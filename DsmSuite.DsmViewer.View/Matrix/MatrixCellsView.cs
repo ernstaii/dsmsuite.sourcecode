@@ -89,7 +89,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
         {
             if (_viewModel != null)
             {
-                SolidColorBrush weightBrush = new SolidColorBrush(Colors.Black);
+                SolidColorBrush weightBrush = _theme.CellWeightColor;
                 Rect weightRect = new Rect(0, 0, _theme.MatrixCellSize, 0.5 * _theme.MatrixCellSize);
 
                 int matrixSize = _viewModel.MatrixSize;
