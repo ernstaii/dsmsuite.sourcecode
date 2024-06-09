@@ -1,2 +1,2 @@
-This archive contains all source code of the DSM suite to visualize software dependencies.
-Ported to DotNetCore/Linux underway. Updated 2 aug 2021.
+This is a copy of https://github.com/dsmsuite/dsmsuite.sourcecode with the following changes:
+24-06-09 Weight visualised in the cell by a coloured bar.
