@@ -599,6 +599,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                     int i = buckets.Count-1;
                     while (_cellWeights[row][column] < buckets[i])
                         i--;
+                    if (i == 0)     // Bucket 0 is for weight 0 exclusively
+                        i = 1;
                     _weightPercentiles[row].Add(i / (double) _nrWeightBuckets);
                 }
             }
