@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AnalyzerSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LogLevel>Error</LogLevel>
+  <Input>
+    <AssemblyDirectory>Publish/DsmSuite</AssemblyDirectory>
+  </Input>
+  <Transformation>
+    <IgnoredNames>
+      <string>^System.</string>
+      <string>^Microsoft.</string>
+      <string>^Interop</string>
+      <string>&lt;</string>
+      <string>^_</string>
+    </IgnoredNames>
+  </Transformation>
+  <Output>
+    <Filename>dsmsuite.dsi</Filename>
+    <Compress>true</Compress>
+  </Output>
+</AnalyzerSettings>

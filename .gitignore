@@ -1,5 +1,7 @@
 */obj/
 */bin/
+Publish/
+packages/
 idloutput/
 *.suo
 *.tlb
