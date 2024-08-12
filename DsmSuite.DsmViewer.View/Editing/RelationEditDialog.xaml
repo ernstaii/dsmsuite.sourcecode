@@ -9,22 +9,7 @@
         Width="650"
         Style="{StaticResource DialogStyle}">
     <StackPanel FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Orientation="Vertical">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="{StaticResource TitleBarHeight}" />
-                <RowDefinition Height="{StaticResource TitleHeight}" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="Close" Style="{StaticResource CloseButtonStyle}"/>
-                </StackPanel>
-            </DockPanel>
-            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DialogTitle}" Text="{Binding Title}" Margin="5"/>
-        </Grid>
+        <TextBlock Style="{StaticResource DialogTitle}" Text="{Binding Title}"/>
         <TextBlock Style="{StaticResource DialogSubTitle}" Text="Consumer"/>
         <Grid Margin="10" DataContext="{Binding Path=ConsumerSearchViewModel}" Visibility="{Binding SearchState, Converter={StaticResource SearchStateOffToVisibilityConverter}}">
             <Grid.RowDefinitions>

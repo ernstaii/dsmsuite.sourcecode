@@ -4,28 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="{Binding Title}" 
-        Height="600" 
+        Height="600"
         Width="800"
         Loaded="ElementListView_OnLoaded"
         Style="{StaticResource FixedHeightDialogStyle}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource TitleBarHeight}"  />
             <RowDefinition Height="{StaticResource TitleHeight}" />
             <RowDefinition Height="{StaticResource SubTitleHeight}" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="{StaticResource BottomRowHeight}" />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" >
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="Close" Style="{StaticResource CloseButtonStyle}"/>
-            </StackPanel>
-        </DockPanel>
-        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DialogTitle}" Text="{Binding Title}" Margin="5"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DialogSubTitle}" Text="{Binding SubTitle}" Margin="5"/>
-        <ListView Grid.Row="3" ItemsSource="{Binding Elements}" SelectedItem="{Binding SelectedElement}" Style="{StaticResource DialogListView}">
+        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DialogTitle}" Text="{Binding Title}"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DialogSubTitle}" Text="{Binding SubTitle}"/>
+        <ListView Grid.Row="2" ItemsSource="{Binding Elements}" SelectedItem="{Binding SelectedElement}" Style="{StaticResource DialogListView}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Index" Width="auto" DisplayMemberBinding="{Binding Index}" />
@@ -35,7 +28,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource DialogButton}" Content="Copy" ToolTip="Copy element list to clipboard" Command="{Binding CopyToClipboardCommand}"/>
         </StackPanel>        
     </Grid>

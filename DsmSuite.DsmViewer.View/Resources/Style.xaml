@@ -17,11 +17,6 @@
     <sys:String x:Key="UpArrowIcon">&#x25B2;</sys:String>
     <sys:String x:Key="DownArrowIcon">&#x25BC;</sys:String>
 
-    <sys:String x:Key="MinimizeAppIcon">&#xE949;</sys:String>
-    <sys:String x:Key="MaximizeAppIcon">&#xE739;</sys:String>
-    <sys:String x:Key="CloseAppIcon">&#xE106;</sys:String>
-
-    <GridLength x:Key="TitleBarHeight">40</GridLength>
     <GridLength x:Key="TitleHeight">40</GridLength>
     <GridLength x:Key="SubTitleHeight">40</GridLength>
     <GridLength x:Key="EditFieldHeight">40</GridLength>
@@ -33,50 +28,6 @@
     <Style x:Key="WindowStyle"  TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource ForegroundStandardColor}" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome CaptionHeight="15"
-                              CornerRadius="0"
-                              GlassFrameThickness="0,0,0,-1"
-                              NonClientFrameEdges="None"
-                              ResizeBorderThickness="5"
-                              UseAeroCaptionButtons="true"/>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!-- Mimimize, Maximize and Close Button -->
-    <Style x:Key="CaptionButtonStyle" TargetType="Button">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid x:Name="LayoutRoot" Background="{StaticResource BackgroundColor}" Width="44" Height="30" >
-                        <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="12" 
-                                   Foreground="{StaticResource ForegroundStandardColor}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   TextOptions.TextFormattingMode="Display"
-                                   FontWeight="Heavy" />
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="White"/>
-                            <Setter TargetName="txt" Property="Background" Value="White"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="MinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource MinimizeAppIcon}"/>
-    </Style>
-
-    <Style x:Key="MaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource MaximizeAppIcon}"/>
-    </Style>
-
-    <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource CloseAppIcon}"/>
     </Style>
 
     <!-- Rich tooltip styles -->
@@ -193,31 +144,11 @@
         <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource ForegroundStandardColor}" />
         <Setter Property="SizeToContent" Value="Height" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome CaptionHeight="15"
-                              CornerRadius="0"
-                              GlassFrameThickness="0,0,0,-1"
-                              NonClientFrameEdges="None"
-                              ResizeBorderThickness="5"
-                              UseAeroCaptionButtons="true"/>
-            </Setter.Value>
-        </Setter>
-    </Style>
+     </Style>
 
     <Style x:Key="FixedHeightDialogStyle" TargetType="Window">
         <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource ForegroundStandardColor}" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome CaptionHeight="15"
-                              CornerRadius="0"
-                              GlassFrameThickness="0,0,0,-1"
-                              NonClientFrameEdges="None"
-                              ResizeBorderThickness="5"
-                              UseAeroCaptionButtons="true"/>
-            </Setter.Value>
-        </Setter>
     </Style>
     
     <Style x:Key="UserControlStyle" TargetType="UserControl">
@@ -237,7 +168,7 @@
     </Style>
 
     <Style x:Key="DialogTitle" TargetType="TextBlock">
-        <Setter Property="Padding" Value="10,0,0,0" />
+        <Setter Property="Padding" Value="10,0,0,10" />
         <Setter Property="FontSize" Value="{StaticResource LargeFontSize}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundStandardColor}" />

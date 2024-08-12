@@ -11,21 +11,15 @@
         Style="{StaticResource FixedHeightDialogStyle}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource TitleBarHeight}"  />
             <RowDefinition Height="{StaticResource TitleHeight}" />
             <RowDefinition Height="{StaticResource SubTitleHeight}" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="{StaticResource BottomRowHeight}" />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" >
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="Close" Style="{StaticResource CloseButtonStyle}"/>
-            </StackPanel>
-        </DockPanel>
-        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DialogTitle}" Text="{Binding Title}" Margin="5"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DialogSubTitle}" Text="{Binding SubTitle}" Margin="5"/>
-        <ListView Grid.Row="3" ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedRelation}" Style="{StaticResource DialogListView}">
+        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DialogTitle}" Text="{Binding Title}" Margin="5"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DialogSubTitle}" Text="{Binding SubTitle}" Margin="5"/>
+        <ListView Grid.Row="2" ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedRelation}" Style="{StaticResource DialogListView}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Index" Width="auto" DisplayMemberBinding="{Binding Path=Index}" />
@@ -41,7 +35,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <DockPanel Grid.Row="4">
+        <DockPanel Grid.Row="3">
             <StackPanel DockPanel.Dock="Left" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Style="{StaticResource DialogButton}" Content="Delete" ToolTip="Delete selected relation" Command="{Binding DeleteRelationCommand}"/>
                 <Button Style="{StaticResource DialogButton}" Content="Edit" ToolTip="Edit selected relation" Command="{Binding EditRelationCommand}"/>
