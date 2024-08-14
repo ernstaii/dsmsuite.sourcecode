@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Windows.Input;
 using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Interfaces;
@@ -9,12 +10,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private const string PastelThemeName = "Pastel";
-        private const string LightThemeName = "Light";
-
         private readonly IDsmApplication _application;
         private LogLevel _logLevel;
         private string _selectedThemeName;
+        private string _help;
 
         private readonly Dictionary<Theme, string> _supportedThemes;
 
@@ -23,12 +22,14 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
             _application = application;
             _supportedThemes = new Dictionary<Theme, string>
             {
-                [Theme.Pastel] = PastelThemeName,
-                [Theme.Light] = LightThemeName
+                [Theme.Light] = "Light",
+                [Theme.Dark] = "Dark",
+                [Theme.Pastel] = "Pastel"
             };
 
             LogLevel = ViewerSetting.LogLevel;
             SelectedThemeName = _supportedThemes[ViewerSetting.Theme];
+            Help = "";
 
             AcceptChangeCommand = new RelayCommand<object>(AcceptChangeExecute, AcceptChangeCanExecute);
         }
@@ -44,6 +45,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
                 OnPropertyChanged();
             }
         }
+        public string Help
+        {
+            get { return _help; }
+            private set { _help = value; OnPropertyChanged(); }
+        }
 
         public List<string> SupportedThemeNames => _supportedThemes.Values.ToList();
 
@@ -53,6 +59,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
             set
             {
                 _selectedThemeName = value;
+                if (_selectedThemeName != _supportedThemes[ViewerSetting.Theme])
+                    Help = "Theme change requires an application restart";
+                else
+                    Help = "";
                 OnPropertyChanged();
             }
         }

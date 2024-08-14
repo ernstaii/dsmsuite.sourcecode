@@ -2,7 +2,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="TextColor" po:Freeze="True">#4b3d38</SolidColorBrush>
+    <SolidColorBrush x:Key="TextColor" po:Freeze="True">#000000</SolidColorBrush>
     <SolidColorBrush x:Key="ErrorTextColor" po:Freeze="True">#d24432</SolidColorBrush>
     <SolidColorBrush x:Key="SearchNoMatchTextColor" po:Freeze="True">#d24432</SolidColorBrush>
     <SolidColorBrush x:Key="SearchMatchTextColor" po:Freeze="True">#4b3d38</SolidColorBrush>

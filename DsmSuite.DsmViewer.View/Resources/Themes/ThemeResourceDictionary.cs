@@ -52,6 +52,9 @@ namespace DsmSuite.DsmViewer.View.Resources.Themes
                 case Theme.Light:
                     uri = LightThemeSource;
                     break;
+                case Theme.Dark:
+                    uri = DarkThemeSource;
+                    break;
                 default:
                     uri = LightThemeSource;
                     break;
