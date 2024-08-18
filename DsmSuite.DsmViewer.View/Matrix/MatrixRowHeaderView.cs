@@ -57,7 +57,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
             {
                 Point pt = e.GetPosition(headerItemView);
 
-                if ((pt.X < 20) && (pt.Y < 24))
+                if (e.ChangedButton == MouseButton.Left  &&  pt.X < 20  &&  pt.Y < 24)
                 {
                     _matrixViewModel.ToggleElementExpandedCommand.Execute(null);
                     InvalidateVisual();

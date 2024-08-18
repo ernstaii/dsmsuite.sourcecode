@@ -109,7 +109,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                 [MetricType.HierarchicalCycles] = "Hierarchical\nCycles",
                 [MetricType.SystemCycles] = "System\nCycles",
                 [MetricType.Cycles] = "Total\nCycles",
-                [MetricType.CycalityPercentage] = "Total\nCycality"
+                [MetricType.CyclicityPercentage] = "Total\nCyclicity"
             };
 
             _selectedMetricType = MetricType.NumberOfElements;
@@ -678,7 +678,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                         _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
                     }
                     break;
-                case MetricType.CycalityPercentage:
+                case MetricType.CyclicityPercentage:
                     foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
                     {
                         int cycleCount = _application.GetHierarchicalCycleCount(viewModel.Element) +
@@ -817,7 +817,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private bool NextMetricCanExecute(object parameter)
         {
-            return _selectedMetricType != MetricType.CycalityPercentage;
+            return _selectedMetricType != MetricType.CyclicityPercentage;
         }
 
         private void UpdateColumnHeaderTooltip(int? column)

@@ -11,6 +11,6 @@
         HierarchicalCycles,
         SystemCycles,
         Cycles,
-        CycalityPercentage,
+        CyclicityPercentage,
     }
 }

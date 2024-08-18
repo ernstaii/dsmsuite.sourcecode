@@ -91,7 +91,7 @@
                 <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="8" Grid.Column="2" Text=":"/>
                 <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="8" Grid.Column="3" Text="{Binding Weight}"/>
                 
-                <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="9" Grid.Column="1" Text="Cycality"/>
+                <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="9" Grid.Column="1" Text="Cyclicity"/>
                 <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="9" Grid.Column="2" Text=":"/>
                 <TextBlock Style="{StaticResource RichToolTipPropertiesStyle}" Grid.Row="9" Grid.Column="3" Text="{Binding CycleType}"/>
             </Grid>
@@ -133,13 +133,14 @@
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Add element below" Command="{Binding AddSiblingElementBelowCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Modify element" Command="{Binding ModifyElementCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Delete element" Command="{Binding DeleteElementCommand}" />
+                    <!--    
                         <Separator />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Copy element" Command="{Binding CopyElementCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Cut element" Command="{Binding CutElementCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Paste element above" Command="{Binding PasteAsSiblingElementAboveCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Paste element child" Command="{Binding PasteAsChildElementCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Paste element below" Command="{Binding PasteAsSiblingElementBelowCommand}" />
-
+                    -->
                         <Separator />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Show and edit element ingoing relations" Command="{Binding ShowElementIngoingRelationsCommand}" />
                         <MenuItem Style="{StaticResource MenuItemStyle}" Header="Show and edit element outgoing relations" Command="{Binding ShowElementOutgoingRelationCommand}" />
@@ -166,7 +167,7 @@
         </Canvas>
 
         <!--  colomn 3 matrix cells and column header -->
-        <Canvas x:Name="ColumnHeaderCanvas" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="{StaticResource MatrixHeaderHeight}" ClipToBounds="True">
+        <Canvas x:Name="ColumnHeaderCanvas" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="{StaticResource MatrixHeaderHeight}" Margin="0,0,0,5" ClipToBounds="True">
             <matrix:MatrixColumnHeaderView x:Name="ColumnHeaderView"  Height="{StaticResource MatrixHeaderHeight}" Width="Auto" />
         </Canvas>
         <ScrollViewer x:Name="ScrolledCellsView" Grid.Column="3" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="CellsViewOnScrollChanged">

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Numerics;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace DsmSuite.DsmViewer.View.Matrix
 {
@@ -11,6 +15,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
         public MatrixView()
         {
             InitializeComponent();
+            PreviewMouseWheel += HandlePreviewMouseWheel;
         }
 
         public double UsedWidth => RowHeaderView.ActualWidth + Splitter.ActualWidth + MatrixMetricsSelectorView.ActualWidth + Math.Min(CellsView.ActualWidth, ScrolledCellsView.ActualWidth);
@@ -23,6 +28,22 @@ namespace DsmSuite.DsmViewer.View.Matrix
             Canvas.SetTop(RowHeaderView, -e.VerticalOffset);
             //Canvas.SetTop(IndicatorView, -e.VerticalOffset);
             Canvas.SetTop(RowMetricsView, -e.VerticalOffset);
+        }
+
+        // Pass mouse wheel events on to the ScrollViewer, so that the user can scroll using
+        // the wheel even when the mouse cursor is not over the matrix cells, but on the headers.
+        private void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                ScrollViewer cells = (ScrollViewer) FindName("ScrolledCellsView");
+                eventArg.Source = cells;
+                cells.RaiseEvent(eventArg);
+            }
         }
     }
 }
