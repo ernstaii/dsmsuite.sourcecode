@@ -16,15 +16,18 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private double _zoomLevel;
         private readonly IMainViewModel _mainViewModel;
         private readonly IDsmApplication _application;
-        private readonly IEnumerable<IDsmElement> _selectedElements;
+        private readonly IEnumerable<IDsmElement> _rootElements;
         private ObservableCollection<ElementTreeItemViewModel> _elementViewModelTree;
         private List<ElementTreeItemViewModel> _elementViewModelLeafs;
-        private ElementTreeItemViewModel _selectedTreeItem;
-        private ElementTreeItemViewModel _hoveredTreeItem;
+
         private int? _selectedRow;
         private int? _selectedColumn;
+        private ElementTreeItemViewModel _selectedTreeItem;
+
+        private ElementTreeItemViewModel _hoveredTreeItem;
         private int? _hoveredRow;
         private int? _hoveredColumn;
+
         private int _matrixSize;
         private bool _isMetricsViewExpanded;
 
@@ -33,9 +36,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private List<MatrixColor> _columnColors;
         private List<int> _columnElementIds;
         private List<string> _metrics;
-        private int? _selectedConsumerId;
-        private int? _selectedProviderId;
-
         private const int _nrWeightBuckets = 10; // Number of buckets (quantiles) for grouping cell weights.
         private List<List<double>> _weightPercentiles;  // The weight bucket for every cell as a percentile
 
@@ -47,11 +47,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private MetricType _selectedMetricType;
         private string _searchText = "";
 
-        public MatrixViewModel(IMainViewModel mainViewModel, IDsmApplication application, IEnumerable<IDsmElement> selectedElements)
+        public MatrixViewModel(IMainViewModel mainViewModel, IDsmApplication application, IEnumerable<IDsmElement> rootElements)
         {
             _mainViewModel = mainViewModel;
             _application = application;
-            _selectedElements = selectedElements;
+            _rootElements = rootElements;
 
             ToggleElementExpandedCommand = mainViewModel.ToggleElementExpandedCommand;
 
@@ -115,48 +115,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             _selectedMetricType = MetricType.NumberOfElements;
             SelectedMetricTypeName = _metricTypeNames[_selectedMetricType];
         }
-
-        public ICommand ToggleElementExpandedCommand { get; }
-
-        public ICommand SortElementCommand { get; }
-        public ICommand MoveUpElementCommand { get; }
-        public ICommand MoveDownElementCommand { get; }
-
-        public ICommand ToggleElementBookmarkCommand { get; }
-
-        public ICommand AddChildElementCommand { get; }
-        public ICommand AddSiblingElementAboveCommand { get; }
-        public ICommand AddSiblingElementBelowCommand { get; }
-        public ICommand ModifyElementCommand { get; }
-        public ICommand ChangeElementParentCommand { get; }
-        public ICommand DeleteElementCommand { get; }
-
-        public ICommand CopyElementCommand { get; }
-        public ICommand CutElementCommand { get; }
-        public ICommand PasteAsChildElementCommand { get; }
-        public ICommand PasteAsSiblingElementAboveCommand { get; }
-        public ICommand PasteAsSiblingElementBelowCommand { get; }
-
-        public ICommand ShowElementIngoingRelationsCommand { get; }
-        public ICommand ShowElementOutgoingRelationCommand { get; }
-        public ICommand ShowElementinternalRelationsCommand { get; }
-
-        public ICommand ShowElementConsumersCommand { get; }
-        public ICommand ShowElementProvidedInterfacesCommand { get; }
-        public ICommand ShowElementRequiredInterfacesCommand { get; }
-        public ICommand ShowElementDetailMatrixCommand { get; }
-        public ICommand ShowElementContextMatrixCommand { get; }
-
-        public ICommand ShowCellRelationsCommand { get; }
-        public ICommand ShowCellConsumersCommand { get; }
-        public ICommand ShowCellProvidersCommand { get; }
-        public ICommand ShowCellDetailMatrixCommand { get; }
-
-        public ICommand PreviousMetricCommand { get; }
-        public ICommand NextMetricCommand { get; }
-
-        public ICommand ToggleMetricsViewExpandedCommand { get; }
-
+        public IEnumerable<string> MetricTypes => _metricTypeNames.Values;
         public string SelectedMetricTypeName
         {
             get { return _selectedMetricTypeName; }
@@ -168,19 +127,18 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                 OnPropertyChanged();
             }
         }
-
-        public int MatrixSize
-        {
-            get { return _matrixSize; }
-            set { _matrixSize = value; OnPropertyChanged(); }
-        }
-
+        public IReadOnlyList<string> Metrics => _metrics;
         public bool IsMetricsViewExpanded
         {
             get { return _isMetricsViewExpanded; }
             set { _isMetricsViewExpanded = value; OnPropertyChanged(); }
         }
 
+        public int MatrixSize
+        {
+            get { return _matrixSize; }
+            set { _matrixSize = value; OnPropertyChanged(); }
+        }
         public ObservableCollection<ElementTreeItemViewModel> ElementViewModelTree
         {
             get { return _elementViewModelTree; }
@@ -197,8 +155,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// where bucket 0 is reserved for cells with weight 0.
         /// </summary>
         public IReadOnlyList<IReadOnlyList<double>> WeightPercentiles => _weightPercentiles;
-        
-        public IReadOnlyList<string> Metrics => _metrics;
+
 
         public double ZoomLevel
         {
@@ -206,31 +163,30 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             set { _zoomLevel = value; OnPropertyChanged(); }
         }
 
-        public void Reload()
+        private void ExpandElement(IDsmElement element)
         {
-            BackupSelectionBeforeReload();
-            ElementViewModelTree = CreateElementViewModelTree();
-            _elementViewModelLeafs = FindLeafElementViewModels();
-            DefineColumnColors();
-            DefineColumnContent();
-            DefineCellColors();
-            DefineCellContent();
-            DefineMetrics();
-            MatrixSize = _elementViewModelLeafs.Count;
-            RestoreSelectionAfterReload();
+            IDsmElement current = element.Parent;
+            while (current != null)
+            {
+                current.IsExpanded = true;
+                current = current.Parent;
+            }
+            Reload();
         }
 
-        public void SelectTreeItem(ElementTreeItemViewModel selectedTreeItem)
+        //=========================== Selecting ==============================
+        #region Selecting
+
+        public int? SelectedRow
         {
-            SelectCell(null, null);
-            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-            {
-                if (_elementViewModelLeafs[row] == selectedTreeItem)
-                {
-                    SelectRow(row);
-                }
-            }
-            _selectedTreeItem = selectedTreeItem;
+            get { return _selectedRow; }
+            private set { _selectedRow = value; OnPropertyChanged(); }
+        }
+
+        public int? SelectedColumn
+        {
+            get { return _selectedColumn; }
+            private set { _selectedColumn = value; OnPropertyChanged(); }
         }
 
         public ElementTreeItemViewModel SelectedTreeItem
@@ -250,19 +206,94 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             }
         }
 
-        public void HoverTreeItem(ElementTreeItemViewModel hoveredTreeItem)
+        public IDsmElement SelectedConsumer
         {
-            HoverCell(null, null);
-            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+            get
             {
-                if (_elementViewModelLeafs[row] == hoveredTreeItem)
+                IDsmElement selectedConsumer = null;
+                if (SelectedColumn.HasValue)
                 {
-                    HoverRow(row);
+                    selectedConsumer = _elementViewModelLeafs[SelectedColumn.Value].Element;
                 }
+                return selectedConsumer;
             }
-            _hoveredTreeItem = hoveredTreeItem;
         }
 
+        public IDsmElement SelectedProvider => SelectedTreeItem?.Element;
+
+
+        public void SelectRow(int? row)
+        {
+            SelectCell(row, null);
+        }
+
+        public void SelectColumn(int? column)
+        {
+            SelectCell(null, column);
+        }
+
+        public void SelectCell(int? row, int? column)
+        {
+            SelectedRow = row;
+            SelectedColumn = column;
+            UpdateProviderRows();
+            UpdateConsumerRows();
+
+            SelectedCellHasRelationCount = _application.GetRelationCount(SelectedConsumer, SelectedProvider);
+        }
+
+        public void SelectTreeItem(ElementTreeItemViewModel selectedTreeItem)
+        {
+            SelectCell(null, null);
+            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+            {
+                if (_elementViewModelLeafs[row] == selectedTreeItem)
+                {
+                    SelectRow(row);
+                }
+            }
+            _selectedTreeItem = selectedTreeItem;
+        }
+
+        private void SelectElement(IDsmElement element)
+        {
+            SelectElement(ElementViewModelTree, element);
+        }
+
+        private void SelectElement(IEnumerable<ElementTreeItemViewModel> tree, IDsmElement element)
+        {
+            foreach (ElementTreeItemViewModel treeItem in tree)
+            {
+                if (treeItem.Id == element.Id)
+                {
+                    SelectTreeItem(treeItem);
+                }
+                else
+                {
+                    SelectElement(treeItem.Children, element);
+                }
+            }
+        }
+
+         // todo Unused. What is it supposed to do?
+        public int SelectedCellHasRelationCount { get; private set; }
+
+        #endregion
+
+        //====================== Hovering =====================================
+        #region Hovering
+
+        public int? HoveredRow
+        {
+            get { return _hoveredRow; }
+            private set { _hoveredRow = value; OnPropertyChanged(); }
+        }
+
+        public int? HoveredColumn
+        {
+            get { return _hoveredColumn; }
+            private set { _hoveredColumn = value; OnPropertyChanged(); }
+        }
         public ElementTreeItemViewModel HoveredTreeItem
         {
             get
@@ -279,49 +310,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                 return hoveredTreeItem;
             }
         }
-
-        public void SelectRow(int? row)
-        {
-            SelectedRow = row;
-            SelectedColumn = null;
-            UpdateProviderRows();
-            UpdateConsumerRows();
-
-            SelectedCellHasRelationCount = 0;
-        }
-
-        public void SelectColumn(int? column)
-        {
-            SelectedRow = null;
-            SelectedColumn = column;
-            UpdateProviderRows();
-            UpdateConsumerRows();
-
-            SelectedCellHasRelationCount = 0;
-        }
-
-        public void SelectCell(int? row, int? columnn)
-        {
-            SelectedRow = row;
-            SelectedColumn = columnn;
-            UpdateProviderRows();
-            UpdateConsumerRows();
-
-            SelectedCellHasRelationCount = _application.GetRelationCount(SelectedConsumer, SelectedProvider);
-        }
-
-        public int? SelectedRow
-        {
-            get { return _selectedRow; }
-            private set { _selectedRow = value; OnPropertyChanged(); }
-        }
-
-        public int? SelectedColumn
-        {
-            get { return _selectedColumn; }
-            private set { _selectedColumn = value; OnPropertyChanged(); }
-        }
-
+ 
         public void HoverRow(int? row)
         {
             HoveredRow = row;
@@ -342,34 +331,23 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             UpdateCellTooltip(row, columnn);
         }
 
-        public int? HoveredRow
+        public void HoverTreeItem(ElementTreeItemViewModel hoveredTreeItem)
         {
-            get { return _hoveredRow; }
-            private set { _hoveredRow = value; OnPropertyChanged(); }
-        }
-
-        public int? HoveredColumn
-        {
-            get { return _hoveredColumn; }
-            private set { _hoveredColumn = value; OnPropertyChanged(); }
-        }
-
-        public IDsmElement SelectedConsumer
-        {
-            get
+            HoverCell(null, null);
+            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
             {
-                IDsmElement selectedConsumer = null;
-                if (SelectedColumn.HasValue)
+                if (_elementViewModelLeafs[row] == hoveredTreeItem)
                 {
-                    selectedConsumer = _elementViewModelLeafs[SelectedColumn.Value].Element;
+                    HoverRow(row);
                 }
-                return selectedConsumer;
             }
+            _hoveredTreeItem = hoveredTreeItem;
         }
 
-        public IDsmElement SelectedProvider => SelectedTreeItem?.Element;
+        #endregion
 
-        public int SelectedCellHasRelationCount { get; private set; }
+        //====================== Visualization ===============================
+        #region Visualization
 
         public ElementToolTipViewModel ColumnHeaderToolTipViewModel
         {
@@ -382,64 +360,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             get { return _cellTooltipViewModel; }
             set { _cellTooltipViewModel = value; OnPropertyChanged(); }
         }
-
-        public IEnumerable<string> MetricTypes => _metricTypeNames.Values;
-
-        private ObservableCollection<ElementTreeItemViewModel> CreateElementViewModelTree()
-        {
-            int depth = 0;
-            ObservableCollection<ElementTreeItemViewModel> tree = new ObservableCollection<ElementTreeItemViewModel>();
-            foreach (IDsmElement element in _selectedElements)
-            {
-                ElementTreeItemViewModel viewModel = new ElementTreeItemViewModel(_mainViewModel, this, _application, element, depth);
-                tree.Add(viewModel);
-                AddElementViewModelChildren(viewModel);
-            }
-            return tree;
-        }
-
-        private void AddElementViewModelChildren(ElementTreeItemViewModel viewModel)
-        {
-            if (viewModel.Element.IsExpanded)
-            {
-                foreach (IDsmElement child in viewModel.Element.Children)
-                {
-                    ElementTreeItemViewModel childViewModel = new ElementTreeItemViewModel(_mainViewModel, this, _application, child, viewModel.Depth + 1);
-                    viewModel.AddChild(childViewModel);
-                    AddElementViewModelChildren(childViewModel);
-                }
-            }
-            else
-            {
-                viewModel.ClearChildren();
-            }
-        }
-
-        private List<ElementTreeItemViewModel> FindLeafElementViewModels()
-        {
-            List<ElementTreeItemViewModel> leafViewModels = new List<ElementTreeItemViewModel>();
-
-            foreach (ElementTreeItemViewModel viewModel in ElementViewModelTree)
-            {
-                FindLeafElementViewModels(leafViewModels, viewModel);
-            }
-
-            return leafViewModels;
-        }
-
-        private void FindLeafElementViewModels(List<ElementTreeItemViewModel> leafViewModels, ElementTreeItemViewModel viewModel)
-        {
-            if (!viewModel.IsExpanded)
-            {
-                leafViewModels.Add(viewModel);
-            }
-
-            foreach (ElementTreeItemViewModel childViewModel in viewModel.Children)
-            {
-                FindLeafElementViewModels(leafViewModels, childViewModel);
-            }
-        }
-
+ 
         private void DefineCellColors()
         {
             int matrixSize = _elementViewModelLeafs.Count;
@@ -605,97 +526,115 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                 }
             }
         }
-
-
-        private void DefineMetrics()
+ 
+        private void UpdateColumnHeaderTooltip(int? column)
         {
-            _metrics = new List<string>();
-            switch (_selectedMetricType)
+            if (column.HasValue)
             {
-                case MetricType.NumberOfElements:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int childElementCount = _application.GetElementSize(viewModel.Element);
-                        _metrics.Add($"{childElementCount}");
-                    }
-                    break;
-                case MetricType.RelativeSizePercentage:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int childElementCount = _application.GetElementSize(viewModel.Element);
-                        int totalElementCount = _application.GetElementCount();
-                        double metricCount = (totalElementCount > 0) ? childElementCount * 100.0 / totalElementCount : 0;
-                        _metrics.Add($"{metricCount:0.000} %");
-                    }
-                    break;
-                case MetricType.IngoingRelations:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.FindIngoingRelations(viewModel.Element).Count();
-                        _metrics.Add($"{metricCount}");
-                    }
-                    break;
-                case MetricType.OutgoingRelations:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.FindOutgoingRelations(viewModel.Element).Count();
-                        _metrics.Add($"{metricCount}");
-                    }
-                    break;
-                case MetricType.InternalRelations:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.FindInternalRelations(viewModel.Element).Count();
-                        _metrics.Add($"{metricCount}");
-                    }
-                    break;
-                case MetricType.ExternalRelations:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.FindExternalRelations(viewModel.Element).Count();
-                        _metrics.Add($"{metricCount}");
-                    }
-                    break;
-                case MetricType.HierarchicalCycles:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.GetHierarchicalCycleCount(viewModel.Element);
-                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
-                    }
-                    break;
-                case MetricType.SystemCycles:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.GetSystemCycleCount(viewModel.Element);
-                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
-                    }
-                    break;
-                case MetricType.Cycles:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int metricCount = _application.GetHierarchicalCycleCount(viewModel.Element) +
-                                          _application.GetSystemCycleCount(viewModel.Element);
-                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
-                    }
-                    break;
-                case MetricType.CyclicityPercentage:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        int cycleCount = _application.GetHierarchicalCycleCount(viewModel.Element) +
-                                          _application.GetSystemCycleCount(viewModel.Element);
-                        int relationCount = _application.FindInternalRelations(viewModel.Element).Count();
-                        double metricCount = (relationCount > 0) ? (cycleCount * 100.0 / relationCount) : 0;
-                        _metrics.Add(metricCount > 0 ? $"{metricCount:0.000} %" : "-");
-                    }
-                    break;
-                default:
-                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
-                    {
-                        _metrics.Add("");
-                    }
-                    break;
+                IDsmElement element = _elementViewModelLeafs[column.Value].Element;
+                if (element != null)
+                {
+                    ColumnHeaderToolTipViewModel = new ElementToolTipViewModel(element, _application);
+                }
             }
         }
+
+        private void UpdateCellTooltip(int? row, int? column)
+        {
+            if (row.HasValue && column.HasValue)
+            {
+                IDsmElement consumer = _elementViewModelLeafs[column.Value].Element;
+                IDsmElement provider = _elementViewModelLeafs[row.Value].Element;
+
+                if ((consumer != null) && (provider != null))
+                {
+                    int weight = _application.GetDependencyWeight(consumer, provider);
+                    CycleType cycleType = _application.IsCyclicDependency(consumer, provider);
+                    CellToolTipViewModel = new CellToolTipViewModel(consumer, provider, weight, cycleType);
+                }
+            }
+        }
+
+        private void UpdateProviderRows()
+        {
+            if (SelectedRow.HasValue)
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    _elementViewModelLeafs[row].IsProvider = _cellWeights[row][SelectedRow.Value] > 0;
+                }
+            }
+            else
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    _elementViewModelLeafs[row].IsProvider = false;
+                }
+            }
+        }
+
+        private void UpdateConsumerRows()
+        {
+            if (SelectedRow.HasValue)
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    _elementViewModelLeafs[row].IsConsumer = _cellWeights[SelectedRow.Value][row] > 0;
+                }
+            }
+            else
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    _elementViewModelLeafs[row].IsConsumer = false;
+                }
+            }
+        }
+
+        #endregion
+
+        //============================ Commands ==============================
+        #region commands
+        public ICommand ToggleElementExpandedCommand { get; }
+
+        public ICommand SortElementCommand { get; }
+        public ICommand MoveUpElementCommand { get; }
+        public ICommand MoveDownElementCommand { get; }
+
+        public ICommand ToggleElementBookmarkCommand { get; }
+
+        public ICommand AddChildElementCommand { get; }
+        public ICommand AddSiblingElementAboveCommand { get; }
+        public ICommand AddSiblingElementBelowCommand { get; }
+        public ICommand ModifyElementCommand { get; }
+        public ICommand ChangeElementParentCommand { get; }
+        public ICommand DeleteElementCommand { get; }
+
+        public ICommand CopyElementCommand { get; }
+        public ICommand CutElementCommand { get; }
+        public ICommand PasteAsChildElementCommand { get; }
+        public ICommand PasteAsSiblingElementAboveCommand { get; }
+        public ICommand PasteAsSiblingElementBelowCommand { get; }
+
+        public ICommand ShowElementIngoingRelationsCommand { get; }
+        public ICommand ShowElementOutgoingRelationCommand { get; }
+        public ICommand ShowElementinternalRelationsCommand { get; }
+
+        public ICommand ShowElementConsumersCommand { get; }
+        public ICommand ShowElementProvidedInterfacesCommand { get; }
+        public ICommand ShowElementRequiredInterfacesCommand { get; }
+        public ICommand ShowElementDetailMatrixCommand { get; }
+        public ICommand ShowElementContextMatrixCommand { get; }
+
+        public ICommand ShowCellRelationsCommand { get; }
+        public ICommand ShowCellConsumersCommand { get; }
+        public ICommand ShowCellProvidersCommand { get; }
+        public ICommand ShowCellDetailMatrixCommand { get; }
+
+        public ICommand PreviousMetricCommand { get; }
+        public ICommand NextMetricCommand { get; }
+
+        public ICommand ToggleMetricsViewExpandedCommand { get; }
 
         private void ShowCellConsumersExecute(object parameter)
         {
@@ -820,121 +759,178 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             return _selectedMetricType != MetricType.CyclicityPercentage;
         }
 
-        private void UpdateColumnHeaderTooltip(int? column)
-        {
-            if (column.HasValue)
-            {
-                IDsmElement element = _elementViewModelLeafs[column.Value].Element;
-                if (element != null)
-                {
-                    ColumnHeaderToolTipViewModel = new ElementToolTipViewModel(element, _application);
-                }
-            }
-        }
+        #endregion
 
-        private void UpdateCellTooltip(int? row, int? column)
-        {
-            if (row.HasValue && column.HasValue)
-            {
-                IDsmElement consumer = _elementViewModelLeafs[column.Value].Element;
-                IDsmElement provider = _elementViewModelLeafs[row.Value].Element;
+         //======================= Load and reload ============================
+        #region Reload
 
-                if ((consumer != null) && (provider != null))
-                {
-                    int weight = _application.GetDependencyWeight(consumer, provider);
-                    CycleType cycleType = _application.IsCyclicDependency(consumer, provider);
-                    CellToolTipViewModel = new CellToolTipViewModel(consumer, provider, weight, cycleType);
-                }
-            }
-        }
-
-        private void SelectElement(IDsmElement element)
+        public void Reload()
         {
-            SelectElement(ElementViewModelTree, element);
-        }
+            //---- Save selection
+            int? selectedConsumerId = SelectedConsumer?.Id;
+            int? selectedProviderId = SelectedProvider?.Id;
 
-        private void SelectElement(IEnumerable<ElementTreeItemViewModel> tree, IDsmElement element)
-        {
-            foreach (ElementTreeItemViewModel treeItem in tree)
-            {
-                if (treeItem.Id == element.Id)
-                {
-                    SelectTreeItem(treeItem);
-                }
-                else
-                {
-                    SelectElement(treeItem.Children, element);
-                }
-            }
-        }
+            //---- Reload
+            ElementViewModelTree = CreateElementViewModelTree();
+            _elementViewModelLeafs = FindLeafElementViewModels();
+            DefineColumnColors();
+            DefineColumnContent();
+            DefineCellColors();
+            DefineCellContent();
+            DefineMetrics();
+            MatrixSize = _elementViewModelLeafs.Count;
 
-        private void ExpandElement(IDsmElement element)
-        {
-            IDsmElement current = element.Parent;
-            while (current != null)
-            {
-                current.IsExpanded = true;
-                current = current.Parent;
-            }
-            Reload();
-        }
-
-        private void UpdateProviderRows()
-        {
-            if (SelectedRow.HasValue)
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsProvider = _cellWeights[row][SelectedRow.Value] > 0;
-                }
-            }
-            else
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsProvider = false;
-                }
-            }
-        }
-
-        private void UpdateConsumerRows()
-        {
-            if (SelectedRow.HasValue)
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsConsumer = _cellWeights[SelectedRow.Value][row] > 0;
-                }
-            }
-            else
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsConsumer = false;
-                }
-            }
-        }
-
-        private void BackupSelectionBeforeReload()
-        {
-            _selectedConsumerId = SelectedConsumer?.Id;
-            _selectedProviderId = SelectedProvider?.Id;
-        }
-
-        private void RestoreSelectionAfterReload()
-        {
+            //---- Restore selection
             for (int i = 0; i < _elementViewModelLeafs.Count; i++)
             {
-                if (_selectedProviderId.HasValue && (_selectedProviderId.Value == _elementViewModelLeafs[i].Id))
-                {
+                if (selectedProviderId.HasValue  &&  selectedProviderId.Value == _elementViewModelLeafs[i].Id)
                     SelectRow(i);
-                }
-
-                if (_selectedConsumerId.HasValue && (_selectedConsumerId.Value == _elementViewModelLeafs[i].Id))
-                {
+                if (selectedConsumerId.HasValue  &&  selectedConsumerId.Value == _elementViewModelLeafs[i].Id)
                     SelectColumn(i);
-                }
             }
         }
+        private ObservableCollection<ElementTreeItemViewModel> CreateElementViewModelTree()
+        {
+            int depth = 0;
+            ObservableCollection<ElementTreeItemViewModel> tree = new ObservableCollection<ElementTreeItemViewModel>();
+            foreach (IDsmElement element in _rootElements)
+            {
+                ElementTreeItemViewModel viewModel = new ElementTreeItemViewModel(_mainViewModel, this, _application, element, depth);
+                tree.Add(viewModel);
+                AddElementViewModelChildren(viewModel);
+            }
+            return tree;
+        }
+
+        private void AddElementViewModelChildren(ElementTreeItemViewModel viewModel)
+        {
+            if (viewModel.Element.IsExpanded)
+            {
+                foreach (IDsmElement child in viewModel.Element.Children)
+                {
+                    ElementTreeItemViewModel childViewModel = new ElementTreeItemViewModel(_mainViewModel, this, _application, child, viewModel.Depth + 1);
+                    viewModel.AddChild(childViewModel);
+                    AddElementViewModelChildren(childViewModel);
+                }
+            }
+            else
+            {
+                viewModel.ClearChildren();
+            }
+        }
+        private List<ElementTreeItemViewModel> FindLeafElementViewModels()
+        {
+            List<ElementTreeItemViewModel> leafViewModels = new List<ElementTreeItemViewModel>();
+
+            foreach (ElementTreeItemViewModel viewModel in ElementViewModelTree)
+            {
+                FindLeafElementViewModels(leafViewModels, viewModel);
+            }
+
+            return leafViewModels;
+        }
+        private void FindLeafElementViewModels(List<ElementTreeItemViewModel> leafViewModels, ElementTreeItemViewModel viewModel)
+        {
+            if (!viewModel.IsExpanded)
+            {
+                leafViewModels.Add(viewModel);
+            }
+
+            foreach (ElementTreeItemViewModel childViewModel in viewModel.Children)
+            {
+                FindLeafElementViewModels(leafViewModels, childViewModel);
+            }
+        }
+        private void DefineMetrics()
+        {
+            _metrics = new List<string>();
+            switch (_selectedMetricType)
+            {
+                case MetricType.NumberOfElements:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int childElementCount = _application.GetElementSize(viewModel.Element);
+                        _metrics.Add($"{childElementCount}");
+                    }
+                    break;
+                case MetricType.RelativeSizePercentage:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int childElementCount = _application.GetElementSize(viewModel.Element);
+                        int totalElementCount = _application.GetElementCount();
+                        double metricCount = (totalElementCount > 0) ? childElementCount * 100.0 / totalElementCount : 0;
+                        _metrics.Add($"{metricCount:0.000} %");
+                    }
+                    break;
+                case MetricType.IngoingRelations:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.FindIngoingRelations(viewModel.Element).Count();
+                        _metrics.Add($"{metricCount}");
+                    }
+                    break;
+                case MetricType.OutgoingRelations:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.FindOutgoingRelations(viewModel.Element).Count();
+                        _metrics.Add($"{metricCount}");
+                    }
+                    break;
+                case MetricType.InternalRelations:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.FindInternalRelations(viewModel.Element).Count();
+                        _metrics.Add($"{metricCount}");
+                    }
+                    break;
+                case MetricType.ExternalRelations:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.FindExternalRelations(viewModel.Element).Count();
+                        _metrics.Add($"{metricCount}");
+                    }
+                    break;
+                case MetricType.HierarchicalCycles:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.GetHierarchicalCycleCount(viewModel.Element);
+                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
+                    }
+                    break;
+                case MetricType.SystemCycles:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.GetSystemCycleCount(viewModel.Element);
+                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
+                    }
+                    break;
+                case MetricType.Cycles:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int metricCount = _application.GetHierarchicalCycleCount(viewModel.Element) +
+                                          _application.GetSystemCycleCount(viewModel.Element);
+                        _metrics.Add(metricCount > 0 ? $"{metricCount}" : "-");
+                    }
+                    break;
+                case MetricType.CyclicityPercentage:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        int cycleCount = _application.GetHierarchicalCycleCount(viewModel.Element) +
+                                          _application.GetSystemCycleCount(viewModel.Element);
+                        int relationCount = _application.FindInternalRelations(viewModel.Element).Count();
+                        double metricCount = (relationCount > 0) ? (cycleCount * 100.0 / relationCount) : 0;
+                        _metrics.Add(metricCount > 0 ? $"{metricCount:0.000} %" : "-");
+                    }
+                    break;
+                default:
+                    foreach (ElementTreeItemViewModel viewModel in _elementViewModelLeafs)
+                    {
+                        _metrics.Add("");
+                    }
+                    break;
+            }
+        }
+
+        #endregion
     }
 }
