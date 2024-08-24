@@ -7,7 +7,6 @@ using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Main;
 using DsmSuite.DsmViewer.ViewModel.Lists;
-using System.Security.RightsManagement;
 
 namespace DsmSuite.DsmViewer.ViewModel.Matrix
 {
@@ -20,9 +19,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private ObservableCollection<ElementTreeItemViewModel> _elementViewModelTree;
         private List<ElementTreeItemViewModel> _elementViewModelLeafs;
 
-        private int? _selectedRow;
-        private int? _selectedColumn;
-        private ElementTreeItemViewModel _selectedTreeItem;
+        private MatrixViewModelCoordinate _selectedRow;
+        private MatrixViewModelCoordinate _selectedColumn;
 
         private ElementTreeItemViewModel _hoveredTreeItem;
         private int? _hoveredRow;
@@ -174,85 +172,136 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             Reload();
         }
 
+
+        /// <summary>
+        /// Return the ViewModel for the given element, or null if it doesn't exist.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public ElementTreeItemViewModel FindElementViewModel(IDsmElement element)
+        {
+            return FindElementViewModel(element, ElementViewModelTree);
+        }
+
+
+        /// <summary>
+        /// Find the ViewModel for the given element by searching the trees in list recursively.
+        /// Return null if no corresponding ViewModel can be found.
+        /// </summary>
+        private ElementTreeItemViewModel FindElementViewModel(IDsmElement element, IEnumerable<ElementTreeItemViewModel> list)
+        {
+            ElementTreeItemViewModel res = null;
+
+            foreach (ElementTreeItemViewModel vm in list)
+            {
+                if (vm.Element == element)
+                    return vm;
+                if ((res = FindElementViewModel(element, vm.Children)) != null)
+                    return res;
+            }
+
+            return null;
+        }
+
+
         //=========================== Selecting ==============================
         #region Selecting
 
-        public int? SelectedRow
+        /// <summary>
+        /// The currently selected row, or null if no row is selected.
+        /// </summary>
+        public MatrixViewModelCoordinate SelectedRow
         {
             get { return _selectedRow; }
-            private set { _selectedRow = value; OnPropertyChanged(); }
+            private set { _selectedRow = value; SelectionChanged();  OnPropertyChanged(); }
         }
 
-        public int? SelectedColumn
+
+        /// <summary>
+        /// The column of the currently selected consumer, or null if no consumer is selected.
+        /// </summary>
+        public MatrixViewModelCoordinate SelectedColumn
         {
             get { return _selectedColumn; }
-            private set { _selectedColumn = value; OnPropertyChanged(); }
+            private set { _selectedColumn = value; SelectionChanged();  OnPropertyChanged(); }
         }
 
-        public ElementTreeItemViewModel SelectedTreeItem
+        /// <summary>
+        /// Auxiliary function to update various properties after the selection has changed.
+        /// </summary>
+        private void SelectionChanged()
         {
-            get
-            {
-                ElementTreeItemViewModel selectedTreeItem;
-                if (SelectedRow.HasValue && (SelectedRow.Value < _elementViewModelLeafs.Count))
-                {
-                    selectedTreeItem = _elementViewModelLeafs[SelectedRow.Value];
-                }
-                else
-                {
-                    selectedTreeItem = _selectedTreeItem;
-                }
-                return selectedTreeItem;
-            }
+            System.Diagnostics.Trace.WriteLine($"ROW: {SelectedRow?.Index} {SelectedRow?.Element?.Id}");
+            UpdateProviderRows();
+            UpdateConsumerRows();
+            SelectedCellHasRelationCount = _application.GetRelationCount(SelectedColumn?.Element, SelectedRow?.Element);
         }
 
-        public IDsmElement SelectedConsumer
-        {
-            get
-            {
-                IDsmElement selectedConsumer = null;
-                if (SelectedColumn.HasValue)
-                {
-                    selectedConsumer = _elementViewModelLeafs[SelectedColumn.Value].Element;
-                }
-                return selectedConsumer;
-            }
-        }
 
-        public IDsmElement SelectedProvider => SelectedTreeItem?.Element;
-
-
+        /// <summary>
+        /// Selected the given row and deselect all columns.
+        /// </summary>
+        /// <param name="row"></param>
         public void SelectRow(int? row)
         {
             SelectCell(row, null);
         }
 
+        /// <summary>
+        /// Select the given column and deselect all rows.
+        /// </summary>
+        /// <param name="column"></param>
         public void SelectColumn(int? column)
         {
             SelectCell(null, column);
         }
 
+        /// <summary>
+        /// Selected the given row and column.
+        /// </summary>
         public void SelectCell(int? row, int? column)
         {
-            SelectedRow = row;
-            SelectedColumn = column;
-            UpdateProviderRows();
-            UpdateConsumerRows();
+            IDsmElement consumer = null, provider = null;
+            ElementTreeItemViewModel vm = null;
 
-            SelectedCellHasRelationCount = _application.GetRelationCount(SelectedConsumer, SelectedProvider);
+            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
+            {
+                vm = _elementViewModelLeafs[therow];
+                provider = vm.Element;
+            }
+
+            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
+            {
+                consumer = _elementViewModelLeafs[thecol].Element;
+            }
+
+            SelectedRow = new() {Axis = MatrixViewModelCoordinate.AxisType.Row, Element = provider, Index = row, TreeItemViewModel = vm};
+            SelectedColumn = new() {Axis = MatrixViewModelCoordinate.AxisType.Column, Element = consumer, Index = column, TreeItemViewModel = null};
         }
 
+        /// <summary>
+        /// Select the given tree item (provider) and deselect all columns.
+        /// </summary>
         public void SelectTreeItem(ElementTreeItemViewModel selectedTreeItem)
         {
-            SelectCell(null, null);
-            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+            int? selrow = null;
+
+            if (selectedTreeItem != null)
             {
-                if (_elementViewModelLeafs[row] == selectedTreeItem)
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
                 {
-                    SelectRow(row);
+                    if (_elementViewModelLeafs[row] == selectedTreeItem)
+                    {
+                        selrow = row;
+                        break;
+                    }
                 }
             }
-            _selectedTreeItem = selectedTreeItem;
+            
+            SelectedRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row, Index = selrow,
+                    Element = selectedTreeItem?.Element, TreeItemViewModel = selectedTreeItem };
+            SelectedColumn = new() { Axis= MatrixViewModelCoordinate.AxisType.Column, Index = null,
+                    Element = null, TreeItemViewModel= null};
         }
 
         private void SelectElement(IDsmElement element)
@@ -265,13 +314,9 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             foreach (ElementTreeItemViewModel treeItem in tree)
             {
                 if (treeItem.Id == element.Id)
-                {
                     SelectTreeItem(treeItem);
-                }
                 else
-                {
                     SelectElement(treeItem.Children, element);
-                }
             }
         }
 
@@ -557,11 +602,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void UpdateProviderRows()
         {
-            if (SelectedRow.HasValue)
+            if (SelectedRow?.Index != null)
             {
                 for (int row = 0; row < _elementViewModelLeafs.Count; row++)
                 {
-                    _elementViewModelLeafs[row].IsProvider = _cellWeights[row][SelectedRow.Value] > 0;
+                    _elementViewModelLeafs[row].IsProvider = _cellWeights[row][SelectedRow.Index.Value] > 0;
                 }
             }
             else
@@ -575,11 +620,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void UpdateConsumerRows()
         {
-            if (SelectedRow.HasValue)
+            if (SelectedRow?.Index != null)
             {
                 for (int row = 0; row < _elementViewModelLeafs.Count; row++)
                 {
-                    _elementViewModelLeafs[row].IsConsumer = _cellWeights[SelectedRow.Value][row] > 0;
+                    _elementViewModelLeafs[row].IsConsumer = _cellWeights[SelectedRow.Index.Value][row] > 0;
                 }
             }
             else
@@ -638,7 +683,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowCellConsumersExecute(object parameter)
         {
-            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.RelationConsumers, SelectedConsumer, SelectedProvider);
+            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.RelationConsumers,
+                    SelectedColumn?.Element, SelectedRow?.Element);
         }
 
         private bool ShowCellConsumersCanExecute(object parameter)
@@ -648,7 +694,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowCellProvidersExecute(object parameter)
         {
-            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.RelationProviders, SelectedConsumer, SelectedProvider);
+            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.RelationProviders,
+                    SelectedColumn?.Element, SelectedRow?.Element);
         }
 
         private bool ShowCellProvidersCanExecute(object parameter)
@@ -658,7 +705,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowElementIngoingRelationsExecute(object parameter)
         {
-            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementIngoingRelations, null, SelectedProvider);
+            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementIngoingRelations,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowElementIngoingRelationsCanExecute(object parameter)
@@ -668,8 +716,9 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowElementOutgoingRelationExecute(object parameter)
         {
-            var relations = _application.FindOutgoingRelations(SelectedProvider);
-            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementOutgoingRelations, null, SelectedProvider);
+            var relations = _application.FindOutgoingRelations(SelectedRow?.Element);
+            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementOutgoingRelations,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowElementOutgoingRelationCanExecute(object parameter)
@@ -679,7 +728,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowElementinternalRelationsExecute(object parameter)
         {
-            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementInternalRelations, null, SelectedProvider);
+            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementInternalRelations,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowElementinternalRelationsCanExecute(object parameter)
@@ -689,7 +739,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowElementConsumersExecute(object parameter)
         {
-            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementConsumers, null, SelectedProvider);
+            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementConsumers,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowConsumersCanExecute(object parameter)
@@ -699,7 +750,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowProvidedInterfacesExecute(object parameter)
         {
-            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementProvidedInterface, null, SelectedProvider);
+            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementProvidedInterface,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowElementProvidedInterfacesCanExecute(object parameter)
@@ -709,7 +761,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowElementRequiredInterfacesExecute(object parameter)
         {
-            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementRequiredInterface, null, SelectedProvider);
+            _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementRequiredInterface,
+                    null, SelectedRow?.Element);
         }
 
         private bool ShowElementRequiredInterfacesCanExecute(object parameter)
@@ -719,7 +772,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         private void ShowCellRelationsExecute(object parameter)
         {
-            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ConsumerProviderRelations, SelectedConsumer, SelectedProvider);
+            _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ConsumerProviderRelations,
+                    SelectedColumn?.Element, SelectedRow?.Element);
         }
 
         private bool ShowCellRelationsCanExecute(object parameter)
@@ -767,8 +821,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public void Reload()
         {
             //---- Save selection
-            int? selectedConsumerId = SelectedConsumer?.Id;
-            int? selectedProviderId = SelectedProvider?.Id;
+            IDsmElement selectedProvider = SelectedRow?.Element;
+            IDsmElement selectedConsumer = SelectedColumn?.Element;
+            int? row = null;
+            int? column = null;
 
             //---- Reload
             ElementViewModelTree = CreateElementViewModelTree();
@@ -783,12 +839,19 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             //---- Restore selection
             for (int i = 0; i < _elementViewModelLeafs.Count; i++)
             {
-                if (selectedProviderId.HasValue  &&  selectedProviderId.Value == _elementViewModelLeafs[i].Id)
-                    SelectRow(i);
-                if (selectedConsumerId.HasValue  &&  selectedConsumerId.Value == _elementViewModelLeafs[i].Id)
-                    SelectColumn(i);
+                if (selectedProvider != null  &&  selectedProvider == _elementViewModelLeafs[i].Element)
+                    row = i;
+                if (selectedConsumer != null  &&  selectedConsumer == _elementViewModelLeafs[i].Element)
+                    column = i;
             }
+
+            SelectedRow = new() {Axis = MatrixViewModelCoordinate.AxisType.Row, Element = selectedProvider,
+                    Index = row, TreeItemViewModel = FindElementViewModel(selectedProvider) };
+            SelectedColumn = new() { Axis= MatrixViewModelCoordinate.AxisType.Column, Element = selectedConsumer,
+                    Index = column, TreeItemViewModel = null };
         }
+
+
         private ObservableCollection<ElementTreeItemViewModel> CreateElementViewModelTree()
         {
             int depth = 0;

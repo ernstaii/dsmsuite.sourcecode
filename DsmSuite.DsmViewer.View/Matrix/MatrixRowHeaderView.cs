@@ -78,8 +78,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
                 CreateChildViews();
             }
 
-            if ((e.PropertyName == nameof(MatrixViewModel.SelectedRow)) ||
-                (e.PropertyName == nameof(MatrixViewModel.SelectedRow)))
+            if (e.PropertyName == nameof(MatrixViewModel.SelectedRow))
             {
                 RedrawChildViews();
             }

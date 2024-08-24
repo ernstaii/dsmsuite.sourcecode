@@ -140,11 +140,12 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             IsModified = e;
         }
 
-        public IDsmElement SelectedConsumer => ActiveMatrix?.SelectedConsumer;
 
-        public IDsmElement SelectedProvider => ActiveMatrix?.SelectedProvider;
+        /// <summary>
+        /// Convenience method.
+        /// </summary>
+        private IDsmElement SelectedProvider => ActiveMatrix?.SelectedRow?.Element;
 
-        public ElementTreeItemViewModel SelectedProviderTreeItem => ActiveMatrix?.SelectedTreeItem;
 
         public MatrixViewModel ActiveMatrix
         {
@@ -380,7 +381,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         {
             ExcludeAllFromTree();
             IncludeInTree(SelectedProvider);
-            IncludeInTree(SelectedConsumer);
+            IncludeInTree(ActiveMatrix?.SelectedColumn?.Element);
 
             ActiveMatrix.Reload();
         }
@@ -442,10 +443,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private void ToggleElementExpandedExecute(object parameter)
         {
-            ActiveMatrix.SelectTreeItem(ActiveMatrix.HoveredTreeItem);
-            if ((SelectedProviderTreeItem != null) && (SelectedProviderTreeItem.IsExpandable))
+            ElementTreeItemViewModel vm = ActiveMatrix.HoveredTreeItem;
+            if (vm != null  &&  vm.IsExpandable)
             {
-                SelectedProviderTreeItem.IsExpanded = !SelectedProviderTreeItem.IsExpanded;
+                vm.IsExpanded = !vm.IsExpanded;
             }
 
             ActiveMatrix.Reload();

@@ -85,7 +85,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
                     _rect.Y = 0;
 
                     bool isHovered = _viewModel.HoveredColumn.HasValue && (column == _viewModel.HoveredColumn.Value);
-                    bool isSelected = _viewModel.SelectedColumn.HasValue && (column == _viewModel.SelectedColumn.Value);
+                    bool isSelected = column == _viewModel.SelectedColumn?.Index;
                     MatrixColor color = _viewModel.ColumnColors[column];
                     SolidColorBrush background = _theme.GetBackground(color, isHovered, isSelected);
 
