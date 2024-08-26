@@ -7,6 +7,7 @@ using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Main;
 using DsmSuite.DsmViewer.ViewModel.Lists;
+using System.Data.Common;
 
 namespace DsmSuite.DsmViewer.ViewModel.Matrix
 {
@@ -22,9 +23,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private MatrixViewModelCoordinate _selectedRow;
         private MatrixViewModelCoordinate _selectedColumn;
 
-        private ElementTreeItemViewModel _hoveredTreeItem;
-        private int? _hoveredRow;
-        private int? _hoveredColumn;
+        private MatrixViewModelCoordinate _hoveredRow;
+        private MatrixViewModelCoordinate _hoveredColumn;
 
         private int _matrixSize;
         private bool _isMetricsViewExpanded;
@@ -328,65 +328,84 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         //====================== Hovering =====================================
         #region Hovering
 
-        public int? HoveredRow
+        public MatrixViewModelCoordinate HoveredRow
         {
             get { return _hoveredRow; }
             private set { _hoveredRow = value; OnPropertyChanged(); }
         }
 
-        public int? HoveredColumn
+        public MatrixViewModelCoordinate HoveredColumn
         {
             get { return _hoveredColumn; }
             private set { _hoveredColumn = value; OnPropertyChanged(); }
         }
-        public ElementTreeItemViewModel HoveredTreeItem
-        {
-            get
-            {
-                ElementTreeItemViewModel hoveredTreeItem;
-                if (HoveredRow.HasValue && (HoveredRow.Value < _elementViewModelLeafs.Count))
-                {
-                    hoveredTreeItem = _elementViewModelLeafs[HoveredRow.Value];
-                }
-                else
-                {
-                    hoveredTreeItem = _hoveredTreeItem;
-                }
-                return hoveredTreeItem;
-            }
-        }
+
  
         public void HoverRow(int? row)
         {
-            HoveredRow = row;
+            ElementTreeItemViewModel vm = null;
+
+            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
+            {
+                vm = _elementViewModelLeafs[therow];
+            }
+            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
+                    Index = row, Element = vm?.Element, TreeItemViewModel = vm };
             HoveredColumn = null;
         }
 
         public void HoverColumn(int? column)
         {
+            IDsmElement consumer = null;
+
+            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
+            {
+                consumer = _elementViewModelLeafs[thecol].Element;
+            }
+
             HoveredRow = null;
-            HoveredColumn = column;
+            HoveredColumn = new() { Axis = MatrixViewModelCoordinate.AxisType.Column,
+                    Index = column, Element = consumer, TreeItemViewModel = null};
             UpdateColumnHeaderTooltip(column);
         }
 
-        public void HoverCell(int? row, int? columnn)
+        public void HoverCell(int? row, int? column)
         {
-            HoveredRow = row;
-            HoveredColumn = columnn;
-            UpdateCellTooltip(row, columnn);
+            IDsmElement producer = null;
+            IDsmElement consumer = null;
+
+            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
+            {
+                producer = _elementViewModelLeafs[therow].Element;
+            }
+            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
+            {
+                consumer = _elementViewModelLeafs[thecol].Element;
+            }
+
+            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
+                    Index = row, Element = producer, TreeItemViewModel = null };
+            HoveredColumn = new() { Axis = MatrixViewModelCoordinate.AxisType.Column,
+                    Index = column, Element = consumer, TreeItemViewModel = null };
+            UpdateCellTooltip(row, column);
         }
 
         public void HoverTreeItem(ElementTreeItemViewModel hoveredTreeItem)
         {
-            HoverCell(null, null);
+            int? therow = 0;
+
             for (int row = 0; row < _elementViewModelLeafs.Count; row++)
             {
                 if (_elementViewModelLeafs[row] == hoveredTreeItem)
                 {
-                    HoverRow(row);
+                    therow = row;
+                    break;
                 }
             }
-            _hoveredTreeItem = hoveredTreeItem;
+
+            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
+                    Index = therow, Element = hoveredTreeItem?.Element, TreeItemViewModel = hoveredTreeItem };
+            HoveredColumn = null;
         }
 
         #endregion

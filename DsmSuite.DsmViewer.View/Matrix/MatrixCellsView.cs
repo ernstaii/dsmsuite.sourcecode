@@ -100,8 +100,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
                         _rect.X = _offset + column * _pitch;
                         _rect.Y = _offset + row * _pitch;
 
-                        bool isHovered = (_viewModel.HoveredRow.HasValue && (row == _viewModel.HoveredRow.Value)) ||
-                                         (_viewModel.HoveredColumn.HasValue && (column == _viewModel.HoveredColumn.Value));
+                        bool isHovered = row == _viewModel.HoveredRow?.Index  ||  column == _viewModel.HoveredColumn?.Index;
                         bool isSelected = row == _viewModel.SelectedRow?.Index  ||  column == _viewModel.SelectedColumn?.Index;
                         MatrixColor color = _viewModel.CellColors[row][column];
                         SolidColorBrush background = _theme.GetBackground(color, isHovered, isSelected);
