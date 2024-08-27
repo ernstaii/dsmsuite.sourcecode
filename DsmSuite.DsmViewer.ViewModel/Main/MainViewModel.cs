@@ -443,7 +443,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private void ToggleElementExpandedExecute(object parameter)
         {
-            ElementTreeItemViewModel vm = ActiveMatrix.HoveredRow?.TreeItemViewModel;
+            ElementTreeItemViewModel vm = ActiveMatrix.FindElementViewModel(ActiveMatrix.HoveredRow?.Element);
             if (vm != null  &&  vm.IsExpandable)
             {
                 vm.IsExpanded = !vm.IsExpanded;

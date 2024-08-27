@@ -31,12 +31,5 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// or there is no row/column (e.g. because it is expanded).
         /// </summary>
         public int? Index { get; init; }
-
-        /// <summary>
-        /// The ViewModel of this provider, or null.
-        /// Always null for columns/consumers.
-        /// </summary>
-        public ElementTreeItemViewModel TreeItemViewModel { get; init; }
-
     }
 }

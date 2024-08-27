@@ -17,7 +17,18 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private readonly IMainViewModel _mainViewModel;
         private readonly IDsmApplication _application;
         private readonly IEnumerable<IDsmElement> _rootElements;
+
+        /// <summary>
+        /// The ViewModels that constitute the providers. Each leaf is a row in the matrix,
+        /// internal nodes are drawn vertically and have no row with cells.
+        /// </summary>
         private ObservableCollection<ElementTreeItemViewModel> _elementViewModelTree;
+        /// <summary>
+        /// The leafs in <see cref="_elementViewModelTree"/>, in the order they are visualized.
+        /// These correspond to the rows/columns of the matrix. Note that a columns/consumers
+        /// does NOT have its own ElementTreeItemViewModel. Every leaf VM is either a leaf element,
+        /// or a collapsed element.
+        /// </summary>
         private List<ElementTreeItemViewModel> _elementViewModelLeafs;
 
         private MatrixViewModelCoordinate _selectedRow;
@@ -180,7 +191,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// <returns></returns>
         public ElementTreeItemViewModel FindElementViewModel(IDsmElement element)
         {
-            return FindElementViewModel(element, ElementViewModelTree);
+            return element == null ? null : FindElementViewModel(element, ElementViewModelTree);
         }
 
 
@@ -201,6 +212,94 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             }
 
             return null;
+        }
+
+        private MatrixViewModelCoordinate GetRowCoord(int? row)
+        {
+            ElementTreeItemViewModel vm = null;
+
+            if (row == null)
+                return null;
+
+            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
+            {
+                vm = _elementViewModelLeafs[therow];
+            }
+
+            return new()
+            {
+                Axis = MatrixViewModelCoordinate.AxisType.Row,
+                Index = row,
+                Element = vm?.Element
+            };
+        }
+
+        public MatrixViewModelCoordinate GetRowCoord(ElementTreeItemViewModel treeItem)
+        {
+            int? selrow = null;
+
+            if (treeItem != null)
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    if (_elementViewModelLeafs[row] == treeItem)
+                    {
+                        selrow = row;
+                        break;
+                    }
+                }
+            }
+
+            return new()
+            {
+                Axis = MatrixViewModelCoordinate.AxisType.Row,
+                Index = selrow,
+                Element = treeItem?.Element
+            };
+        }
+
+        private MatrixViewModelCoordinate GetColumnCoord(int? column)
+        {
+            IDsmElement consumer = null;
+
+            if (column == null)
+                return null;
+
+            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
+            {
+                consumer = _elementViewModelLeafs[thecol].Element;
+            }
+
+            return new()
+            {
+                Axis = MatrixViewModelCoordinate.AxisType.Column,
+                Index = column,
+                Element = consumer
+            };
+        }
+
+        public MatrixViewModelCoordinate GetColumnCoord(ElementTreeItemViewModel treeItem)
+        {
+            int? selrow = null;
+
+            if (treeItem != null)
+            {
+                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                {
+                    if (_elementViewModelLeafs[row] == treeItem)
+                    {
+                        selrow = row;
+                        break;
+                    }
+                }
+            }
+
+            return new()
+            {
+                Axis = MatrixViewModelCoordinate.AxisType.Column,
+                Index = selrow,
+                Element = treeItem?.Element
+            };
         }
 
 
@@ -231,52 +330,36 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// </summary>
         private void SelectionChanged()
         {
-            System.Diagnostics.Trace.WriteLine($"ROW: {SelectedRow?.Index} {SelectedRow?.Element?.Id}");
             UpdateProviderRows();
             UpdateConsumerRows();
-            SelectedCellHasRelationCount = _application.GetRelationCount(SelectedColumn?.Element, SelectedRow?.Element);
         }
 
 
         /// <summary>
         /// Selected the given row and deselect all columns.
         /// </summary>
-        /// <param name="row"></param>
         public void SelectRow(int? row)
         {
-            SelectCell(row, null);
+            SelectedRow = GetRowCoord(row);
+            SelectedColumn = null;
         }
 
         /// <summary>
         /// Select the given column and deselect all rows.
         /// </summary>
-        /// <param name="column"></param>
         public void SelectColumn(int? column)
         {
-            SelectCell(null, column);
+            SelectedColumn = GetColumnCoord(column);
+            SelectedRow = null;
         }
 
         /// <summary>
-        /// Selected the given row and column.
+        /// Select the given row and column.
         /// </summary>
         public void SelectCell(int? row, int? column)
         {
-            IDsmElement consumer = null, provider = null;
-            ElementTreeItemViewModel vm = null;
-
-            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
-            {
-                vm = _elementViewModelLeafs[therow];
-                provider = vm.Element;
-            }
-
-            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
-            {
-                consumer = _elementViewModelLeafs[thecol].Element;
-            }
-
-            SelectedRow = new() {Axis = MatrixViewModelCoordinate.AxisType.Row, Element = provider, Index = row, TreeItemViewModel = vm};
-            SelectedColumn = new() {Axis = MatrixViewModelCoordinate.AxisType.Column, Element = consumer, Index = column, TreeItemViewModel = null};
+            SelectedRow = GetRowCoord(row);
+            SelectedColumn = GetColumnCoord(column);
         }
 
         /// <summary>
@@ -284,44 +367,9 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// </summary>
         public void SelectTreeItem(ElementTreeItemViewModel selectedTreeItem)
         {
-            int? selrow = null;
-
-            if (selectedTreeItem != null)
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    if (_elementViewModelLeafs[row] == selectedTreeItem)
-                    {
-                        selrow = row;
-                        break;
-                    }
-                }
-            }
-            
-            SelectedRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row, Index = selrow,
-                    Element = selectedTreeItem?.Element, TreeItemViewModel = selectedTreeItem };
-            SelectedColumn = new() { Axis= MatrixViewModelCoordinate.AxisType.Column, Index = null,
-                    Element = null, TreeItemViewModel= null};
+            SelectedRow = GetRowCoord(selectedTreeItem);
+            SelectedColumn = null;
         }
-
-        private void SelectElement(IDsmElement element)
-        {
-            SelectElement(ElementViewModelTree, element);
-        }
-
-        private void SelectElement(IEnumerable<ElementTreeItemViewModel> tree, IDsmElement element)
-        {
-            foreach (ElementTreeItemViewModel treeItem in tree)
-            {
-                if (treeItem.Id == element.Id)
-                    SelectTreeItem(treeItem);
-                else
-                    SelectElement(treeItem.Children, element);
-            }
-        }
-
-         // todo Unused. What is it supposed to do?
-        public int SelectedCellHasRelationCount { get; private set; }
 
         #endregion
 
@@ -343,68 +391,27 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
  
         public void HoverRow(int? row)
         {
-            ElementTreeItemViewModel vm = null;
-
-            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
-            {
-                vm = _elementViewModelLeafs[therow];
-            }
-            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
-                    Index = row, Element = vm?.Element, TreeItemViewModel = vm };
+            HoveredRow = GetRowCoord(row);
             HoveredColumn = null;
         }
 
         public void HoverColumn(int? column)
         {
-            IDsmElement consumer = null;
-
-            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
-            {
-                consumer = _elementViewModelLeafs[thecol].Element;
-            }
-
             HoveredRow = null;
-            HoveredColumn = new() { Axis = MatrixViewModelCoordinate.AxisType.Column,
-                    Index = column, Element = consumer, TreeItemViewModel = null};
+            HoveredColumn = GetColumnCoord(column);
             UpdateColumnHeaderTooltip(column);
         }
 
         public void HoverCell(int? row, int? column)
         {
-            IDsmElement producer = null;
-            IDsmElement consumer = null;
-
-            if (row is int therow  &&  therow < _elementViewModelLeafs.Count)
-            {
-                producer = _elementViewModelLeafs[therow].Element;
-            }
-            if (column is int thecol  &&  thecol < _elementViewModelLeafs.Count)
-            {
-                consumer = _elementViewModelLeafs[thecol].Element;
-            }
-
-            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
-                    Index = row, Element = producer, TreeItemViewModel = null };
-            HoveredColumn = new() { Axis = MatrixViewModelCoordinate.AxisType.Column,
-                    Index = column, Element = consumer, TreeItemViewModel = null };
+            HoveredRow = GetRowCoord(row);
+            HoveredColumn = GetColumnCoord(column);
             UpdateCellTooltip(row, column);
         }
 
         public void HoverTreeItem(ElementTreeItemViewModel hoveredTreeItem)
         {
-            int? therow = 0;
-
-            for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-            {
-                if (_elementViewModelLeafs[row] == hoveredTreeItem)
-                {
-                    therow = row;
-                    break;
-                }
-            }
-
-            HoveredRow = new() { Axis = MatrixViewModelCoordinate.AxisType.Row,
-                    Index = therow, Element = hoveredTreeItem?.Element, TreeItemViewModel = hoveredTreeItem };
+            HoveredRow = GetRowCoord(hoveredTreeItem);
             HoveredColumn = null;
         }
 
@@ -842,8 +849,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             //---- Save selection
             IDsmElement selectedProvider = SelectedRow?.Element;
             IDsmElement selectedConsumer = SelectedColumn?.Element;
-            int? row = null;
-            int? column = null;
 
             //---- Reload
             ElementViewModelTree = CreateElementViewModelTree();
@@ -855,20 +860,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             DefineMetrics();
             MatrixSize = _elementViewModelLeafs.Count;
 
-            //---- Restore selection
-            for (int i = 0; i < _elementViewModelLeafs.Count; i++)
-            {
-                if (selectedProvider != null  &&  selectedProvider == _elementViewModelLeafs[i].Element)
-                    row = i;
-                if (selectedConsumer != null  &&  selectedConsumer == _elementViewModelLeafs[i].Element)
-                    column = i;
-            }
-
-            SelectedRow = new() {Axis = MatrixViewModelCoordinate.AxisType.Row, Element = selectedProvider,
-                    Index = row, TreeItemViewModel = FindElementViewModel(selectedProvider) };
-            SelectedColumn = new() { Axis= MatrixViewModelCoordinate.AxisType.Column, Element = selectedConsumer,
-                    Index = column, TreeItemViewModel = null };
-        }
+            //---- Restore selection (with new indices)
+            SelectedRow = GetRowCoord(FindElementViewModel(selectedProvider));
+            SelectedColumn = GetColumnCoord(FindElementViewModel(selectedConsumer));
+         }
 
 
         private ObservableCollection<ElementTreeItemViewModel> CreateElementViewModelTree()
