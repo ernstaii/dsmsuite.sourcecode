@@ -14,6 +14,7 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding SelectedIndicatorViewMode, Converter={StaticResource DefaultIndicatorModeToVisibilityConverter}}">
             <Rectangle Style="{StaticResource LegendRectangleStyle}" Fill="{StaticResource MatrixColorConsumer}" />
@@ -35,5 +36,11 @@
             <Rectangle Style="{StaticResource LegendRectangleStyle}" Fill="{StaticResource MatrixColorBookmark}"/>
             <TextBlock Style="{StaticResource LegendTextBlockStyle}" Grid.Column="9">Bookmarked</TextBlock>
         </StackPanel>
+        <Rectangle Grid.Column="5" Fill="{StaticResource CellWeightColor}" Width="1" Margin="0,3,5,3"/>
+        <TextBlock Grid.Column="6" Style="{StaticResource LegendTextBlockStyle}">
+            <Run Text="{Binding Path=ActiveMatrix.SelectedColumn.Element.Name}"/>
+            <Run Text=" - "/>
+            <Run Text="{Binding Path=ActiveMatrix.SelectedRow.Element.Name}"/>
+        </TextBlock>
     </Grid>
 </UserControl>
