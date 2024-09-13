@@ -27,7 +27,7 @@ namespace DsmSuite.Common.Util
         public static void Init(Assembly assembly, bool logInCurrentDirectory)
         {
             _assembly = assembly;
-            _logPath = logInCurrentDirectory ? Directory.GetCurrentDirectory() : @"C:\Temp\DsmSuiteLogging\";
+            _logPath = logInCurrentDirectory ? Directory.GetCurrentDirectory() : System.IO.Path.GetTempPath() + @"DsmSuiteLogging\";
 
             LogLevel = LogLevel.None;
         }

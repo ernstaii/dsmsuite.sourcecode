@@ -525,7 +525,7 @@ namespace DsmSuite.DsmViewer.Model.Persistency
                         TotalItemCount = totalItemCount,
                         CurrentItemCount = progressedItemCount,
                         ItemType = "items",
-                        Done = totalItemCount == progressedItemCount
+                        Done = done
                     };
 
                     progress.Report(progressInfoInfo);
