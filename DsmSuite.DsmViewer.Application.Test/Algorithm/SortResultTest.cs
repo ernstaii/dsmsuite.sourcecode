@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DsmSuite.DsmViewer.Application.Sorting;
+using System.Collections.Generic;
 
 namespace DsmSuite.DsmViewer.Application.Test.Algorithm
 {
@@ -26,57 +27,49 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         }
         
         [TestMethod]
-        public void WhenSortResultConstructedWithEmptyStringThenOrderItIsInvalid()
+        public void WhenSortResultConstructedWithEmptyListThenItIsInvalid()
         {
-            SortResult result = new SortResult("");
-            Assert.IsFalse(result.IsValid);
-        }
-
-        [TestMethod]
-        public void WhenSortResultConstructedWithTextStringThenItIsInvalid()
-        {
-            SortResult result = new SortResult("abc");
+            SortResult result = new SortResult(new List<int>());
             Assert.IsFalse(result.IsValid);
         }
 
         [TestMethod]
         public void WhenSortResultConstructedWithSingleNumberStringThenItIsValid()
         {
-            string input = "0";
-            SortResult result = new SortResult(input);
+            SortResult result = new SortResult( new List<int> {0} );
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(0, result.GetIndex(0));
         }
 
         [TestMethod]
-        public void WhenSortResultConstructedWithInvalidCommaSeparatedNumberStringThenItIsInvalid()
+        public void WhenSortResultConstructedWithInvalidListThenItIsInvalid()
         {
-            SortResult result = new SortResult("3,1,0");
+            SortResult result = new SortResult( new List<int>() {3, 1, 0} );
             Assert.IsFalse(result.IsValid);
         }
 
         [TestMethod]
-        public void WhenSortResultConstructedWithCommaSeparatedNumberStringThenItIsValid()
+        public void WhenSortResultConstructedWithListThenItIsValid()
         {
-            SortResult result = new SortResult("2,1,0");
+            SortResult result = new SortResult( new List<int>() {2, 1, 0} );
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(2, result.GetIndex(0));
             Assert.AreEqual(1, result.GetIndex(1));
             Assert.AreEqual(0, result.GetIndex(2));
         }
-        
+
         [TestMethod]
-        public void WhenSortResultConstructedWithCommaSeparatedNumberStringThenDataReturnsSameString()
+        public void SortResultConstructedWithList()
         {
-            string input = "3,2,1,0";
+            List<int> input = new List<int>() {3, 2, 1, 0};
             SortResult result = new SortResult(input);
-            Assert.AreEqual(input, result.Data);
+            CollectionAssert.AreEqual(input, result.GetOrder());
         }
 
         [TestMethod]
         public void WhenSwapWithValidArgumentThenTheOrderIsChanged()
         {
-            SortResult result = new SortResult("2,1,0");
+            SortResult result = new SortResult( new List<int>() {2, 1, 0} );
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(2, result.GetIndex(0));
             Assert.AreEqual(1, result.GetIndex(1));
@@ -94,7 +87,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WhenSwapWithOutOfBoundArgumentThenExceptionIsThrown()
         {
-            SortResult result = new SortResult("2,1,0");
+            SortResult result = new SortResult( new List<int>() { 2, 1, 0} );
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(2, result.GetIndex(0));
             Assert.AreEqual(1, result.GetIndex(1));
@@ -106,7 +99,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         [TestMethod]
         public void WhenInvertOrderThenTheOrderIsChanged()
         {
-            SortResult result = new SortResult("2,0,1");
+            SortResult result = new SortResult( new List<int>() { 2, 0, 1} );
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(2, result.GetIndex(0));
             Assert.AreEqual(0, result.GetIndex(1));
@@ -123,7 +116,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         [TestMethod]
         public void WhenInvertOrderIsCalledTwiceThenTheOrderIsUnchanged()
         {
-            SortResult result = new SortResult("2,0,1");
+            SortResult result = new SortResult(new List<int>() { 2, 0, 1 });
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(2, result.GetIndex(0));
             Assert.AreEqual(0, result.GetIndex(1));
@@ -142,7 +135,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WhenGetIndexWithOutOfBoundArgumentThenExceptionIsThrown()
         {
-            SortResult result = new SortResult("2,1,0");
+            SortResult result = new SortResult(new List<int>() { 2, 1, 0 });
             Assert.IsTrue(result.IsValid);
             result.GetIndex(3);
         }

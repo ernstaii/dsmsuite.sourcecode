@@ -88,5 +88,26 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Base
             Assert.AreEqual(memberValue1, attributes.GetString(memberName1));
             Assert.AreEqual(memberValue2, attributes.GetInt(memberName2));
         }
+
+        [TestMethod]
+        public void GetListIntTest()
+        {
+            Mock<IDsmModel> model = new Mock<IDsmModel>();
+            Dictionary<string, string> data = new Dictionary<string, string>();
+
+            data["empty"] = "";
+            data["single"] = "1";
+            data["five"] = "1,2,3,4,5";
+            data["dups"] = "5,5,5,5";
+            data["many"] = "2147483647,1,0,-1,-2147483648";
+            ActionReadOnlyAttributes atts = new ActionReadOnlyAttributes(model.Object, data);
+            CollectionAssert.AreEqual(new List<int>(), atts.GetListInt("_empty"));
+            CollectionAssert.AreEqual(new List<int>() {1}, atts.GetListInt("_single"));
+            CollectionAssert.AreEqual(new List<int>() {1,2,3,4,5}, atts.GetListInt("_five"));
+            CollectionAssert.AreEqual(new List<int>() {5,5,5,5}, atts.GetListInt("_dups"));
+            CollectionAssert.AreEqual(new List<int>() {int.MaxValue,1,0,-1,int.MinValue}, atts.GetListInt("_many"));
+
+
+        }
     }
 }

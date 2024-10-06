@@ -89,5 +89,24 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Base
             Assert.IsTrue(data.ContainsKey(key2));
             Assert.AreEqual(memberValue2.ToString(), data[key2]);
         }
+
+        [TestMethod]
+        public void SetListIntTest()
+        {
+            ActionAttributes atts = new ActionAttributes();
+            atts.SetListInt("_empty", new List<int> { } );
+            atts.SetListInt("_single", new List<int> {0});
+            atts.SetListInt("_five", new List<int> {1,2,3,4,5});
+            atts.SetListInt("_dups", new List<int> {5,5,5,5});
+            atts.SetListInt("_many", new List<int> {int.MaxValue,1,0,-1,int.MinValue});
+
+            IReadOnlyDictionary<string, string> data = atts.Data;
+            Assert.AreEqual(5, data.Count);
+            Assert.AreEqual(atts.Data["empty"], "");
+            Assert.AreEqual(atts.Data["single"], "0");
+            Assert.AreEqual(atts.Data["five"], "1,2,3,4,5");
+            Assert.AreEqual(atts.Data["dups"], "5,5,5,5");
+            Assert.AreEqual(atts.Data["many"], "2147483647,1,0,-1,-2147483648");
+        }
     }
 }

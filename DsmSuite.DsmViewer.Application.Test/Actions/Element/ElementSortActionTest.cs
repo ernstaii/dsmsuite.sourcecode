@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using DsmSuite.DsmViewer.Application.Sorting;
 using DsmSuite.DsmViewer.Application.Test.Stubs;
 using System;
+using System.Linq;
 
 namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
 {
@@ -20,7 +21,8 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
         private const int ElementId = 1;
         private const string UsedAlgorithm = "MockedAlgorithm";
         private const string SortResult = "2,0,1";
-        private const string InverseSortResult = "1,2,0";
+        private List<int> SortList = new List<int>() {2, 0, 1};
+        private List<int> InverseSortList = new List<int>() {1, 2, 0};
 
         [TestInitialize()]
         public void Setup()
@@ -48,7 +50,8 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
             action.Do();
             Assert.IsTrue(action.IsValid());
 
-            _model.Verify(x => x.ReorderChildren(_element.Object, It.Is<SortResult>(i => i.Data == SortResult)), Times.Once());
+            _model.Verify(x => x.ReorderChildren(_element.Object,
+                    It.Is<SortResult>(i => i.GetOrder().SequenceEqual(SortList))), Times.Once());
         }
 
         [TestMethod]
@@ -59,7 +62,8 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
             action.Undo();
             Assert.IsTrue(action.IsValid());
 
-            _model.Verify(x => x.ReorderChildren(_element.Object, It.Is<SortResult>(i => i.Data == InverseSortResult)), Times.Once());
+            _model.Verify(x => x.ReorderChildren(_element.Object,
+                    It.Is<SortResult>(i => i.GetOrder().SequenceEqual(InverseSortList))), Times.Once());
         }
 
         [TestMethod]

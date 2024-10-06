@@ -6,22 +6,15 @@ namespace DsmSuite.DsmViewer.Application.Sorting
 {
     public class SortResult : ISortResult
     {
+        /// <summary>
+        /// _list contains the ordering as a permutation of indices. If the sorting
+        /// puts an element on position i that was on position j, then _list[i] == j; 
+        /// </summary>
         private readonly List<int> _list = new List<int>();
 
-        public SortResult(string data)
+        public SortResult(List<int> list)
         {
-            string[] items = data.Split(',');
-
-            _list.Clear();
-
-            foreach (string item in items)
-            {
-                int value;
-                if (int.TryParse(item, out value))
-                {
-                    _list.Add(value);
-                }
-            }
+            _list = new List<int>(list);
         }
 
         public SortResult(int numberOfElements)
@@ -74,43 +67,28 @@ namespace DsmSuite.DsmViewer.Application.Sorting
             return _list[index];
         }
 
-        public string Data
+        /// <summary>
+        /// Return the sorting order as a permutation of indices. If the sorting
+        /// puts an element on position i that was on position j, then order[i] == j; 
+        /// </summary>
+        public List<int> GetOrder()
         {
-            get
-            {
-                string data = "";
-                for (int i = 0; i < _list.Count; i++)
-                {
-                    data += _list[i].ToString();
-
-                    if (i < _list.Count - 1)
-                    {
-                        data += ",";
-                    }
-                }
-                return data;
-            }
+            return new List<int>(_list);
         }
+
 
         public bool IsValid
         {
             get
             {
-                HashSet<int> set = new HashSet<int>();
-                foreach (int value in _list)
-                {
-                    set.Add(value);
-                }
+                HashSet<int> set = new HashSet<int>(_list);
 
-                bool valid = true;
                 for (int i = 0; i < _list.Count; i++)
                 {
                     if (!set.Contains(i))
-                    {
-                        valid = false;
-                    }
+                        return false;
                 }
-                return (_list.Count > 0) && valid;
+                return _list.Count > 0;
             }
         }
         

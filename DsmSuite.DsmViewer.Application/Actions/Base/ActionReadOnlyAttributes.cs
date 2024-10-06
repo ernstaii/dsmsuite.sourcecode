@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using DsmSuite.DsmViewer.Model.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Base
 {
@@ -36,6 +38,23 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
             }
 
             return value;
+        }
+
+        public List<int> GetListInt(string memberName)
+        {
+            List<int> list = new List<int>();
+            string s = _data.GetValueOrDefault(RemoveUnderscore(memberName));
+
+            foreach (string item in s.Split(','))
+            {
+                int value;
+                if (int.TryParse(item, out value))
+                {
+                    list.Add(value);
+                }
+            }
+
+            return list;
         }
 
         public IDsmElement GetElement(string memberName)

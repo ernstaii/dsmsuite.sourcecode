@@ -1,10 +1,11 @@
 ﻿using DsmSuite.DsmViewer.Application.Sorting;
+using System.Collections.Generic;
 
 namespace DsmSuite.DsmViewer.Application.Test.Stubs
 {
     public class StubbedSortAlgorithm : ISortAlgorithm
     {
-        private const string SortResult = "2,0,1";
+        private List<int> SortResult = new List<int>() {2,0,1};
 
         public StubbedSortAlgorithm(object[] args) { }
 

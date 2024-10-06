@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Base
 {
@@ -28,6 +31,21 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
                 _data[RemoveUnderscore(memberName)] = memberValue.Value.ToString();
             }
         }
+
+        public void SetListInt(string memberName, List<int> list)
+        {
+            StringBuilder s = new StringBuilder();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                s.Append(list[i]);
+                if (i < list.Count - 1)
+                    s.Append(',');
+            }
+
+            _data[RemoveUnderscore(memberName)] = s.ToString();
+        }
+
 
         public IReadOnlyDictionary<string, string> Data => _data;
 

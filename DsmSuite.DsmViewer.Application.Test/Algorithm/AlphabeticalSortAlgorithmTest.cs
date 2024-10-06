@@ -39,7 +39,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
             object[] args = { model.Object, parent.Object };
             AlphabeticalSortAlgorithm algorithm = new AlphabeticalSortAlgorithm(args);
             SortResult result = algorithm.Sort();
-            Assert.AreEqual("2,3,0,1", result.Data);
+            CollectionAssert.AreEqual(new List<int>() { 2, 3, 0, 1 }, result.GetOrder());
 
             Assert.AreEqual(a.Object, children[result.GetIndex(0)]);
             Assert.AreEqual(b.Object, children[result.GetIndex(1)]);

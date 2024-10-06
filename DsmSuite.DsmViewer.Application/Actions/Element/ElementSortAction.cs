@@ -13,7 +13,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
         private readonly IActionContext _actionContext;
         private readonly IDsmElement _element;
         private readonly string _algorithm;
-        private string _order;
+        private List<int> _order;
 
         public const ActionType RegisteredType = ActionType.ElementSort;
 
@@ -27,7 +27,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
 
                 _element = attributes.GetElement(nameof(_element));
                 _algorithm = attributes.GetString(nameof(_algorithm));
-                _order = attributes.GetString(nameof(_order));
+                _order = attributes.GetListInt(nameof(_order));
             }
         }
 
@@ -36,7 +36,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
             _model = model;
             _element = element;
             _algorithm = algorithm;
-            _order = "";
+            _order = null;
         }
 
         public ActionType Type => RegisteredType;
@@ -48,7 +48,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
             ISortAlgorithm sortAlgorithm = SortAlgorithmFactory.CreateAlgorithm(_model, _element, _algorithm);
             SortResult sortResult = sortAlgorithm.Sort();
             _model.ReorderChildren(_element, sortResult);
-            _order = sortResult.Data;
+            _order = sortResult.GetOrder();
 
             _model.AssignElementOrder();
 
@@ -79,7 +79,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
                 ActionAttributes attributes = new ActionAttributes();
                 attributes.SetInt(nameof(_element), _element.Id);
                 attributes.SetString(nameof(_algorithm), _algorithm);
-                attributes.SetString(nameof(_order), _order);
+                attributes.SetListInt(nameof(_order), _order);
                 return attributes.Data;
             }
         }
