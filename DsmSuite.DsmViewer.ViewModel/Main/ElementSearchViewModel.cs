@@ -66,7 +66,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public IDsmElement SelectedElement
         {
             get { return _selectedElement; }
-            set { _selectedElement = value; OnPropertyChanged(); }
+            set { _selectedElement = value; RaisePropertyChanged(); }
         }
 
         public string SearchText
@@ -77,7 +77,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                 if (_searchText != value)
                 {
                     _searchText = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged();
                     OnSearchTextUpdated();
                 }
             }
@@ -91,7 +91,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                 if (_caseSensitiveSearch != value)
                 {
                     _caseSensitiveSearch = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged();
                     OnSearchTextUpdated();
                 }
             }
@@ -105,7 +105,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                 if (_selectedElementType != value)
                 {
                     _selectedElementType = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged();
                     OnSearchTextUpdated();
                 }
             }
@@ -114,19 +114,19 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public ObservableCollection<string> SearchMatches
         {
             get { return _searchMatches; }
-            private set { _searchMatches = value; OnPropertyChanged(); }
+            private set { _searchMatches = value; RaisePropertyChanged(); }
         }
 
         public SearchState SearchState
         {
             get { return _searchState; }
-            set { _searchState = value; OnPropertyChanged(); }
+            set { _searchState = value; RaisePropertyChanged(); }
         }
 
         public string SearchResult
         {
             get { return _searchResult; }
-            set { _searchResult = value; OnPropertyChanged(); }
+            set { _searchResult = value; RaisePropertyChanged(); }
         }
 
         private void OnSearchTextUpdated()

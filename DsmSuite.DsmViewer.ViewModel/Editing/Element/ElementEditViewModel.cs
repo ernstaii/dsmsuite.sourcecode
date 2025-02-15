@@ -77,13 +77,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Element
         public string Help
         {
             get { return _help; }
-            private set { _help = value; OnPropertyChanged(); }
+            private set { _help = value; RaisePropertyChanged(); }
         }
 
         public string Name
         {
             get { return _name; }
-            set { _name = value; OnPropertyChanged(); }
+            set { _name = value; RaisePropertyChanged(); }
         }
 
         public List<string> ElementTypes { get; }
@@ -91,7 +91,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Element
         public string SelectedElementType
         {
             get { return _selectedElementType; }
-            set { _selectedElementType = value; _lastSelectedElementType = value; OnPropertyChanged(); }
+            set { _selectedElementType = value; _lastSelectedElementType = value; RaisePropertyChanged(); }
         }
 
         private void AcceptAddExecute(object parameter)

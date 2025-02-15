@@ -76,19 +76,19 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
         public string SelectedRelationType
         {
             get { return _selectedRelationType; }
-            set { _selectedRelationType = value; _lastSelectedRelationType = value;  OnPropertyChanged(); }
+            set { _selectedRelationType = value; _lastSelectedRelationType = value;  RaisePropertyChanged(); }
         }
 
         public int Weight
         {
             get { return _weight; }
-            set { _weight = value; OnPropertyChanged(); }
+            set { _weight = value; RaisePropertyChanged(); }
         }
 
         public string Help
         {
             get { return _help; }
-            private set { _help = value; OnPropertyChanged(); }
+            private set { _help = value; RaisePropertyChanged(); }
         }
 
         public ICommand AcceptChangeCommand { get; }

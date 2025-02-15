@@ -83,22 +83,22 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             PasteAsSiblingElementAboveCommand = mainViewModel.DeleteElementCommand;
             PasteAsSiblingElementBelowCommand = mainViewModel.DeleteElementCommand;
 
-            ShowElementIngoingRelationsCommand = new RelayCommand<object>(ShowElementIngoingRelationsExecute, ShowElementIngoingRelationsCanExecute);
-            ShowElementOutgoingRelationCommand = new RelayCommand<object>(ShowElementOutgoingRelationExecute, ShowElementOutgoingRelationCanExecute);
-            ShowElementinternalRelationsCommand = new RelayCommand<object>(ShowElementinternalRelationsExecute, ShowElementinternalRelationsCanExecute);
+            ShowElementIngoingRelationsCommand = new RelayCommand<object>(ShowElementIngoingRelationsExecute);
+            ShowElementOutgoingRelationCommand = new RelayCommand<object>(ShowElementOutgoingRelationExecute);
+            ShowElementinternalRelationsCommand = new RelayCommand<object>(ShowElementinternalRelationsExecute);
 
-            ShowElementConsumersCommand = new RelayCommand<object>(ShowElementConsumersExecute, ShowConsumersCanExecute);
-            ShowElementProvidedInterfacesCommand = new RelayCommand<object>(ShowProvidedInterfacesExecute, ShowElementProvidedInterfacesCanExecute);
-            ShowElementRequiredInterfacesCommand = new RelayCommand<object>(ShowElementRequiredInterfacesExecute, ShowElementRequiredInterfacesCanExecute);
+            ShowElementConsumersCommand = new RelayCommand<object>(ShowElementConsumersExecute);
+            ShowElementProvidedInterfacesCommand = new RelayCommand<object>(ShowProvidedInterfacesExecute);
+            ShowElementRequiredInterfacesCommand = new RelayCommand<object>(ShowElementRequiredInterfacesExecute);
             ShowCellDetailMatrixCommand = mainViewModel.ShowCellDetailMatrixCommand;
 
-            ShowCellRelationsCommand = new RelayCommand<object>(ShowCellRelationsExecute, ShowCellRelationsCanExecute);
-            ShowCellConsumersCommand = new RelayCommand<object>(ShowCellConsumersExecute, ShowCellConsumersCanExecute);
-            ShowCellProvidersCommand = new RelayCommand<object>(ShowCellProvidersExecute, ShowCellProvidersCanExecute);
+            ShowCellRelationsCommand = new RelayCommand<object>(ShowCellRelationsExecute);
+            ShowCellConsumersCommand = new RelayCommand<object>(ShowCellConsumersExecute);
+            ShowCellProvidersCommand = new RelayCommand<object>(ShowCellProvidersExecute);
             ShowElementDetailMatrixCommand = mainViewModel.ShowElementDetailMatrixCommand;
             ShowElementContextMatrixCommand = mainViewModel.ShowElementContextMatrixCommand;
 
-            ToggleMetricsViewExpandedCommand = new RelayCommand<object>(ToggleMetricsViewExpandedExecute, ToggleMetricsViewExpandedCanExecute);
+            ToggleMetricsViewExpandedCommand = new RelayCommand<object>(ToggleMetricsViewExpandedExecute);
 
             PreviousMetricCommand = new RelayCommand<object>(PreviousMetricExecute, PreviousMetricCanExecute);
             NextMetricCommand = new RelayCommand<object>(NextMetricExecute, NextMetricCanExecute);
@@ -133,25 +133,25 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                 _selectedMetricTypeName = value;
                 _selectedMetricType = _metricTypeNames.FirstOrDefault(x => x.Value == _selectedMetricTypeName).Key;
                 Reload();
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
         public IReadOnlyList<string> Metrics => _metrics;
         public bool IsMetricsViewExpanded
         {
             get { return _isMetricsViewExpanded; }
-            set { _isMetricsViewExpanded = value; OnPropertyChanged(); }
+            set { _isMetricsViewExpanded = value; RaisePropertyChanged(); }
         }
 
         public int MatrixSize
         {
             get { return _matrixSize; }
-            set { _matrixSize = value; OnPropertyChanged(); }
+            set { _matrixSize = value; RaisePropertyChanged(); }
         }
         public ObservableCollection<ElementTreeItemViewModel> ElementViewModelTree
         {
             get { return _elementViewModelTree; }
-            private set { _elementViewModelTree = value; OnPropertyChanged(); }
+            private set { _elementViewModelTree = value; RaisePropertyChanged(); }
         }
 
         public IReadOnlyList<MatrixColor> ColumnColors => _columnColors;
@@ -169,7 +169,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public double ZoomLevel
         {
             get { return _zoomLevel; }
-            set { _zoomLevel = value; OnPropertyChanged(); }
+            set { _zoomLevel = value; RaisePropertyChanged(); }
         }
 
         private void ExpandElement(IDsmElement element)
@@ -312,7 +312,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public MatrixViewModelCoordinate SelectedRow
         {
             get { return _selectedRow; }
-            private set { _selectedRow = value; SelectionChanged();  OnPropertyChanged(); }
+            private set { _selectedRow = value; SelectionChanged();  RaisePropertyChanged(); }
         }
 
 
@@ -322,7 +322,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public MatrixViewModelCoordinate SelectedColumn
         {
             get { return _selectedColumn; }
-            private set { _selectedColumn = value; SelectionChanged();  OnPropertyChanged(); }
+            private set { _selectedColumn = value; SelectionChanged();  RaisePropertyChanged(); }
         }
 
         /// <summary>
@@ -379,13 +379,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public MatrixViewModelCoordinate HoveredRow
         {
             get { return _hoveredRow; }
-            private set { _hoveredRow = value; OnPropertyChanged(); }
+            private set { _hoveredRow = value; RaisePropertyChanged(); }
         }
 
         public MatrixViewModelCoordinate HoveredColumn
         {
             get { return _hoveredColumn; }
-            private set { _hoveredColumn = value; OnPropertyChanged(); }
+            private set { _hoveredColumn = value; RaisePropertyChanged(); }
         }
 
  
@@ -423,13 +423,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public ElementToolTipViewModel ColumnHeaderToolTipViewModel
         {
             get { return _columnHeaderTooltipViewModel; }
-            set { _columnHeaderTooltipViewModel = value; OnPropertyChanged(); }
+            set { _columnHeaderTooltipViewModel = value; RaisePropertyChanged(); }
         }
 
         public CellToolTipViewModel CellToolTipViewModel
         {
             get { return _cellTooltipViewModel; }
-            set { _cellTooltipViewModel = value; OnPropertyChanged(); }
+            set { _cellTooltipViewModel = value; RaisePropertyChanged(); }
         }
  
         private void DefineCellColors()
@@ -713,31 +713,16 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                     SelectedColumn?.Element, SelectedRow?.Element);
         }
 
-        private bool ShowCellConsumersCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowCellProvidersExecute(object parameter)
         {
             _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.RelationProviders,
                     SelectedColumn?.Element, SelectedRow?.Element);
         }
 
-        private bool ShowCellProvidersCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowElementIngoingRelationsExecute(object parameter)
         {
             _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementIngoingRelations,
                     null, SelectedRow?.Element);
-        }
-
-        private bool ShowElementIngoingRelationsCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void ShowElementOutgoingRelationExecute(object parameter)
@@ -747,20 +732,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                     null, SelectedRow?.Element);
         }
 
-        private bool ShowElementOutgoingRelationCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowElementinternalRelationsExecute(object parameter)
         {
             _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ElementInternalRelations,
                     null, SelectedRow?.Element);
-        }
-
-        private bool ShowElementinternalRelationsCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void ShowElementConsumersExecute(object parameter)
@@ -769,20 +744,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                     null, SelectedRow?.Element);
         }
 
-        private bool ShowConsumersCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowProvidedInterfacesExecute(object parameter)
         {
             _mainViewModel.NotifyElementsReportReady(ElementListViewModelType.ElementProvidedInterface,
                     null, SelectedRow?.Element);
-        }
-
-        private bool ShowElementProvidedInterfacesCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void ShowElementRequiredInterfacesExecute(object parameter)
@@ -791,30 +756,15 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
                     null, SelectedRow?.Element);
         }
 
-        private bool ShowElementRequiredInterfacesCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowCellRelationsExecute(object parameter)
         {
             _mainViewModel.NotifyRelationsReportReady(RelationsListViewModelType.ConsumerProviderRelations,
                     SelectedColumn?.Element, SelectedRow?.Element);
         }
 
-        private bool ShowCellRelationsCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ToggleMetricsViewExpandedExecute(object parameter)
         {
             IsMetricsViewExpanded = !IsMetricsViewExpanded;
-        }
-
-        private bool ToggleMetricsViewExpandedCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void PreviousMetricExecute(object parameter)

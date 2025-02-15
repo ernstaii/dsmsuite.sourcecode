@@ -40,13 +40,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public bool IsDropTarget
         {
             get { return _isDropTarget; }
-            set { _isDropTarget = value; UpdateColor(); OnPropertyChanged(); }
+            set { _isDropTarget = value; UpdateColor(); RaisePropertyChanged(); }
         }
 
         public MatrixColor Color
         {
             get { return _color; }
-            set { _color = value; OnPropertyChanged();  }
+            set { _color = value; RaisePropertyChanged();  }
         }
 
         public int Depth { get; }

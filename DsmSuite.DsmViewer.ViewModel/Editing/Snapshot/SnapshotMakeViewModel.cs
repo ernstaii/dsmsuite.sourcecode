@@ -28,13 +28,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Snapshot
         public string Help
         {
             get { return _help; }
-            private set { _help = value; OnPropertyChanged(); }
+            private set { _help = value; RaisePropertyChanged(); }
         }
 
         public string Description
         {
             get { return _description; }
-            set { _description = value; OnPropertyChanged();  }
+            set { _description = value; RaisePropertyChanged();  }
         }
 
         private void AcceptChangeExecute(object parameter)

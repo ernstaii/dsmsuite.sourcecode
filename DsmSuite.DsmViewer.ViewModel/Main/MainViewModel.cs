@@ -81,33 +81,33 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
             ToggleElementBookmarkCommand = new RelayCommand<object>(ToggleElementBookmarkExecute, ToggleElementBookmarkCanExecute);
 
-            ShowElementDetailMatrixCommand = new RelayCommand<object>(ShowElementDetailMatrixExecute, ShowElementDetailMatrixCanExecute);
-            ShowElementContextMatrixCommand = new RelayCommand<object>(ShowElementContextMatrixExecute, ShowElementContextMatrixCanExecute);
-            ShowCellDetailMatrixCommand = new RelayCommand<object>(ShowCellDetailMatrixExecute, ShowCellDetailMatrixCanExecute);
+            ShowElementDetailMatrixCommand = new RelayCommand<object>(ShowElementDetailMatrixExecute);
+            ShowElementContextMatrixCommand = new RelayCommand<object>(ShowElementContextMatrixExecute);
+            ShowCellDetailMatrixCommand = new RelayCommand<object>(ShowCellDetailMatrixExecute);
 
             ZoomInCommand = new RelayCommand<object>(ZoomInExecute, ZoomInCanExecute);
             ZoomOutCommand = new RelayCommand<object>(ZoomOutExecute, ZoomOutCanExecute);
-            ToggleElementExpandedCommand = new RelayCommand<object>(ToggleElementExpandedExecute, ToggleElementExpandedCanExecute);
+            ToggleElementExpandedCommand = new RelayCommand<object>(ToggleElementExpandedExecute);
 
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
             RedoCommand = new RelayCommand<object>(RedoExecute, RedoCanExecute);
 
-            AddChildElementCommand = new RelayCommand<object>(AddChildElementExecute, AddChildElementCanExecute);
-            AddSiblingElementAboveCommand = new RelayCommand<object>(AddSiblingElementAboveExecute, AddSiblingElementAboveCanExecute);
-            AddSiblingElementBelowCommand = new RelayCommand<object>(AddSiblingElementBelowExecute, AddSiblingElementBelowCanExecute);
-            ModifyElementCommand = new RelayCommand<object>(ModifyElementExecute, ModifyElementCanExecute);
-            DeleteElementCommand = new RelayCommand<object>(DeleteElementExecute, DeleteElementCanExecute);
-            ChangeElementParentCommand = new RelayCommand<object>(MoveElementExecute, MoveElementCanExecute);
+            AddChildElementCommand = new RelayCommand<object>(AddChildElementExecute);
+            AddSiblingElementAboveCommand = new RelayCommand<object>(AddSiblingElementAboveExecute);
+            AddSiblingElementBelowCommand = new RelayCommand<object>(AddSiblingElementBelowExecute);
+            ModifyElementCommand = new RelayCommand<object>(ModifyElementExecute, SelectedProviderIsNotRoot);
+            DeleteElementCommand = new RelayCommand<object>(DeleteElementExecute, SelectedProviderIsNotRoot);
+            ChangeElementParentCommand = new RelayCommand<object>(MoveElementExecute, SelectedProviderIsNotRoot);
 
-            CopyElementCommand = new RelayCommand<object>(CopyElementExecute, CopyElementCanExecute);
-            CutElementCommand = new RelayCommand<object>(CutElementExecute, CutElementCanExecute);
-            PasteAsChildElementCommand = new RelayCommand<object>(PasteAsChildElementExecute, PasteAsChildElementCanExecute);
-            PasteAsSiblingElementAboveCommand = new RelayCommand<object>(PasteAsSiblingElementAboveExecute, PasteAsSiblingElementAboveCanExecute);
-            PasteAsSiblingElementBelowCommand = new RelayCommand<object>(PasteAsSiblingElementBelowExecute, PasteAsSiblingElementBelowCanExecute);
+            CopyElementCommand = new RelayCommand<object>(CopyElementExecute, SelectedProviderIsNotRoot);
+            CutElementCommand = new RelayCommand<object>(CutElementExecute, SelectedProviderIsNotRoot);
+            PasteAsChildElementCommand = new RelayCommand<object>(PasteAsChildElementExecute, SelectedProviderIsNotRoot);
+            PasteAsSiblingElementAboveCommand = new RelayCommand<object>(PasteAsSiblingElementAboveExecute, SelectedProviderIsNotRoot);
+            PasteAsSiblingElementBelowCommand = new RelayCommand<object>(PasteAsSiblingElementBelowExecute, SelectedProviderIsNotRoot);
 
-            MakeSnapshotCommand = new RelayCommand<object>(MakeSnapshotExecute, MakeSnapshotCanExecute);
-            ShowHistoryCommand = new RelayCommand<object>(ShowHistoryExecute, ShowHistoryCanExecute);
-            ShowSettingsCommand = new RelayCommand<object>(ShowSettingsExecute, ShowSettingsCanExecute);
+            MakeSnapshotCommand = new RelayCommand<object>(MakeSnapshotExecute);
+            ShowHistoryCommand = new RelayCommand<object>(ShowHistoryExecute);
+            ShowSettingsCommand = new RelayCommand<object>(ShowSettingsExecute);
 
             TakeScreenshotCommand = new RelayCommand<object>(TakeScreenshotExecute);
 
@@ -150,7 +150,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public MatrixViewModel ActiveMatrix
         {
             get { return _activeMatrix; }
-            set { _activeMatrix = value; OnPropertyChanged(); }
+            set { _activeMatrix = value; RaisePropertyChanged(); }
         }
 
         public ElementSearchViewModel ElementSearchViewModel { get; }
@@ -160,7 +160,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public bool IsMetricsViewExpanded
         {
             get { return _isMetricsViewExpanded; }
-            set { _isMetricsViewExpanded = value; OnPropertyChanged(); }
+            set { _isMetricsViewExpanded = value; RaisePropertyChanged(); }
         }
 
         public List<string> SupportedSortAlgorithms => _application.GetSupportedSortAlgorithms().ToList();
@@ -168,7 +168,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public string SelectedSortAlgorithm
         {
             get { return _selectedSortAlgorithm; }
-            set { _selectedSortAlgorithm = value; OnPropertyChanged(); }
+            set { _selectedSortAlgorithm = value; RaisePropertyChanged(); }
         }
 
         public List<IndicatorViewMode> SupportedIndicatorViewModes => Enum.GetValues(typeof(IndicatorViewMode)).Cast<IndicatorViewMode>().ToList();
@@ -176,7 +176,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public IndicatorViewMode SelectedIndicatorViewMode
         {
             get { return _selectedIndicatorViewMode; }
-            set { _selectedIndicatorViewMode = value; OnPropertyChanged(); ActiveMatrix?.Reload(); }
+            set { _selectedIndicatorViewMode = value; RaisePropertyChanged(); ActiveMatrix?.Reload(); }
         }
 
         public ICommand OpenFileCommand { get; }
@@ -219,31 +219,31 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public string ModelFilename
         {
             get { return _modelFilename; }
-            set { _modelFilename = value; OnPropertyChanged(); }
+            set { _modelFilename = value; RaisePropertyChanged(); }
         }
 
         public bool IsModified
         {
             get { return _isModified; }
-            set { _isModified = value; OnPropertyChanged(); }
+            set { _isModified = value; RaisePropertyChanged(); }
         }
 
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            set { _isLoaded = value; OnPropertyChanged(); }
+            set { _isLoaded = value; RaisePropertyChanged(); }
         }
 
         public string Title
         {
             get { return _title; }
-            set { _title = value; OnPropertyChanged(); }
+            set { _title = value; RaisePropertyChanged(); }
         }
 
         public string Version
         {
             get { return _version; }
-            set { _version = value; OnPropertyChanged(); }
+            set { _version = value; RaisePropertyChanged(); }
         }
 
         public ProgressViewModel ProgressViewModel => _progressViewModel;
@@ -290,14 +290,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         private bool OpenFileCanExecute(object parameter)
         {
             string fileToOpen = parameter as string;
-            if (fileToOpen != null)
-            {
-                return File.Exists(fileToOpen);
-            }
-            else
-            {
-                return false;
-            }
+            return fileToOpen != null  && File.Exists(fileToOpen);
         }
 
         private async void SaveFileExecute(object parameter)
@@ -307,7 +300,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                 _progressViewModel.Update(p);
             });
 
-            _progressViewModel.Action = "Reading";
+            _progressViewModel.Action = "Writing";
             await _application.AsyncSaveModel(ModelFilename, progress);
         }
 
@@ -316,10 +309,28 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             return _application.IsModified;
         }
 
+        private async void SaveAsExecute(object parameter)
+        {
+            var progress = new Progress<ProgressInfo>(p =>
+            {
+                _progressViewModel.Update(p);
+            });
+
+            _progressViewModel.Action = "Writing";
+
+            string filename = parameter as string;
+            if (filename != null)
+                await _application.AsyncSaveModel(filename, progress);
+        }
+
+        private bool SaveAsCanExecute(object parameter)
+        {
+            return _application?.RootElement != null;
+        }
+
         private void HomeExecute(object parameter)
         {
-            IncludeAllInTree();
-            ActiveMatrix.Reload();
+            _application.ShowElementDetail(_application.RootElement, null);
         }
 
         private IEnumerable<IDsmElement> GetRootElements()
@@ -347,29 +358,14 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             _application.ShowElementDetail(SelectedProvider, null);
         }
 
-        private bool ShowElementDetailMatrixCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowElementContextMatrixExecute(object parameter)
         {
             _application.ShowElementContext(SelectedProvider);
         }
 
-        private bool ShowElementContextMatrixCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowCellDetailMatrixExecute(object parameter)
         {
             _application.ShowElementDetail(SelectedProvider, ActiveMatrix?.SelectedColumn?.Element);
-        }
-
-        private bool ShowCellDetailMatrixCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void MoveUpElementExecute(object parameter)
@@ -433,15 +429,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             ActiveMatrix.Reload();
         }
 
-        private bool ToggleElementExpandedCanExecute(object parameter)
-        {
-            return true;
-        }
-
         public string UndoText
         {
             get { return _undoText; }
-            set { _undoText = value; OnPropertyChanged(); }
+            set { _undoText = value; RaisePropertyChanged(); }
         }
 
         private void UndoExecute(object parameter)
@@ -462,7 +453,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public string RedoText
         {
             get { return _redoText; }
-            set { _redoText = value; OnPropertyChanged(); }
+            set { _redoText = value; RaisePropertyChanged(); }
         }
 
         private bool RedoCanExecute(object parameter)
@@ -488,20 +479,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             ElementEditStarted?.Invoke(this, elementEditViewModel);
         }
 
-        private bool AddChildElementCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void AddSiblingElementAboveExecute(object parameter)
         {
             ElementEditViewModel elementEditViewModel = new ElementEditViewModel(ElementEditViewModelType.AddSiblingAbove, _application, SelectedProvider);
             ElementEditStarted?.Invoke(this, elementEditViewModel);
-        }
-
-        private bool AddSiblingElementAboveCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void AddSiblingElementBelowExecute(object parameter)
@@ -510,40 +491,20 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             ElementEditStarted?.Invoke(this, elementEditViewModel);
         }
 
-        private bool AddSiblingElementBelowCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ModifyElementExecute(object parameter)
         {
             ElementEditViewModel elementEditViewModel = new ElementEditViewModel(ElementEditViewModelType.Modify, _application, SelectedProvider);
             ElementEditStarted?.Invoke(this, elementEditViewModel);
         }
 
-        private bool ModifyElementCanExecute(object parameter)
+        private bool SelectedProviderIsNotRoot(object parameter)
         {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
+            return SelectedProvider != null  &&  !SelectedProvider.IsRoot;
         }
 
         private void DeleteElementExecute(object parameter)
         {
             _application.DeleteElement(SelectedProvider);
-        }
-
-        private bool DeleteElementCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
         }
 
         private void MoveElementExecute(object parameter)
@@ -556,29 +517,9 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             }
         }
 
-        private bool MoveElementCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
-        }
-
         private void CopyElementExecute(object parameter)
         {
             _application.CopyElement(SelectedProvider);
-        }
-
-        private bool CopyElementCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
         }
 
         private void CutElementExecute(object parameter)
@@ -586,58 +527,17 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             _application.CutElement(SelectedProvider);
         }
 
-        private bool CutElementCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
-        }
-
         private void PasteAsChildElementExecute(object parameter)
         {
             _application.PasteElement(SelectedProvider.Parent, 0);
-        }
-
-        private bool PasteAsChildElementCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
         }
 
         private void PasteAsSiblingElementAboveExecute(object parameter)
         {
         }
 
-        private bool PasteAsSiblingElementAboveCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
-        }
-
-
         private void PasteAsSiblingElementBelowExecute(object parameter)
         {
-        }
-
-        private bool PasteAsSiblingElementBelowCanExecute(object parameter)
-        {
-            bool canExecute = false;
-            if (SelectedProvider != null)
-            {
-                canExecute = !SelectedProvider.IsRoot;
-            }
-            return canExecute;
         }
 
         private void ToggleElementBookmarkExecute(object parameter)
@@ -660,20 +560,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             SnapshotMakeStarted?.Invoke(this, viewModel);
         }
 
-        private bool MakeSnapshotCanExecute(object parameter)
-        {
-            return true;
-        }
-
         private void ShowHistoryExecute(object parameter)
         {
             ActionListViewModel viewModel = new ActionListViewModel(_application);
             ActionsVisible?.Invoke(this, viewModel);
-        }
-
-        private bool ShowHistoryCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void ShowSettingsExecute(object parameter)
@@ -681,11 +571,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             SettingsViewModel viewModel = new SettingsViewModel(_application);
             SettingsVisible?.Invoke(this, viewModel);
             ActiveMatrix?.Reload();
-        }
-
-        private bool ShowSettingsCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void TakeScreenshotExecute(object parameter)

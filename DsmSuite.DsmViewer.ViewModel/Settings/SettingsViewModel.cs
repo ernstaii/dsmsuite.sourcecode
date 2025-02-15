@@ -31,7 +31,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
             SelectedThemeName = _supportedThemes[ViewerSetting.Theme];
             Help = "";
 
-            AcceptChangeCommand = new RelayCommand<object>(AcceptChangeExecute, AcceptChangeCanExecute);
+            AcceptChangeCommand = new RelayCommand<object>(AcceptChangeExecute);
         }
 
         public ICommand AcceptChangeCommand { get; }
@@ -42,13 +42,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
             set
             {
                 _logLevel = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
         public string Help
         {
             get { return _help; }
-            private set { _help = value; OnPropertyChanged(); }
+            private set { _help = value; RaisePropertyChanged(); }
         }
 
         public List<string> SupportedThemeNames => _supportedThemes.Values.ToList();
@@ -63,7 +63,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
                     Help = "Theme change requires an application restart";
                 else
                     Help = "";
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -71,11 +71,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
         {
             ViewerSetting.LogLevel = LogLevel;
             ViewerSetting.Theme = _supportedThemes.FirstOrDefault(x => x.Value == SelectedThemeName).Key;
-        }
-
-        private bool AcceptChangeCanExecute(object parameter)
-        {
-            return true;
         }
     }
 }

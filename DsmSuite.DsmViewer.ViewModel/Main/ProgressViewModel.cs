@@ -28,13 +28,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public string Action
         {
             get { return _action; }
-            set { _action = value; OnPropertyChanged(); }
+            set { _action = value; RaisePropertyChanged(); }
         }
 
         public string Text
         {
             get { return _text; }
-            set { _text = value; OnPropertyChanged(); }
+            set { _text = value; RaisePropertyChanged(); }
         }
 
         public bool Busy
@@ -45,7 +45,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                 if (_busy != value)
                 {
                     _busy = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged();
                     BusyChanged?.Invoke(this, _busy);
                 }
             }
@@ -54,13 +54,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public int ProgressValue
         {
             get { return _progressValue; }
-            set { _progressValue = value; OnPropertyChanged(); }
+            set { _progressValue = value; RaisePropertyChanged(); }
         }
 
         public string ProgressText
         {
             get { return _progressText; }
-            set { _progressText = value; OnPropertyChanged(); }
+            set { _progressText = value; RaisePropertyChanged(); }
         }
     }
 }

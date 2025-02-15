@@ -68,13 +68,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
         public ObservableCollection<RelationListItemViewModel> Relations
         {
             get { return _relations; }
-            private set { _relations = value; OnPropertyChanged(); }
+            private set { _relations = value; RaisePropertyChanged(); }
         }
 
         public RelationListItemViewModel SelectedRelation
         {
             get { return _selectedRelation; }
-            set { _selectedRelation = value; OnPropertyChanged(); }
+            set { _selectedRelation = value; RaisePropertyChanged(); }
         }
 
         public ICommand CopyToClipboardCommand { get; }

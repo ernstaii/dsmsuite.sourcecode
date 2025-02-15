@@ -36,7 +36,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
         public IEnumerable<ActionListItemViewModel> Actions
         {
             get { return _actions; }
-            set { _actions = value; OnPropertyChanged(); }
+            set { _actions = value; RaisePropertyChanged(); }
         }
 
         public ICommand CopyToClipboardCommand { get; }

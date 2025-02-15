@@ -43,12 +43,12 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         bool IsRoot { get; }
 
         /// <summary>
-        /// Has the element any children.
+        /// Has the element any children that are in the tree.
         /// </summary>
         bool HasChildren { get; }
 
         /// <summary>
-        /// Children of the element.
+        /// Tree children of the element.
         /// </summary>
         IList<IDsmElement> Children { get; }
 
