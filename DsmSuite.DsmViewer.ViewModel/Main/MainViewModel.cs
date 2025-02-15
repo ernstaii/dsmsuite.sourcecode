@@ -344,9 +344,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private void ShowElementDetailMatrixExecute(object parameter)
         {
-            ExcludeAllFromTree();
-            IncludeInTree(SelectedProvider);
-            ActiveMatrix.Reload();
+            _application.ShowElementDetail(SelectedProvider, null);
         }
 
         private bool ShowElementDetailMatrixCanExecute(object parameter)
@@ -356,20 +354,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private void ShowElementContextMatrixExecute(object parameter)
         {
-            ExcludeAllFromTree();
-            IncludeInTree(SelectedProvider);
-
-            foreach (IDsmElement consumer in _application.GetElementConsumers(SelectedProvider))
-            {
-                IncludeInTree(consumer);
-            }
-
-            foreach (IDsmElement provider in _application.GetElementProviders(SelectedProvider))
-            {
-                IncludeInTree(provider);
-            }
-
-            ActiveMatrix.Reload();
+            _application.ShowElementContext(SelectedProvider);
         }
 
         private bool ShowElementContextMatrixCanExecute(object parameter)
@@ -379,11 +364,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private void ShowCellDetailMatrixExecute(object parameter)
         {
-            ExcludeAllFromTree();
-            IncludeInTree(SelectedProvider);
-            IncludeInTree(ActiveMatrix?.SelectedColumn?.Element);
-
-            ActiveMatrix.Reload();
+            _application.ShowElementDetail(SelectedProvider, ActiveMatrix?.SelectedColumn?.Element);
         }
 
         private bool ShowCellDetailMatrixCanExecute(object parameter)
@@ -710,42 +691,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         private void TakeScreenshotExecute(object parameter)
         {
             ScreenshotRequested?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void ExcludeAllFromTree()
-        {
-            UpdateChildrenIncludeInTree(_application.RootElement, false);
-        }
-
-        private void IncludeAllInTree()
-        {
-            UpdateChildrenIncludeInTree(_application.RootElement, true);
-        }
-
-        private void IncludeInTree(IDsmElement element)
-        {
-            UpdateChildrenIncludeInTree(element, true);
-            UpdateParentsIncludeInTree(element, true);
-        }
-
-        private void UpdateChildrenIncludeInTree(IDsmElement element, bool included)
-        {
-            element.IsIncludedInTree = included;
-
-            foreach (IDsmElement child in element.AllChildren)
-            {
-                UpdateChildrenIncludeInTree(child, included);
-            }
-        }
-
-        private void UpdateParentsIncludeInTree(IDsmElement element, bool included)
-        {
-            IDsmElement current = element;
-            do
-            {
-                current.IsIncludedInTree = included;
-                current = current.Parent;
-            } while (current != null);
         }
     }
 }

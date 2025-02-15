@@ -109,5 +109,27 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Base
 
 
         }
+
+        [TestMethod]
+        public void GetListIntCompactTest()
+        {
+            Mock<IDsmModel> model = new Mock<IDsmModel>();
+            Dictionary<string, string> data = new Dictionary<string, string>();
+
+            data["empty"] = "";
+            data["single"] = "1";
+            data["five"] = "1-5";
+            data["fivehole"] = "1,2,4,5";
+            data["sevenhole"] = "1-3,5-7";
+            data["middle"] = "1,3-5,7";
+            data["dups"] = "5,5,5,5";
+            ActionReadOnlyAttributes atts = new ActionReadOnlyAttributes(model.Object, data);
+            CollectionAssert.AreEqual(new List<int>(), atts.GetListIntCompact("_empty"));
+            CollectionAssert.AreEqual(new List<int>() {1}, atts.GetListIntCompact("_single"));
+            CollectionAssert.AreEqual(new List<int>() {1,2,3,4,5}, atts.GetListIntCompact("_five"));
+            CollectionAssert.AreEqual(new List<int>() {1,2,3,5,6,7}, atts.GetListIntCompact("_sevenhole"));
+            CollectionAssert.AreEqual(new List<int>() {1,3,4,5,7}, atts.GetListIntCompact("_middle"));
+            CollectionAssert.AreEqual(new List<int>() {5,5,5,5}, atts.GetListIntCompact("_dups"));
+        }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using DsmSuite.DsmViewer.Application.Actions.Element;
+using DsmSuite.DsmViewer.Application.Actions.Filtering;
 using DsmSuite.DsmViewer.Application.Actions.Relation;
 using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using System.Collections.Generic;
+using DsmSuite.Common.Util;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Management
 {
@@ -36,7 +38,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
 
         /// <summary>
         /// Loads all actions from the model into the ActionManager.
-        /// Unrecognized actions are silently ignored.
+        /// Unrecognized actions are logged but otherwise ignored.
         /// If any action cannot be loaded correctly, the ActionManager is cleared.
         /// </summary>
         public void LoadFromModel()
@@ -56,12 +58,19 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                         {
                             _actionManager.Add(instance);
                         }
+                        else
+                            Logger.LogError($"Cannot instantiate action {action.Id} {action.Type}.");
                     }
+                    else
+                        Logger.LogError($"Action {action.Type} not in table.");
                 }
+                else
+                    Logger.LogWarning($"Unknown action {action.Type} in model.");
             }
 
             if (!_actionManager.Validate())
             {
+                Logger.LogWarning($"Invalid action found.");
                 _actionManager.Clear();
             }
         }
@@ -73,6 +82,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
         {
             if (_actionManager.Validate())
             {
+                _model.ClearActions();
                 foreach (IAction action in _actionManager.GetActionsInChronologicalOrder())
                 {
                     _model.AddAction(action.Type.ToString(), action.Data);
@@ -91,6 +101,9 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
             _types[ElementMoveDownAction.RegisteredType] = typeof(ElementMoveDownAction);
             _types[ElementMoveUpAction.RegisteredType] = typeof(ElementMoveUpAction);
             _types[ElementSortAction.RegisteredType] = typeof(ElementSortAction);
+
+            _types[ShowElementDetailAction.RegisteredType] = typeof(ShowElementDetailAction);
+            _types[ShowElementContextAction.RegisteredType] = typeof(ShowElementContextAction);
 
             _types[RelationChangeTypeAction.RegisteredType] = typeof(RelationChangeTypeAction);
             _types[RelationChangeWeightAction.RegisteredType] = typeof(RelationChangeWeightAction);

@@ -42,7 +42,11 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         IDsmElement PreviousSibling(IDsmElement element);
         bool Swap(IDsmElement first, IDsmElement second);
         void AssignElementOrder();
-
+        /// <summary>
+        /// Includes or excludes the children and parents of the given element in the tree.
+        /// </summary>
+        void IncludeInTree(IDsmElement element, bool included);
+ 
         // Element queries
         IDsmElement GetElementById(int id);
         IDsmElement GetDeletedElementById(int id);

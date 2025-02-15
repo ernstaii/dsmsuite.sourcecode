@@ -21,4 +21,24 @@ After it builds successfully, running `publish.bat` will create a distribution d
 * 24-07-03 Upgraded to net8.
 * 24-08-10 Distribute as a zip file instead of .msi.
 * 24-08-24 Small UI improvements and corrections.
-* 28-08-24 Show current selection in legend.
+* 24-08-28 Show current selection in legend.
+* 25-02-15 Filtering is an action and can be undone and saved.
+
+## Implementation notes
+
+### Actions
+Actions are things the user does with the model that are saved as part of the model.
+
+The flow of control when executing an action is as follows:
+
+. MainViewModel has private methods FooExecute and FooCanExecute.
+It also has a ICommand FooCommand, which the MainViewModel constructor sets to RelayCommand(FooExecute, FooCanExecute).
+. FooCommand can be bound in the view to a button or a menu.
+. The FooExecute method calls the IApplication.Foo method with the necessary parameters. This method instantiates a FooAction object and passes it to ActionManager.Execute.
+
+To add a new action, do the following:
+
+. Define a constant in ActionType.
+. Implement a new IAction. This should only use methods of the model, not of the application.
+. Add the new ActionType to ActionStore.RegisterActionTypes.
+. Add a FooCommand etc. as described above.

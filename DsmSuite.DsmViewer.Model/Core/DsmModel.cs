@@ -56,6 +56,7 @@ namespace DsmSuite.DsmViewer.Model.Core
             _metaDataModel.Clear();
             _elementsDataModel.Clear();
             _relationsDataModel.Clear();
+            _actionsDataModel.Clear();
         }
 
         public IMetaDataItem AddMetaData(string name, string value)
@@ -126,6 +127,22 @@ namespace DsmSuite.DsmViewer.Model.Core
         public void UnremoveElement(int elementId)
         {
             _elementsDataModel.UnremoveElement(elementId);
+        }
+
+        public void IncludeInTree(IDsmElement element, bool included)
+        {
+            UpdateChildrenIncludeInTree(element, included);
+            UpdateParentsIncludeInTree(element, included);
+        }
+
+        private void UpdateChildrenIncludeInTree(IDsmElement element, bool included)
+        {
+            _elementsDataModel.UpdateChildrenIncludeInTree(element, included);
+        }
+
+        private void UpdateParentsIncludeInTree(IDsmElement element, bool included)
+        {
+            _elementsDataModel.UpdateParentsIncludeInTree(element, included);
         }
 
         public IEnumerable<string> GetElementTypes()

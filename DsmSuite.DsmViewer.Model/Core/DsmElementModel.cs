@@ -367,6 +367,27 @@ namespace DsmSuite.DsmViewer.Model.Core
             return previousSibling;
         }
 
+        public void UpdateChildrenIncludeInTree(IDsmElement element, bool included)
+        {
+            element.IsIncludedInTree = included;
+
+            foreach (IDsmElement child in element.AllChildren)
+            {
+                UpdateChildrenIncludeInTree(child, included);
+            }
+        }
+
+        public void UpdateParentsIncludeInTree(IDsmElement element, bool included)
+        {
+            IDsmElement current = element;
+            do
+            {
+                current.IsIncludedInTree = included;
+                current = current.Parent;
+            } while (current != null);
+        }
+
+
         private IDsmElement AddElement(int id, string name, string type, int? index, IDictionary<string, string> properties, int order, bool expanded, int? parentId, bool deleted)
         {
             DsmElement element = new DsmElement(id, name, type, properties) { Order = order, IsExpanded = expanded, IsDeleted = deleted };

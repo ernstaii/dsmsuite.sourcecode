@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -46,6 +48,43 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
             _data[RemoveUnderscore(memberName)] = s.ToString();
         }
 
+        /// <summary>
+        /// Set data for <c>memberName</c> to a compact representation of <c>list</c>.
+        /// If <c>list</c> is not strictly increasing or contains negative numbers, the results are undefined.
+        /// </summary>
+        public void SetListIntCompact(string memberName, List<int> list)
+        {
+            StringBuilder s = new StringBuilder();
+            int startRun, i;
+
+            i = 0;
+            while (i < list.Count)
+            {
+                if (list[i] < 0)  // This causes parsing problems for ActionReadOnlyAttributes
+                    throw new ArgumentException("negative element in list");
+                //if (i > 0  &&  list[i] <= list[i - 1])
+                    //throw new ArgumentException("list must be strictly increasing");
+
+                if (s.Length > 0)
+                    s.Append(',');
+                s.Append(list[i]);
+                startRun = i;
+                while (i < list.Count-1  &&  list[i+1] == list[i] + 1)
+                {
+                    i++;
+                }
+                if (i > startRun+1)
+                {
+                    s.Append('-');
+                    s.Append(list[i]);
+                    i++;
+                }
+                else if (i == startRun)
+                    i++;
+            }
+
+            _data[RemoveUnderscore(memberName)] = s.ToString();
+        }
 
         public IReadOnlyDictionary<string, string> Data => _data;
 

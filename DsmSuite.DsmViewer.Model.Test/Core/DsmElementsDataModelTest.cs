@@ -675,5 +675,37 @@ namespace DsmSuite.DsmViewer.Model.Test.Core
             Assert.AreEqual(a1, model.PreviousSibling(a2));
             Assert.AreEqual(a2, model.PreviousSibling(a3));
         }
+        [TestMethod]
+        public void UpdateInTreeTest()
+        {
+            DsmElementModel model = new DsmElementModel(_relationsModel);
+            IDsmElement a = model.ImportElement(1, "a", "", null, 0, false, null, false);
+            IDsmElement a1 = model.ImportElement(2, "a1", "eta", null, 0, false, a.Id, false);
+
+            IDsmElement b = model.ImportElement(3, "b", "", null, 0, false, null, false);
+            IDsmElement b1 = model.ImportElement(4, "b1", "etb", null, 0, false, b.Id, false);
+            IDsmElement b2 = model.ImportElement(5, "b2", "etb", null, 0, false, b.Id, false);
+
+            IDsmElement c = model.ImportElement(6, "c", "", null, 0, false, null, false);
+            IDsmElement c1 = model.ImportElement(7, "c1", "etc", null, 0, false, c.Id, false);
+            IDsmElement c2 = model.ImportElement(8, "c2", "etc", null, 0, false, c.Id, false);
+            IDsmElement c3 = model.ImportElement(9, "c3", "etc", null, 0, false, c.Id, false);
+
+            foreach (IDsmElement e in model.GetElements())
+                Assert.IsTrue(e.IsIncludedInTree);
+
+            model.UpdateChildrenIncludeInTree(a, false);
+            foreach (IDsmElement e in model.GetElements())
+                Assert.IsTrue(e.IsIncludedInTree != e.Name.StartsWith('a'));
+
+            model.UpdateParentsIncludeInTree(a1, true);
+            foreach (IDsmElement e in model.GetElements())
+                Assert.IsTrue(e.IsIncludedInTree);
+
+            model.UpdateChildrenIncludeInTree(c, false);
+            model.UpdateParentsIncludeInTree(c2, true);
+            foreach (IDsmElement e in model.GetElements())
+                Assert.IsTrue(e.IsIncludedInTree  ==  (e != c1  &&  e != c3));
+        }
     }
 }

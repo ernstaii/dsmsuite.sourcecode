@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -56,6 +57,40 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
 
             return list;
         }
+
+
+        public List<int> GetListIntCompact(string memberName)
+        {
+            List<int> list = new List<int>();
+            string s = _data.GetValueOrDefault(RemoveUnderscore(memberName));
+
+            foreach (string item in s.Split(','))
+            {
+                if (item.LastIndexOf('-') > 0)  // A range (and not a negative number)?
+                {
+                    int start, end;
+                    string[] limits = item.Split('-');
+
+                    if (limits.Length > 2  ||
+                            !int.TryParse(limits[0], out start)  ||  !int.TryParse(limits[1], out end))
+                        throw new ArgumentException("malformed data string");
+
+                    for (int i = start; i <= end; i++)
+                        list.Add(i);
+                }
+                else
+                {
+                    int value;
+                    if (int.TryParse(item, out value))
+                    {
+                        list.Add(value);
+                    }
+                }
+            }
+
+            return list;
+        }
+
 
         public IDsmElement GetElement(string memberName)
         {

@@ -34,6 +34,7 @@ namespace DsmSuite.DsmViewer.Model.Persistency
         private const string ElementParentXmlAttribute = "parent";
         private const string ElementDeletedXmlAttribute = "deleted";
         private const string ElementBookmarkedXmlAttribute = "bookmarked";
+        private const string ElementInTreeXmlAttribute = "tree";
 
         private const string RelationGroupXmlNode = "relations";
 
@@ -251,6 +252,7 @@ namespace DsmSuite.DsmViewer.Model.Persistency
             {
                 writer.WriteAttributeString(ElementBookmarkedXmlAttribute, "true");
             }
+            writer.WriteAttributeString(ElementInTreeXmlAttribute, element.IsIncludedInTree.ToString());
             if ((element.Parent != null) && (element.Parent.Id > 0))
             {
                 writer.WriteAttributeString(ElementParentXmlAttribute, element.Parent.Id.ToString());
@@ -285,6 +287,7 @@ namespace DsmSuite.DsmViewer.Model.Persistency
                 int? parent = null;
                 bool deleted = false;
                 bool bookmarked = false;
+                bool intree = true;
 
                 Dictionary<string, string> elementProperties = new Dictionary<string, string>();
                 for (int attInd = 0; attInd < xReader.AttributeCount; attInd++)
@@ -316,6 +319,9 @@ namespace DsmSuite.DsmViewer.Model.Persistency
                         case ElementBookmarkedXmlAttribute:
                             bookmarked = ParseBool(xReader.Value);
                             break;
+                        case ElementInTreeXmlAttribute:
+                            intree = ParseBool(xReader.Value);
+                            break;
                         default:
                             if (!string.IsNullOrEmpty(xReader.Value))
                             {
@@ -327,16 +333,13 @@ namespace DsmSuite.DsmViewer.Model.Persistency
         
                 if (id.HasValue && order.HasValue)
                 {
-                    if (elementProperties.Count > 0)
-                    {
-                        IDsmElement element = _elementModelCallback.ImportElement(id.Value, name, type, elementProperties, order.Value, expanded, parent, deleted);
-                        element.IsBookmarked = bookmarked;
-                    }
-                    else
-                    {
-                        IDsmElement element = _elementModelCallback.ImportElement(id.Value, name, type, null, order.Value, expanded, parent, deleted);
-                        element.IsBookmarked = bookmarked;
-                    }
+                    IDsmElement element = _elementModelCallback.ImportElement(
+                            id.Value, name, type,
+                            elementProperties.Count > 0 ? elementProperties : null,
+                            order.Value, expanded, parent, deleted
+                    );
+                    element.IsBookmarked = bookmarked;
+                    element.IsIncludedInTree = intree;
                 }
 
                 _progressedElementCount++;

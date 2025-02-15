@@ -73,5 +73,7 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
 
         int GetElementSize(IDsmElement element);
         int GetElementCount();
+        void ShowElementDetail(IDsmElement consumer, IDsmElement provider);
+        void ShowElementContext(IDsmElement provider);
     }
 }

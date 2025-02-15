@@ -15,6 +15,7 @@ using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Import.Common;
 using DsmSuite.DsmViewer.Application.Import.Dsi;
 using DsmSuite.DsmViewer.Application.Metrics;
+using DsmSuite.DsmViewer.Application.Actions.Filtering;
 
 namespace DsmSuite.DsmViewer.Application.Core
 {
@@ -359,6 +360,18 @@ namespace DsmSuite.DsmViewer.Application.Core
         public IEnumerable<string> GetRelationTypes()
         {
             return _dsmModel.GetRelationTypes();
+        }
+
+        public void ShowElementDetail(IDsmElement provider, IDsmElement consumer)
+        {
+            IAction action = new ShowElementDetailAction(_dsmModel, provider, consumer);
+            _actionManager.Execute(action);
+        }
+
+        public void ShowElementContext(IDsmElement provider)
+        {
+            IAction action = new ShowElementContextAction(_dsmModel, provider);
+            _actionManager.Execute(action);
         }
 
         public void MakeSnapshot(string description)

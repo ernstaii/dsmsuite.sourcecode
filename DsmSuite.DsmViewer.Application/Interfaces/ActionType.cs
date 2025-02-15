@@ -23,6 +23,9 @@
         RelationCreate,
         RelationDelete,
 
+        ShowElementDetail,
+        ShowElementContext,
+
         Snapshot
     }
 }
