@@ -43,6 +43,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
         /// </summary>
         public void LoadFromModel()
         {
+            _actionManager.Clear();
             foreach (IDsmAction action in _model.GetActions())
             {
                 ActionType actionType;
