@@ -65,6 +65,10 @@ namespace DsmSuite.DsmViewer.Application.Core
         {
             _actionManager.Undo();
         }
+        public void GotoAction(IAction action)
+        {
+            _actionManager.Goto(action);
+        }
 
         public bool CanRedo()
         {

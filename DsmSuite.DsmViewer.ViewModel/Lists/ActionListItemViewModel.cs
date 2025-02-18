@@ -5,15 +5,17 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
     public class ActionListItemViewModel : ViewModelBase
     {
+        private IAction _action;
+
         public ActionListItemViewModel(int index, IAction action)
         {
             Index = index;
-            Action = action.Title;
-            Details = action.Description;
+            _action = action;
         }
 
         public int Index { get; }
-        public string Action { get; }
-        public string Details { get; }
+        public IAction Action => _action;
+        public string Title => _action.Title;
+        public string Details => _action.Description;
     }
 }

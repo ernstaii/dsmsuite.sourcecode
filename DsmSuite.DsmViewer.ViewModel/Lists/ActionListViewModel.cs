@@ -4,6 +4,7 @@ using DsmSuite.DsmViewer.ViewModel.Common;
 using System.Windows.Input;
 using System.Windows;
 using System.Text;
+using System;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
@@ -23,6 +24,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             
             CopyToClipboardCommand =  new RelayCommand<object>(CopyToClipboardExecute);
             ClearCommand = new RelayCommand<object>(ClearExecute);
+            GotoCommand = new RelayCommand<object>(GotoExecute, GotoCanExecute);
         }
 
         private void OnActionPerformed(object sender, System.EventArgs e)
@@ -41,15 +43,26 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
 
         public ICommand CopyToClipboardCommand { get; }
         public ICommand ClearCommand { get; }
+        public ICommand GotoCommand { get; }
 
         private void CopyToClipboardExecute(object parameter)
         {
             StringBuilder builder = new StringBuilder();
             foreach(ActionListItemViewModel viewModel in Actions)
             {
-                builder.AppendLine($"{viewModel.Index, -5}, {viewModel.Action, -30}, {viewModel.Details}");
+                builder.AppendLine($"{viewModel.Index, -5}, {viewModel.Title, -30}, {viewModel.Details}");
             }
             Clipboard.SetText(builder.ToString());
+        }
+
+        private void GotoExecute(object parameter)
+        {
+            _application.GotoAction(((ActionListItemViewModel)parameter).Action);
+        }
+
+        private bool GotoCanExecute(object parameter)
+        {
+            return parameter != null;
         }
 
         private void ClearExecute(object parameter)

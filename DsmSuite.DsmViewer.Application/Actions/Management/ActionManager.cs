@@ -88,7 +88,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                     _redoActionStack.Push(action);
                     action.Undo();
                     ActionPerformed?.Invoke(this, EventArgs.Empty);
-                    Logger.LogInfo("Undo :{action.Description}");
+                    Logger.LogInfo($"Undo :{action.Description}");
                 }
             }
         }
@@ -118,9 +118,35 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                     _undoActionStack.Push(action);
                     action.Do();
                     ActionPerformed?.Invoke(this, EventArgs.Empty);
-                    Logger.LogInfo("Redo :{action.Description}");
+                    Logger.LogInfo($"Redo :{action.Description}");
                 }
             }
+        }
+
+        /// <summary>
+        /// Undo/redo actions up to an including <c>action</c>.
+        /// </summary>
+        /// <param name="action"></param>
+        public void Goto(IAction action)
+        {
+            if (_undoActionStack.Contains(action))
+            {
+                do
+                {
+                    Undo();
+                }
+                while (_redoActionStack.Peek() != action);
+            }
+            else if (_redoActionStack.Contains(action))
+            {
+                do
+                {
+                    Redo();
+                }
+                while (_undoActionStack.Peek() != action);
+            }
+            else
+                Logger.LogError($"Action {action} not in ActionManager");
         }
 
         public void Clear()

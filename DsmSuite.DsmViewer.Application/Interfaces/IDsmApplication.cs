@@ -20,6 +20,7 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         bool CanUndo();
         string GetUndoActionDescription();
         void Undo();
+        void GotoAction(IAction action);
         bool CanRedo();
         string GetRedoActionDescription();
         void Redo();
