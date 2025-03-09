@@ -7,6 +7,7 @@
     <sys:Double x:Key="StandardEditControlHeight">26</sys:Double>
     
     <sys:Double x:Key="StandardButtonSize">24</sys:Double>
+    <sys:Double x:Key="NarrowButtonSize">12</sys:Double>
     <sys:Double x:Key="ExpandButtonSize">20</sys:Double>
     <sys:Double x:Key="MatrixCellSize">24</sys:Double>
     <sys:Double x:Key="MatrixHeaderHeight">60</sys:Double>
@@ -235,6 +236,26 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Height" Value="{StaticResource StandardButtonSize}" />
         <Setter Property="Width" Value="{StaticResource StandardButtonSize}" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Foreground" Value="{StaticResource ForegroundHoverColor}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{StaticResource ForegroundDisabledColor}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DropDownButton" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="{StaticResource StandardButtonSize}" />
+        <Setter Property="Width" Value="{StaticResource NarrowButtonSize}"/>
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Content" Value="{StaticResource DropDownIcon}"/>
         <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">

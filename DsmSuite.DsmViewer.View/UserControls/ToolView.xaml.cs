@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.ViewModel.Main;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -20,6 +22,7 @@ namespace DsmSuite.DsmViewer.View.UserControls
         private void ToolView_OnLoaded(object sender, RoutedEventArgs e)
         {
             _mainViewModel = DataContext as MainViewModel;
+            _mainViewModel.GotoSnapshotExecuted += CloseSnapshotList;
         }
 
         private void OpenButtonClick(object sender, RoutedEventArgs e)
@@ -68,6 +71,11 @@ namespace DsmSuite.DsmViewer.View.UserControls
             {
                 mainPanelBorder.Margin = new Thickness();
             }
+        }
+
+        public void CloseSnapshotList(object sender, EventArgs e)
+        {
+            GotoButton.IsChecked = false;
         }
     }
 }

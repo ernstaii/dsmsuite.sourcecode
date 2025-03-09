@@ -36,8 +36,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Snapshot
         [TestMethod]
         public void WhenLoadingExistingActionThenActionAttributesMatch()
         {
-            object[] args = { _model.Object, _data };
-            MakeSnapshotAction action = new MakeSnapshotAction(args);
+            MakeSnapshotAction action = new MakeSnapshotAction(_model.Object, null, _data);
 
             Assert.AreEqual(1, action.Data.Count);
             Assert.AreEqual(Name, _data["name"]);

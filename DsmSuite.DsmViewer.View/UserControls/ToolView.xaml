@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:usercontrols="clr-namespace:DsmSuite.DsmViewer.View.UserControls"
+             xmlns:main="clr-namespace:DsmSuite.DsmViewer.ViewModel.Main;assembly=DsmSuite.DsmViewer.ViewModel"
+             d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="1000"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -27,6 +29,26 @@
             <Button Style="{StaticResource ToolbarButton}" ToolTip="Sort selected element" Command="{Binding SortElementCommand}" Content="{StaticResource PartitionIcon}"/>
             <ComboBox Style="{StaticResource ToolbarComboBox}" ToolTip="Used sort algorithm" ItemsSource="{Binding SupportedSortAlgorithms}" SelectedItem="{Binding SelectedSortAlgorithm}" Width="100" />
             <Button Style="{StaticResource ToolbarButton}" ToolTip="Label current state" Command="{Binding MakeSnapshotCommand}" Content="{StaticResource LabelIcon}"/>
+            <StackPanel Margin="0" VerticalAlignment="Center">
+                <ToggleButton Style="{StaticResource DropDownButton}" ToolTip="Goto snapshot" Name="GotoButton" Content="{StaticResource DropDownIcon}"/>
+                <Popup IsOpen="{Binding IsChecked, ElementName=GotoButton}" StaysOpen="False"
+                       PlacementTarget="{Binding ElementName=GotoButton}"
+                       Placement="Left" HorizontalOffset="{StaticResource NarrowButtonSize}" VerticalOffset="{StaticResource StandardButtonSize}">
+                    <ListBox x:Name="snapshotList" Width="200" Height="100" ItemsSource="{Binding Snapshots}"
+                             SelectionMode="Single">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" CommandParameter="{Binding}"
+                                                Command="{Binding DataContext.GotoSnapshotCommand, Source={x:Reference snapshotList}}"/>
+                                    </TextBlock.InputBindings>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Popup>
+            </StackPanel>
             <Separator/>
             <Button Style="{StaticResource ToolbarButton}" ToolTip="{Binding UndoText}" Command="{Binding UndoCommand}" Content="{StaticResource UndoIcon}"/>
             <Button Style="{StaticResource ToolbarButton}" ToolTip="{Binding RedoText}" Command="{Binding RedoCommand}" Content="{StaticResource RedoIcon}"/>

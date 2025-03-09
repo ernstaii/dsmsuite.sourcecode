@@ -124,18 +124,17 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
         }
 
         /// <summary>
-        /// Undo/redo actions up to an including <c>action</c>.
+        /// Undo/redo actions until <c>action</c> is at the top of the undo stack.
         /// </summary>
         /// <param name="action"></param>
         public void Goto(IAction action)
         {
             if (_undoActionStack.Contains(action))
             {
-                do
+                while (_undoActionStack.Peek() != action)
                 {
                     Undo();
                 }
-                while (_redoActionStack.Peek() != action);
             }
             else if (_redoActionStack.Contains(action))
             {
@@ -163,6 +162,15 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
         public IEnumerable<IAction> GetActionsInChronologicalOrder()
         {
             return _undoActionStack.Reverse();
+        }
+
+        /// <summary>
+        /// Return the actions for redo in the order in which they were originally executed.
+        /// This is also the order in which they will be redone.
+        /// </summary>
+         public IEnumerable<IAction> GetRedoActionsInChronologicalOrder()
+        {
+            return _redoActionStack;
         }
 
         public IActionContext GetContext()

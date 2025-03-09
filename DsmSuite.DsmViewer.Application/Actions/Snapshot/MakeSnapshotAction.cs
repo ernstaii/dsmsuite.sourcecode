@@ -14,31 +14,32 @@ namespace DsmSuite.DsmViewer.Application.Actions.Snapshot
 
         public const ActionType RegisteredType = ActionType.Snapshot;
 
-        public MakeSnapshotAction(object[] args)
+        /// <summary>
+        /// MakeSnapshotAction creates a bookmark in the do/undo stacks.
+        /// Neither Do() nor Undo() has any effect.
+        /// </summary>
+        public MakeSnapshotAction(IDsmModel model, IActionContext context, IReadOnlyDictionary<string, string> data)
         {
-            if (args.Length == 3)
+            _model = model;
+            _actionContext = context;
+
+            if (_model != null  &&  data != null)
             {
-                _model = args[0] as IDsmModel;
-                _actionContext = args[1] as IActionContext;
-                IReadOnlyDictionary<string, string> data = args[2] as IReadOnlyDictionary<string, string>;
-
-                if ((_model != null) && (data != null))
-                {
-                    ActionReadOnlyAttributes attributes = new ActionReadOnlyAttributes(_model, data);
-
-                    _name = attributes.GetString(nameof(_name));
-                }
+                ActionReadOnlyAttributes attributes = new ActionReadOnlyAttributes(_model, data);
+                _name = attributes.GetString(nameof(_name));
             }
         }
 
         public MakeSnapshotAction(IDsmModel model, string name)
         {
+            _model = model;
             _name = name;
         }
         
         public ActionType Type => RegisteredType;
         public string Title => "Make snapshot";
         public string Description => $"name={_name}";
+        public string Name => _name;
 
         public object Do()
         {
@@ -51,8 +52,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Snapshot
 
         public bool IsValid()
         {
-            return (_model != null) && 
-                   (_name != null);
+            return _model != null  &&  _name != null;
         }
 
         public IReadOnlyDictionary<string, string> Data

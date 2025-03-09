@@ -15,6 +15,8 @@ using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.ViewModel.Settings;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using DsmSuite.DsmViewer.Application.Actions.Snapshot;
+using System.Diagnostics;
 
 namespace DsmSuite.DsmViewer.ViewModel.Main
 {
@@ -44,6 +46,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public event EventHandler<SettingsViewModel> SettingsVisible;
 
         public event EventHandler ScreenshotRequested;
+        public event EventHandler GotoSnapshotExecuted;
 
         private readonly IDsmApplication _application;
         private string _modelFilename;
@@ -106,6 +109,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             PasteAsSiblingElementBelowCommand = new RelayCommand<object>(PasteAsSiblingElementBelowExecute, SelectedProviderIsNotRoot);
 
             MakeSnapshotCommand = new RelayCommand<object>(MakeSnapshotExecute);
+            GotoSnapshotCommand = new RelayCommand<object>(GotoSnapshotExecute);
             ShowHistoryCommand = new RelayCommand<object>(ShowHistoryExecute);
             ShowSettingsCommand = new RelayCommand<object>(ShowSettingsExecute);
 
@@ -114,15 +118,12 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             _modelFilename = "";
             _version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             _title = $"DSM Viewer";
-
             _isModified = false;
             _isLoaded = false;
-
             _selectedSortAlgorithm = SupportedSortAlgorithms[0];
-
             _selectedIndicatorViewMode = IndicatorViewMode.Default;
-
             _progressViewModel = new ProgressViewModel();
+            Snapshots = new();
 
             ActiveMatrix = new MatrixViewModel(this, _application, new List<IDsmElement>());
             ElementSearchViewModel = new ElementSearchViewModel(_application, null, null, null, true);
@@ -179,6 +180,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             set { _selectedIndicatorViewMode = value; RaisePropertyChanged(); ActiveMatrix?.Reload(); }
         }
 
+        /// <summary>
+        /// The snapshots that can be used in a GotoSnapShot command.
+        /// </summary>
+        public ObservableCollection<MakeSnapshotAction> Snapshots { get; }
+
         public ICommand OpenFileCommand { get; }
         public ICommand SaveFileCommand { get; }
         public ICommand HomeCommand { get; }
@@ -211,6 +217,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public ICommand PasteAsSiblingElementAboveCommand { get; }
         public ICommand PasteAsSiblingElementBelowCommand { get; }
 
+        public ICommand GotoSnapshotCommand { get; }
         public ICommand MakeSnapshotCommand { get; }
         public ICommand ShowHistoryCommand { get; }
         public ICommand ShowSettingsCommand { get; }
@@ -284,6 +291,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                         break;
                 }
                 ActiveMatrix = new MatrixViewModel(this, _application, GetRootElements());
+                UpdateSnapshots();
             }
         }
 
@@ -471,6 +479,15 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             UndoText = $"Undo {_application.GetUndoActionDescription()}";
             RedoText = $"Redo {_application.GetRedoActionDescription()}";
             ActiveMatrix?.Reload();
+            UpdateSnapshots();
+        }
+
+        private void UpdateSnapshots()
+        {
+            Snapshots.Clear();
+            foreach (MakeSnapshotAction a in _application.GetAllActions().OfType<MakeSnapshotAction>())
+                Snapshots.Add(a);
+            RaisePropertyChanged(nameof(Snapshots));
         }
 
         private void AddChildElementExecute(object parameter)
@@ -559,6 +576,15 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             SnapshotMakeViewModel viewModel = new SnapshotMakeViewModel(_application);
             SnapshotMakeStarted?.Invoke(this, viewModel);
         }
+
+        private void GotoSnapshotExecute(object parameter)
+        {
+            MakeSnapshotAction action = parameter as MakeSnapshotAction;
+            _application.GotoAction(action);
+            GotoSnapshotExecuted?.Invoke(this, EventArgs.Empty);
+            ActiveMatrix?.Reload();
+        }
+
 
         private void ShowHistoryExecute(object parameter)
         {

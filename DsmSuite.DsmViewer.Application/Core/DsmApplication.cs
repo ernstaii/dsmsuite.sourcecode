@@ -16,6 +16,8 @@ using DsmSuite.DsmViewer.Application.Import.Common;
 using DsmSuite.DsmViewer.Application.Import.Dsi;
 using DsmSuite.DsmViewer.Application.Metrics;
 using DsmSuite.DsmViewer.Application.Actions.Filtering;
+using System.Linq;
+using System.Diagnostics;
 
 namespace DsmSuite.DsmViewer.Application.Core
 {
@@ -387,6 +389,12 @@ namespace DsmSuite.DsmViewer.Application.Core
         public IEnumerable<IAction> GetActions()
         {
             return _actionManager.GetActionsInReverseChronologicalOrder();
+        }
+
+        public IEnumerable<IAction> GetAllActions()
+        {
+            return _actionManager.GetActionsInChronologicalOrder()
+                .Concat(_actionManager.GetRedoActionsInChronologicalOrder());
         }
 
         public void ClearActions()

@@ -69,8 +69,15 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         IEnumerable<string> GetRelationTypes();
         void MakeSnapshot(string name);
 
+        /// <summary>
+        /// Return the undoable actions.
+        /// </summary>
         IEnumerable<IAction> GetActions();
         void ClearActions();
+        /// <summary>
+        /// Return the undoable and redoable actions in a single order.
+        /// </summary>
+        IEnumerable<IAction> GetAllActions();
 
         int GetElementSize(IDsmElement element);
         int GetElementCount();

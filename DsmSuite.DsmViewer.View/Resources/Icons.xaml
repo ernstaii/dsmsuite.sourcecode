@@ -6,6 +6,21 @@
     <BitmapImage x:Key="ApplicationIcon" UriSource="Dsm.ico" />
 
     <!-- Icons from https://materialdesignicons.com/ -->
+
+    <Image x:Key="DropDownIcon" x:Shared="false">
+        <Image.Source>
+            <DrawingImage po:Freeze="True">
+                <DrawingImage.Drawing>
+                    <DrawingGroup>
+                        <DrawingGroup.Children>
+                            <GeometryDrawing Brush="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" 
+                                             Geometry="F0 M 0 0 L 4 4 L 8 0 Z" />
+                        </DrawingGroup.Children>
+                    </DrawingGroup>
+                </DrawingImage.Drawing>
+            </DrawingImage>
+        </Image.Source>
+    </Image>
     
     <Image x:Key="SettingsIcon" x:Shared="false">
         <Image.Source>
