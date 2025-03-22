@@ -95,6 +95,16 @@ namespace DsmSuite.DsmViewer.Model.Core
 
         public bool IsExpanded { get; set; }
 
+        public void ExpandRecursively(bool expanded)
+        {
+            if (!HasChildren)
+                return;
+
+            IsExpanded = expanded;
+            foreach (DsmElement child in Children)
+                child.ExpandRecursively(expanded);
+        }
+
         public bool IsMatch { get; set; }
 
         public bool IsIncludedInTree { get; set; }

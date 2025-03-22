@@ -72,17 +72,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         public bool IsExpandable => Element.HasChildren;
 
-        public bool IsExpanded
-        {
-            get
-            {
-                return Element.IsExpanded;
-            }
-            set
-            {
-                Element.IsExpanded = value;
-            }
-        }
+        public bool IsExpanded => Element.IsExpanded;
+
 
         public IReadOnlyList<ElementTreeItemViewModel> Children => _children;
 

@@ -426,13 +426,22 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             return ActiveMatrix?.ZoomLevel > _minZoom;
         }
 
-        private void ToggleElementExpandedExecute(object parameter)
+        /// <summary>
+        /// Toggle the IsExpanded state of the current row. If <paramref name="recursive"/> is
+        /// <c>bool true</c>, the IsExpanded state of the entire subtree under the current element
+        /// is set to the same new value as element.
+        /// If <paramref name="recursive"/> is false, only the current element is toggled.
+        /// </summary>
+        private void ToggleElementExpandedExecute(object recursive)
         {
             ElementTreeItemViewModel vm = ActiveMatrix.FindElementViewModel(ActiveMatrix.HoveredRow?.Element);
-            if (vm != null  &&  vm.IsExpandable)
-            {
-                vm.IsExpanded = !vm.IsExpanded;
-            }
+            if (vm == null  ||  !vm.IsExpandable)
+                return;
+
+            if ((bool)recursive)
+                vm.Element.ExpandRecursively(!vm.IsExpanded);
+            else
+                vm.Element.IsExpanded = !vm.IsExpanded;
 
             ActiveMatrix.Reload();
         }

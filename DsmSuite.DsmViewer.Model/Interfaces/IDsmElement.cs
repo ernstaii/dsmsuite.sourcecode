@@ -43,12 +43,12 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         bool IsRoot { get; }
 
         /// <summary>
-        /// Has the element any children that are in the tree.
+        /// Has the element any children that are in the tree (see <see cref="IsIncludedInTree"/>).
         /// </summary>
         bool HasChildren { get; }
 
         /// <summary>
-        /// Tree children of the element.
+        /// Tree children of the element (see <see cref="IsIncludedInTree"/>).
         /// </summary>
         IList<IDsmElement> Children { get; }
 
@@ -69,9 +69,20 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         bool IsRecursiveChildOf(IDsmElement element);
 
         /// <summary>
-        /// Is the element expanded in the viewer.
+        /// Is the element expanded in the viewer. This is only meaningful for elements with children.<br/>
+        /// If an element is expanded, each of its children has a line in the matrix and the element
+        /// itself hasn't, but is used to vertically group the children.<br/>
+        /// If an element is not expanded, its children are not displayed and the element itself has
+        /// a row in the matrix.<br/>
+        /// This property is only relevant and should only be changed for elements that are in the
+        /// tree (see <see cref="IsIncludedInTree"/>).
         /// </summary>
         bool IsExpanded { get; set; }
+
+        /// <summary>
+        /// Set or clear the IsExpanded property recursively for elements in the tree.
+        /// </summary>
+        void ExpandRecursively(bool expanded);
 
         /// <summary>
         /// Is the element match in search.
@@ -79,7 +90,8 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         bool IsMatch{ get; set; }
 
         /// <summary>
-        /// Is the element included in the tree
+        /// Is the element included in the tree. The tree is the set of elements that are in scope
+        /// for the viewer, i.e. that are not filtered out.
         /// </summary>
         bool IsIncludedInTree { get; set; }
     }

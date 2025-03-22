@@ -20,6 +20,8 @@ Settings are read and saved from %APPDATA%, usually `%HOME%/AppData/{Local,Roami
 Several smallish changes to the functionality were made; see Changes below.
 Larger changes are described in the remainder of this section.
 
+* Expanding or collapsing a row header with shift pressed will expand or collapse recursively.
+
 
 ### Snapshots
 Snapshots are saved as part of the action list with the model. You can return to a snapshot by selecting it from the dropdown list (narrow down-triangle) next to the action button.
@@ -37,6 +39,7 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 * 24-08-28 Show current selection in legend.
 * 25-02-15 Filtering is an action and can be undone and saved.
 * 25-03-09 A dropdown list next to the 'Make snapshot' button allows jumping back to a snapshot.
+* 25-03-23 Expand/collapse recursively with shift.
 
 ## Implementation notes
 

@@ -59,7 +59,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
 
                 if (e.ChangedButton == MouseButton.Left  &&  pt.X < 20  &&  pt.Y < 24)
                 {
-                    _matrixViewModel.ToggleElementExpandedCommand.Execute(null);
+                    _matrixViewModel.ToggleElementExpandedCommand.Execute(Keyboard.Modifiers == ModifierKeys.Shift);
                     InvalidateVisual();
                 }
             }
