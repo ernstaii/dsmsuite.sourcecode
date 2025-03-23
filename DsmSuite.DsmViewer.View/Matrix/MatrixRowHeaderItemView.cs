@@ -168,7 +168,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
 
                 if (_viewModel.IsExpanded)
                 {
-                    Point textLocation = new Point(backgroundRect.X + 10.0, backgroundRect.Y - 20.0);
+                    Point textLocation = new Point(backgroundRect.X + 8.0, backgroundRect.Y - 20.0);
                     DrawRotatedText(dc, content, textLocation, _theme.TextColor, backgroundRect.Height - 20.0);
                 }
                 else
@@ -206,14 +206,14 @@ namespace DsmSuite.DsmViewer.View.Matrix
 
                     if (ActualWidth > 70.0)
                     {
-                        Point contentTextLocation = new Point(backgroundRect.X + 20.0, backgroundRect.Y + 15.0);
+                        Point contentTextLocation = new Point(backgroundRect.X + 20.0, backgroundRect.Y + 16.0);
                         DrawText(dc, content, contentTextLocation, _theme.TextColor, ActualWidth - 70.0);
                     }
 
                     string order = _viewModel.Order.ToString();
                     double textWidth = MeasureText(order);
 
-                    Point orderTextLocation = new Point(backgroundRect.X - 25.0 + backgroundRect.Width - textWidth, backgroundRect.Y + 15.0);
+                    Point orderTextLocation = new Point(backgroundRect.X - 25.0 + backgroundRect.Width - textWidth, backgroundRect.Y + 16.0);
                     if (orderTextLocation.X > 0)
                     {
                         DrawText(dc, order, orderTextLocation, _theme.TextColor, ActualWidth - 25.0);

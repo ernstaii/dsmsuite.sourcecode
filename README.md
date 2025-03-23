@@ -40,7 +40,7 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 * 25-02-15 Filtering is an action and can be undone and saved.
 * 25-03-09 A dropdown list next to the 'Make snapshot' button allows jumping back to a snapshot.
 * 25-03-23 Expand/collapse recursively with shift. Weights and sorting in consumer/provider/relation list dialogs.
-
+* 25-03-23 Font size of the matrix increased.
 
 ## Implementation notes
 

@@ -17,7 +17,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
         private int? _hoveredColumn;
         private readonly double _pitch;     // Distance between the same points in neighbouring cells
         private readonly double _offset;    // Distance between header and first cell (hor/ver)
-        private readonly double _verticalTextOffset = 11.0; // Distance between top of cell and baseline of text
+        private readonly double _verticalTextOffset = 12.0; // Distance between top of cell and baseline of text
 
         public MatrixCellsView()
         {
