@@ -7,8 +7,8 @@ namespace DsmSuite.Common.Util
     {
         None,
         User,
-        Warning,
         Error,
+        Warning,
         Info,
         Data,
         All
