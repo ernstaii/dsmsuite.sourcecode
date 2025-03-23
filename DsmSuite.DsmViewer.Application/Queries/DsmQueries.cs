@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 
 namespace DsmSuite.DsmViewer.Application.Queries
@@ -12,61 +13,65 @@ namespace DsmSuite.DsmViewer.Application.Queries
     /// by forwarding once and dispatching here?
     public class DsmQueries
     {
+
         private readonly IDsmModel _model;
         public DsmQueries(IDsmModel model)
         {
             _model = model;
         }
 
-        public IEnumerable<IDsmElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
+        public IEnumerable<WeightedElement> GetElementProvidedElements(IDsmElement element)
         {
-            var relations = _model.FindRelations(consumer, provider)
-                .OrderBy(x => x.Consumer.Fullname)
-                .GroupBy(x => x.Consumer.Fullname)
-                .Select(x => x.FirstOrDefault())
-                .ToList();
-
-            var elements = relations.Select(x => x.Consumer)
-                .ToList();
-            return elements;
-        }
-
-        public IEnumerable<IDsmElement> GetElementProvidedElements(IDsmElement element)
-        {
-            var relations = _model.FindIngoingRelations(element)
+            var elements = _model.FindIngoingRelations(element)
                 .OrderBy(x => x.Provider.Fullname)
                 .GroupBy(x => x.Provider.Fullname)
-                .Select(x => x.FirstOrDefault())
+                .Select( g => new WeightedElement(g.First().Provider, g.Sum(x => x.Weight)) )
                 .ToList();
 
-            var elements = relations.Select(x => x.Provider)
-                .ToList();
             return elements;
         }
 
-        public IEnumerable<IDsmElement> GetElementProviders(IDsmElement element)
+        public IEnumerable<WeightedElement> GetElementProviders(IDsmElement element)
         {
-            var relations = _model.FindOutgoingRelations(element)
+            var elements = _model.FindOutgoingRelations(element)
                 .OrderBy(x => x.Provider.Fullname)
                 .GroupBy(x => x.Provider.Fullname)
-                .Select(x => x.FirstOrDefault())
+                .Select( g => new WeightedElement(g.First().Provider, g.Sum(x => x.Weight)) )
                 .ToList();
 
-            var elements = relations.Select(x => x.Provider)
-                .ToList();
             return elements;
         }
 
-        public IEnumerable<IDsmElement> GetElementConsumers(IDsmElement element)
+        public IEnumerable<WeightedElement> GetElementConsumers(IDsmElement element)
         {
-            var relations = _model.FindIngoingRelations(element)
+            var elements = _model.FindIngoingRelations(element)
                 .OrderBy(x => x.Consumer.Fullname)
                 .GroupBy(x => x.Consumer.Fullname)
-                .Select(x => x.FirstOrDefault())
+                .Select( g => new WeightedElement(g.First().Consumer, g.Sum(x => x.Weight)) )
                 .ToList();
 
-            var elements = relations.Select(x => x.Consumer)
+            return elements;
+        }
+
+        public IEnumerable<WeightedElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
+        {
+            var elements = _model.FindRelations(consumer, provider)
+                .OrderBy(x => x.Consumer.Fullname)
+                .GroupBy(x => x.Consumer.Fullname)
+                .Select(g => new WeightedElement(g.First().Consumer, g.Sum(x => x.Weight)))
                 .ToList();
+
+            return elements;
+        }
+
+        public IEnumerable<WeightedElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
+        {
+            var elements = _model.FindRelations(consumer, provider)
+                .OrderBy(x => x.Provider.Fullname)
+                .GroupBy(x => x.Provider.Fullname)
+                .Select(g => new WeightedElement(g.First().Provider, g.Sum(x => x.Weight)))
+                .ToList();
+
             return elements;
         }
 
@@ -78,20 +83,6 @@ namespace DsmSuite.DsmViewer.Application.Queries
                 .ToList();
             return relations;
         }
-
-        public IEnumerable<IDsmElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
-        {
-            var relations = _model.FindRelations(consumer, provider)
-                .OrderBy(x => x.Provider.Fullname)
-                .GroupBy(x => x.Provider.Fullname)
-                .Select(x => x.FirstOrDefault())
-                .ToList();
-
-            var elements = relations.Select(x => x.Provider)
-                .ToList();
-            return elements;
-        }
-
         public IEnumerable<IDsmRelation> FindIngoingRelations(IDsmElement element)
         {
             return _model.FindIngoingRelations(element);

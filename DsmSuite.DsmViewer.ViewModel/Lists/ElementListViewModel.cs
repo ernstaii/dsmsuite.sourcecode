@@ -6,6 +6,7 @@ using System.Windows;
 using System.Text;
 using System.Collections.ObjectModel;
 using DsmSuite.DsmViewer.Application.Interfaces;
+using DsmSuite.DsmViewer.Application.Queries;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
@@ -25,7 +26,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
 
             Title = "Element List";
 
-            IEnumerable<IDsmElement> elements;
+            IEnumerable<WeightedElement> elements;
             switch (viewModelType)
             {
                 case ElementListViewModelType.RelationConsumers:
@@ -41,24 +42,24 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
                     elements = _application.GetElementConsumers(_selectedProvider);
                     break;
                 case ElementListViewModelType.ElementProvidedInterface:
-                    SubTitle = $"Provided interface of {_selectedProvider.Fullname}";
+                    SubTitle = $"Interface provided by {_selectedProvider.Fullname}";
                     elements = _application.GetElementProvidedElements(_selectedProvider);
                     break;
                 case ElementListViewModelType.ElementRequiredInterface:
-                    SubTitle = $"Required interface of {_selectedProvider.Fullname}";
+                    SubTitle = $"Providers for {_selectedProvider.Fullname}";
                     elements = _application.GetElementProviders(_selectedProvider);
                     break;
                 default:
                     SubTitle = "";
-                    elements = new List<IDsmElement>();
+                    elements = new List<WeightedElement>();
                     break;
             }
 
             List<ElementListItemViewModel> elementViewModels = new List<ElementListItemViewModel>();
 
-            foreach (IDsmElement element in elements)
+            foreach (WeightedElement element in elements)
             {
-                elementViewModels.Add(new ElementListItemViewModel(element));
+                elementViewModels.Add(new ElementListItemViewModel(element.Element, element.weight));
             }
 
             elementViewModels.Sort();
@@ -95,6 +96,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
                 headerLine.Append($"Path,");
                 headerLine.Append($"Name,");
                 headerLine.Append($"Type,");
+                headerLine.Append($"Weight,");
                 foreach (string propertyName in Elements[0].DiscoveredElementPropertyNames())
                 {
                     headerLine.Append($"{propertyName},");
@@ -108,6 +110,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
                     line.Append($"{viewModel.ElementPath},");
                     line.Append($"{viewModel.ElementName},");
                     line.Append($"{viewModel.ElementType},");
+                    line.Append($"{viewModel.Weight},");
                     foreach (string propertyName in Elements[0].DiscoveredElementPropertyNames())
                     {
                         string propertyValue = viewModel.Properties.ContainsKey(propertyName) ? viewModel.Properties[propertyName] : "";

@@ -25,8 +25,11 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         string GetRedoActionDescription();
         void Redo();
         IDsmElement RootElement { get; }
-        IEnumerable<IDsmElement> GetElementProvidedElements(IDsmElement element);
-        IEnumerable<IDsmElement> GetElementProviders(IDsmElement element);
+        IEnumerable<WeightedElement> GetElementConsumers(IDsmElement element);
+        IEnumerable<WeightedElement> GetElementProvidedElements(IDsmElement element);
+        IEnumerable<WeightedElement> GetElementProviders(IDsmElement element);
+        IEnumerable<WeightedElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider);
+        IEnumerable<WeightedElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider);
         IEnumerable<IDsmRelation> FindResolvedRelations(IDsmElement consumer, IDsmElement provider);
         IEnumerable<IDsmRelation> FindRelations(IDsmElement consumer, IDsmElement provider);
         int GetRelationCount(IDsmElement consumer, IDsmElement provider);
@@ -34,9 +37,6 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         IEnumerable<IDsmRelation> FindOutgoingRelations(IDsmElement element);
         IEnumerable<IDsmRelation> FindInternalRelations(IDsmElement element);
         IEnumerable<IDsmRelation> FindExternalRelations(IDsmElement element);
-        IEnumerable<IDsmElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider);
-        IEnumerable<IDsmElement> GetElementConsumers(IDsmElement element);
-        IEnumerable<IDsmElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider);
         int GetHierarchicalCycleCount(IDsmElement element);
         int GetSystemCycleCount(IDsmElement element);
         IDsmElement NextSibling(IDsmElement element);

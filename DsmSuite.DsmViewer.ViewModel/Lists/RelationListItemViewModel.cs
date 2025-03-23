@@ -60,19 +60,22 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
 
         public int CompareTo(object obj)
         {
+            int res;
             RelationListItemViewModel other = obj as RelationListItemViewModel;
 
-            int compareConsumer = string.Compare(ConsumerName, other?.ConsumerName, StringComparison.Ordinal);
-            int compareProvider = string.Compare(ProviderName, other?.ProviderName, StringComparison.Ordinal);
+            res = string.Compare(ConsumerPath, other?.ConsumerPath, StringComparison.Ordinal);
+            if (res == 0)
+                res = string.Compare(ConsumerName, other?.ConsumerName, StringComparison.Ordinal);
+            if (res == 0)
+                res = string.Compare(ProviderPath, other?.ProviderPath, StringComparison.Ordinal);
+            if (res == 0)
+                res = string.Compare(ProviderName, other.ProviderName, StringComparison.Ordinal);
+            if (res == 0)
+                res = RelationWeight.CompareTo(other?.RelationWeight);
+            if (res == 0)
+                res = RelationType.CompareTo(other?.RelationType);
 
-            if (compareConsumer != 0)
-            {
-                return compareConsumer;
-            }
-            else
-            {
-                return compareProvider;
-            }
+            return res;
         }
     }
 }

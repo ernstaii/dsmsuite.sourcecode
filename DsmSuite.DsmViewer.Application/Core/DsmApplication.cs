@@ -139,17 +139,17 @@ namespace DsmSuite.DsmViewer.Application.Core
 
         public bool IsModified { get; private set; }
 
-        public IEnumerable<IDsmElement> GetElementConsumers(IDsmElement element)
+        public IEnumerable<WeightedElement> GetElementConsumers(IDsmElement element)
         {
             return _queries.GetElementConsumers(element);
         }
 
-        public IEnumerable<IDsmElement> GetElementProvidedElements(IDsmElement element)
+        public IEnumerable<WeightedElement> GetElementProvidedElements(IDsmElement element)
         {
             return _queries.GetElementProvidedElements(element);
         }
 
-        public IEnumerable<IDsmElement> GetElementProviders(IDsmElement element)
+        public IEnumerable<WeightedElement> GetElementProviders(IDsmElement element)
         {
             return _queries.GetElementProviders(element);
         }
@@ -189,12 +189,12 @@ namespace DsmSuite.DsmViewer.Application.Core
             return _queries.FindExternalRelations(element);
         }
 
-        public IEnumerable<IDsmElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
+        public IEnumerable<WeightedElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
         {
             return _queries.GetRelationProviders(consumer, provider);
         }
 
-        public IEnumerable<IDsmElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
+        public IEnumerable<WeightedElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
         {
             return _queries.GetRelationConsumers(consumer, provider);
         }

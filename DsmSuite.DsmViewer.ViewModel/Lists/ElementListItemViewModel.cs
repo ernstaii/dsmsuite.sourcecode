@@ -9,19 +9,21 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
     {
         private IDsmElement _element;
 
-        public ElementListItemViewModel(IDsmElement element)
+        public ElementListItemViewModel(IDsmElement element, int weight)
         {
             _element = element;
             ElementName = element.Name;
             ElementPath = element.Parent.Fullname;
             ElementType = element.Type;
             Properties = _element.Properties;
+            Weight = weight;
         }
 
         public int Index { get; set; }
         public string ElementPath { get; }
         public string ElementName { get; }
         public string ElementType { get; }
+        public int Weight { get; }
         public IDictionary<string, string> Properties { get; }
 
         public IEnumerable<string> DiscoveredElementPropertyNames()
@@ -32,7 +34,16 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
         public int CompareTo(object obj)
         {
             ElementListItemViewModel other = obj as ElementListItemViewModel;
-            return string.Compare(ElementName, other?.ElementName, StringComparison.Ordinal);
+            int res;
+
+            res = string.Compare(ElementPath, other?.ElementPath, StringComparison.Ordinal);
+            if (res == 0)
+                res = string.Compare(ElementName, other?.ElementName, StringComparison.Ordinal);
+            if (res == 0)
+                res = Weight.CompareTo(other.Weight);
+            if (res == 0)
+                res = string.Compare(ElementType, other?.ElementType, StringComparison.Ordinal);
+            return res;
         }
     }
 }
