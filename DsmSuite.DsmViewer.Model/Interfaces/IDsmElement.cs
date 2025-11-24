@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DsmSuite.DsmViewer.Model.Interfaces
+﻿namespace DsmSuite.DsmViewer.Model.Interfaces
 {
     public interface IDsmElement : IComparable
     {
@@ -87,7 +84,7 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         /// <summary>
         /// Is the element match in search.
         /// </summary>
-        bool IsMatch{ get; set; }
+        bool IsMatch { get; set; }
 
         /// <summary>
         /// Is the element included in the tree. The tree is the set of elements that are in scope

@@ -1,5 +1,4 @@
-﻿using System;
-using DsmSuite.Common.Util;
+﻿using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Sorting;
 using DsmSuite.DsmViewer.Model.Interfaces;
 
@@ -13,6 +12,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Common
         public ImporterBase(IDsmModel dsmModel)
         {
             _dsmModel = dsmModel;
+            _dsmModel.Clear();
         }
 
         protected void Partition(IProgress<ProgressInfo> progress)
@@ -33,6 +33,11 @@ namespace DsmSuite.DsmViewer.Application.Import.Common
             {
                 Partition(progress, child, totalElements, ref progressedElements);
             }
+        }
+
+        protected void FinalizeImport(IProgress<ProgressInfo> progress)
+        {
+            _dsmModel.AssignElementOrder();
         }
 
         protected void UpdateProgress(IProgress<ProgressInfo> progress, string progressActionText, int totalItemCount, int progressedItemCount)

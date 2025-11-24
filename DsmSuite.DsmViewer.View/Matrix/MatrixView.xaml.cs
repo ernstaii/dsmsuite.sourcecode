@@ -1,9 +1,6 @@
-﻿using System;
-using System.Numerics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace DsmSuite.DsmViewer.View.Matrix
 {

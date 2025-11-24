@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using DsmSuite.Common.Util;
-using System.Text.RegularExpressions;
 using Mono.Cecil;
+using DsmSuite.Common.Util;
+using System.Linq;
 
 namespace DsmSuite.Analyzer.DotNet.Lib
 {
     public class BinaryFile
     {
         private readonly IProgress<ProgressInfo> _progress;
-        private readonly List<TypeDefinition> _typeList = new List<TypeDefinition>();
-        private readonly List<String> _includedAssemblyStrings = new List<String>();
+        private readonly IList<TypeDefinition> _typeList = new List<TypeDefinition>();
+        private readonly IList<String> _includedAssemblyStrings = new List<String>();
 
         public BinaryFile(string filename, IProgress<ProgressInfo> progress, List<String> includedAssemblyStrings)
         {
             FileInfo = new FileInfo(filename);
             _progress = progress;
-            if (includedAssemblyStrings != null)
-                _includedAssemblyStrings.AddRange(includedAssemblyStrings);
+            _includedAssemblyStrings = includedAssemblyStrings;
         }
 
         public List<DotNetType> Types { get; } = new List<DotNetType>();
@@ -173,9 +171,9 @@ namespace DsmSuite.Analyzer.DotNet.Lib
 
         private void AnalyzeTypeInterfaces(TypeDefinition typeDecl)
         {
-            foreach (InterfaceImplementation impl in typeDecl.Interfaces)
+            foreach (InterfaceImplementation interfaceImplementation in typeDecl.Interfaces)
             {
-                TypeReference interf = impl.InterfaceType;
+                TypeReference interf = interfaceImplementation.InterfaceType;
                 try
                 {
                     string context = "Analyze interfaces of type " + typeDecl.Name;
@@ -259,9 +257,9 @@ namespace DsmSuite.Analyzer.DotNet.Lib
         {
             foreach (GenericParameter genericArgument in method.GenericParameters)
             {
-                foreach (GenericParameterConstraint cs in genericArgument.Constraints)
+                foreach (GenericParameterConstraint genericParameterConstraint in genericArgument.Constraints)
                 {
-                    TypeReference constraint = cs.ConstraintType;
+                    TypeReference constraint = genericParameterConstraint.ConstraintType;
                     try
                     {
                         string context = "Analyze generic parameters of method " + typeDecl.Name + "::" + method.Name;
@@ -400,7 +398,7 @@ namespace DsmSuite.Analyzer.DotNet.Lib
         private bool Accept(string name)
         {
             bool accept = false;
-            if (_includedAssemblyStrings.Count() > 0)
+            if ((_includedAssemblyStrings != null) && (_includedAssemblyStrings.Count() > 0))
             {
                 foreach (string ignoredName in _includedAssemblyStrings)
                 {

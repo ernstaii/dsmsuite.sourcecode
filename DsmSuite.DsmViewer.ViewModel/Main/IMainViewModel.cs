@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using DsmSuite.DsmViewer.Model.Interfaces;
+using DsmSuite.DsmViewer.ViewModel.Lists;
 using System.ComponentModel;
 using System.Windows.Input;
-using DsmSuite.DsmViewer.Model.Interfaces;
-using DsmSuite.DsmViewer.ViewModel.Lists;
 
 namespace DsmSuite.DsmViewer.ViewModel.Main
 {
@@ -30,5 +29,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         ICommand ChangeElementParentCommand { get; }
 
         IndicatorViewMode SelectedIndicatorViewMode { get; }
+
+        void UpdateCommandStates();
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using DsmSuite.Analyzer.DotNet.Lib;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
-using DsmSuite.Analyzer.DotNet.Lib;
 using DsmSuite.Analyzer.DotNet.Settings;
 using DsmSuite.Analyzer.Model.Interface;
 using DsmSuite.Common.Util;
+using System.IO;
 
 namespace DsmSuite.Analyzer.DotNet.Analysis
 {
@@ -43,6 +43,7 @@ namespace DsmSuite.Analyzer.DotNet.Analysis
                     BinaryFile assemblyFile = new BinaryFile(assemblyFilename, _progress, _analyzerSettings.Transformation.IncludedNames);
                     if (assemblyFile.Exists && assemblyFile.IsAssembly && Accept(assemblyFilename))
                     {
+                        Console.WriteLine($"Assembly={assemblyFile}");
                         _assemblyFiles.Add(assemblyFile);
                         _resolver.AddSearchPath(assemblyFile);
                         UpdateAssemblyProgress(false);
@@ -59,6 +60,7 @@ namespace DsmSuite.Analyzer.DotNet.Analysis
                 assemblyFile.FindTypes(_resolver);
                 foreach (DotNetType type in assemblyFile.Types)
                 {
+                    Console.WriteLine($"DotNetType={type.Name}");
                     _model.AddElement(type.Name, type.Type, null);
                 }
             }

@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using DsmSuite.Analyzer.Model.Interface;
-using DsmSuite.Common.Util;
 using DsmSuite.Common.Model.Interface;
 using DsmSuite.Common.Model.Persistency;
-using System.Collections.Generic;
+using DsmSuite.Common.Util;
 
 namespace DsmSuite.Analyzer.Model.Persistency
 {
@@ -48,7 +48,7 @@ namespace DsmSuite.Analyzer.Model.Persistency
         private int _progressPercentage;
         private string _progressActionText;
 
-        public DsiModelFile(string filename, 
+        public DsiModelFile(string filename,
                             IMetaDataModelFileCallback metaDataModelCallback,
                             IDsiElementModelFileCallback elementModelCallback,
                             IDsiRelationModelFileCallback relationModelCallback)
@@ -85,7 +85,7 @@ namespace DsmSuite.Analyzer.Model.Persistency
             {
                 writer.WriteStartDocument();
 
-                writer.WriteStartElement(RootXmlNode, "urn:dsi-schema");
+                writer.WriteStartElement(RootXmlNode);
                 {
                     WriteModelAttributes(writer);
                     WriteMetaData(writer);
@@ -230,7 +230,7 @@ namespace DsmSuite.Analyzer.Model.Persistency
                 for (int attInd = 0; attInd < xReader.AttributeCount; attInd++)
                 {
                     xReader.MoveToAttribute(attInd);
-                    switch(xReader.Name)
+                    switch (xReader.Name)
                     {
                         case ElementIdXmlAttribute:
                             id = ParseInt(xReader.Value);

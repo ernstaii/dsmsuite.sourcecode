@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using DsmSuite.Analyzer.DotNet.Settings;
@@ -33,7 +34,10 @@ namespace DsmSuite.Analyzer.DotNet
 
         protected override void LogInputParameters()
         {
-            Logger.LogUserMessage($"Assembly directory:{_analyzerSettings.Input.AssemblyDirectory}");
+            foreach (string assemblyDirectory in _analyzerSettings.AssemblyDirectories())
+            {
+                Logger.LogUserMessage($"Assembly directory:{assemblyDirectory}");
+            }
         }
 
         protected override void Action()

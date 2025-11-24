@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using System.Collections.Generic;
 using Moq;
-using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 
 namespace DsmSuite.DsmViewer.Application.Test.Actions.Snapshot
 {

@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DsmSuite.DsmViewer.Application.Actions.Management;
+﻿using System.Reflection;
+using DsmSuite.Analyzer.Model.Core;
+using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Actions.Element;
+using DsmSuite.DsmViewer.Application.Actions.Filtering;
+using DsmSuite.DsmViewer.Application.Actions.Management;
 using DsmSuite.DsmViewer.Application.Actions.Relation;
 using DsmSuite.DsmViewer.Application.Actions.Snapshot;
+using DsmSuite.DsmViewer.Application.Import.Common;
+using DsmSuite.DsmViewer.Application.Import.Dsi;
 using DsmSuite.DsmViewer.Application.Interfaces;
+using DsmSuite.DsmViewer.Application.Metrics;
 using DsmSuite.DsmViewer.Application.Queries;
 using DsmSuite.DsmViewer.Application.Sorting;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using DsmSuite.Analyzer.Model.Core;
-using System.Reflection;
-using DsmSuite.Common.Util;
-using DsmSuite.DsmViewer.Application.Import.Common;
-using DsmSuite.DsmViewer.Application.Import.Dsi;
-using DsmSuite.DsmViewer.Application.Metrics;
-using DsmSuite.DsmViewer.Application.Actions.Filtering;
-using System.Linq;
-using System.Diagnostics;
 
 namespace DsmSuite.DsmViewer.Application.Core
 {
@@ -95,6 +90,14 @@ namespace DsmSuite.DsmViewer.Application.Core
             Modified?.Invoke(this, IsModified);
         }
 
+        public async Task AsyncImportSqlModel(string sqlFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress)
+        {
+            await Task.Run(() => ImportSqlModel(sqlFilename, dsmFilename, autoPartition, compressDsmFile, progress));
+            _actionStore.LoadFromModel();
+            IsModified = false;
+            Modified?.Invoke(this, IsModified);
+        }
+
         public void ImportDsiModel(string dsiFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress)
         {
             string processStep = "Builder";
@@ -102,8 +105,15 @@ namespace DsmSuite.DsmViewer.Application.Core
             DsiModel dsiModel = new DsiModel(processStep, new List<string>(), assembly);
             dsiModel.Load(dsiFilename, progress);
 
-            IDsmBuilder importPolicy = new DsmBuilder(_dsmModel);
-            DsiImporter importer = new DsiImporter(dsiModel, _dsmModel, importPolicy, autoPartition);
+            DsiImporter importer = new DsiImporter(dsiModel, _dsmModel, autoPartition);
+            importer.Import(progress);
+            _actionStore.SaveToModel();
+            _dsmModel.SaveModel(dsmFilename, compressDsmFile, progress);
+        }
+
+        public void ImportSqlModel(string sqlFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress)
+        {
+            SqlImporter importer = new SqlImporter(sqlFilename, _dsmModel, autoPartition);
             importer.Import(progress);
             _actionStore.SaveToModel();
             _dsmModel.SaveModel(dsmFilename, compressDsmFile, progress);
@@ -256,7 +266,7 @@ namespace DsmSuite.DsmViewer.Application.Core
             ElementMoveDownAction action = new ElementMoveDownAction(_dsmModel, element);
             _actionManager.Execute(action);
         }
-        
+
         public IEnumerable<string> GetElementTypes()
         {
             return _dsmModel.GetElementTypes();

@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Actions.Element;
 using DsmSuite.DsmViewer.Application.Actions.Filtering;
 using DsmSuite.DsmViewer.Application.Actions.Relation;
 using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using System.Collections.Generic;
-using DsmSuite.Common.Util;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Management
 {
@@ -54,7 +54,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                         Type type = _types[actionType];
                         object[] args = { _model, _actionManager.GetContext(), action.Data };
                         IAction instance = Activator.CreateInstance(type, args) as IAction;
- 
+
                         if (instance != null)
                         {
                             _actionManager.Add(instance);

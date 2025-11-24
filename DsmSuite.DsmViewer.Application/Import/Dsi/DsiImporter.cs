@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DsmSuite.Analyzer.Model.Interface;
+﻿using DsmSuite.Analyzer.Model.Interface;
 using DsmSuite.Common.Model.Interface;
 using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Import.Common;
@@ -12,16 +9,16 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
     public class DsiImporter : ImporterBase
     {
         private readonly IDsiModel _dsiModel;
-        private readonly IDsmBuilder _importPolicy;
+        private readonly IDsmModel _dsmModel;
         private readonly bool _autoPartition;
         private readonly Dictionary<int, int> _dsiToDsmMapping;
         private int _totalItemCount;
         private int _progressedItemCount;
 
-        public DsiImporter(IDsiModel dsiModel, IDsmModel dsmModel, IDsmBuilder importPolicy, bool autoPartition) : base(dsmModel)
+        public DsiImporter(IDsiModel dsiModel, IDsmModel dsmModel,  bool autoPartition) : base(dsmModel)
         {
             _dsiModel = dsiModel;
-            _importPolicy = importPolicy;
+            _dsmModel = dsmModel;
             _autoPartition = autoPartition;
             _dsiToDsmMapping = new Dictionary<int, int>();
 
@@ -39,7 +36,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
                 Partition(progress);
             }
 
-            _importPolicy.FinalizeImport(progress);
+            FinalizeImport(progress);
         }
 
         private void ImportMetaDataItems()
@@ -48,7 +45,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
             {
                 foreach (IMetaDataItem metaDatItem in _dsiModel.GetMetaDataGroupItems(groupName))
                 {
-                    _importPolicy.ImportMetaDataItem(groupName, metaDatItem.Name, metaDatItem.Value);
+                    ImportMetaDataItem(groupName, metaDatItem.Name, metaDatItem.Value);
                 }
             }
         }
@@ -67,7 +64,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
         {
             IDsmElement parent = null;
 
-            char[] trimCharacters = { ' ', '.'};
+            char[] trimCharacters = { ' ', '.' };
             string dsiElementName = dsiElement.Name.TrimStart(trimCharacters);
             ElementName elementName = new ElementName();
             foreach (string name in new ElementName(dsiElementName).NameParts)
@@ -78,7 +75,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
 
                 if (isElementLeaf)
                 {
-                    IDsmElement element = _importPolicy.ImportElement(elementName.FullName, name, dsiElement.Type, parent, dsiElement.Properties);
+                    IDsmElement element = ImportElement(elementName.FullName, name, dsiElement.Type, parent, dsiElement.Properties);
                     parent = element;
                     _dsiToDsmMapping[dsiElement.Id] = element.Id;
 
@@ -86,7 +83,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
                 }
                 else
                 {
-                    IDsmElement element = _importPolicy.ImportElement(elementName.FullName, name, "", parent, null);
+                    IDsmElement element = ImportElement(elementName.FullName, name, "", parent, null);
                     parent = element;
 
                     Logger.LogInfo($"Import non leaf element dsiId={dsiElement.Id} dsiName={dsiElement.Name} dsmName={elementName.FullName}");
@@ -103,7 +100,7 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
                 UpdateProgress(progress, "Importing dsi model", _totalItemCount, _progressedItemCount);
             }
         }
-        
+
         private void ImportRelation(IDsiRelation dsiRelation)
         {
             Logger.LogInfo($"Import relation consumerId={dsiRelation.ConsumerId} providerId={dsiRelation.ProviderId}");
@@ -117,13 +114,37 @@ namespace DsmSuite.DsmViewer.Application.Import.Dsi
 
                 if (consumerId != providerId)
                 {
-                    _importPolicy.ImportRelation(consumerId, providerId, type, weight, dsiRelation.Properties);
+                    ImportRelation(consumerId, providerId, type, weight, dsiRelation.Properties);
                 }
             }
             else
             {
                 Logger.LogError($"Could not find consumer or provider of relation consumer={dsiRelation.ConsumerId} provider={dsiRelation.ProviderId}");
             }
+        }
+
+        private IMetaDataItem ImportMetaDataItem(string group, string name, string value)
+        {
+            return _dsmModel.AddMetaData(group, name, value);
+        }
+
+        private IDsmElement ImportElement(string fullname, string name, string type, IDsmElement parent, IDictionary<string, string> properties)
+        {
+            IDsmElement element = _dsmModel.GetElementByFullname(fullname);
+            if (element == null)
+            {
+                int? parentId = parent?.Id;
+                element = _dsmModel.AddElement(name, type, parentId, 0, properties);
+            }
+            return element;
+        }
+
+        private IDsmRelation ImportRelation(int consumerId, int providerId, string type, int weight, IDictionary<string, string> properties)
+        {
+            IDsmElement consumer = _dsmModel.GetElementById(consumerId);
+            IDsmElement provider = _dsmModel.GetElementById(providerId);
+
+            return _dsmModel.AddRelation(consumer, provider, type, weight, properties);
         }
     }
 }

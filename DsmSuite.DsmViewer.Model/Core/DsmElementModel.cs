@@ -1,7 +1,5 @@
 ﻿using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 using DsmSuite.DsmViewer.Model.Persistency;
 
 namespace DsmSuite.DsmViewer.Model.Core
@@ -290,7 +288,7 @@ namespace DsmSuite.DsmViewer.Model.Core
         {
             element.IsMatch = false;
 
-            foreach(IDsmElement child in element.Children)
+            foreach (IDsmElement child in element.Children)
             {
                 ClearMarkElements(child);
             }
@@ -387,6 +385,13 @@ namespace DsmSuite.DsmViewer.Model.Core
             } while (current != null);
         }
 
+
+        public IDsmElement AddElement(int id, string name, string type, IDictionary<string, string> properties, int order)
+        {
+            DsmElement element = new DsmElement(id, name, type, properties) { Order = order, IsExpanded = false, IsDeleted = false };
+            RegisterElement(element);
+            return element;
+        }
 
         private IDsmElement AddElement(int id, string name, string type, int? index, IDictionary<string, string> properties, int order, bool expanded, int? parentId, bool deleted)
         {

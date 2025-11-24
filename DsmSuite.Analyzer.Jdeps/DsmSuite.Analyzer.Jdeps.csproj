@@ -1,20 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <OutputType>Exe</OutputType>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AssemblyTitle>DsmSuite.Analyzer.Jdeps</AssemblyTitle>
-    <Product>DsmSuite.Analyzer.Jdeps</Product>
-    <Copyright>Copyright ©  2018</Copyright>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DsmSuite.Analyzer.Model\DsmSuite.Analyzer.Model.csproj" />
     <ProjectReference Include="..\DsmSuite.Common.Util\DsmSuite.Common.Util.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
+
 </Project>

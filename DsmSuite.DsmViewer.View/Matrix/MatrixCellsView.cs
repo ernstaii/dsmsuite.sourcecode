@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using DsmSuite.DsmViewer.ViewModel.Matrix;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using DsmSuite.DsmViewer.ViewModel.Matrix;
 
 namespace DsmSuite.DsmViewer.View.Matrix
 {

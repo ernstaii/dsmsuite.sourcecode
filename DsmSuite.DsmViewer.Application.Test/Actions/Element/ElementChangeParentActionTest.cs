@@ -1,9 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using DsmSuite.DsmViewer.Application.Actions.Element;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using Moq;
-using System.Collections.Generic;
-using DsmSuite.DsmViewer.Application.Actions.Element;
-using System;
 
 namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
 {

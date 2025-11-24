@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using DsmSuite.Common.Util;
 
 namespace DsmSuite.DsmViewer.Application.Interfaces
 {
@@ -12,7 +9,9 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         event EventHandler ActionPerformed;
 
         Task AsyncImportDsiModel(string dsiFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress);
+        Task AsyncImportSqlModel(string sqlFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress);
 
+        void ImportSqlModel(string sqlFilename, string dsmFilename, bool autoPartition, bool compressDsmFile, IProgress<ProgressInfo> progress);
         void ImportDsiModel(string dsiFilename, string dsmFilename, bool applyPartitionAlgorithm, bool compressDsmFile, IProgress<ProgressInfo> progress);
         Task AsyncOpenModel(string dsmFilename, Progress<ProgressInfo> progress);
         Task AsyncSaveModel(string dsmFilename, Progress<ProgressInfo> progress);

@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Input;
-using DsmSuite.DsmViewer.ViewModel.Common;
-using DsmSuite.DsmViewer.ViewModel.Matrix;
-using DsmSuite.DsmViewer.ViewModel.Lists;
-using System.Linq;
+﻿using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Interfaces;
+using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.Model.Interfaces;
+using DsmSuite.DsmViewer.ViewModel.Common;
 using DsmSuite.DsmViewer.ViewModel.Editing.Element;
-using DsmSuite.DsmViewer.ViewModel.Editing.Relation;
 using DsmSuite.DsmViewer.ViewModel.Editing.Snapshot;
-using DsmSuite.Common.Util;
+using DsmSuite.DsmViewer.ViewModel.Lists;
+using DsmSuite.DsmViewer.ViewModel.Matrix;
 using DsmSuite.DsmViewer.ViewModel.Settings;
 using System.Reflection;
-using System.Collections.ObjectModel;
-using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using System.Diagnostics;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace DsmSuite.DsmViewer.ViewModel.Main
 {
@@ -73,47 +69,47 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             _application.Modified += OnModelModified;
             _application.ActionPerformed += OnActionPerformed;
 
-            OpenFileCommand = new RelayCommand<object>(OpenFileExecute, OpenFileCanExecute);
-            SaveFileCommand = new RelayCommand<object>(SaveFileExecute, SaveFileCanExecute);
+            OpenFileCommand = RegisterCommand(OpenFileExecute, OpenFileCanExecute);
+            SaveFileCommand = RegisterCommand(SaveFileExecute, SaveFileCanExecute);
 
-            HomeCommand = new RelayCommand<object>(HomeExecute, HomeCanExecute);
+            HomeCommand = RegisterCommand(HomeExecute, HomeCanExecute);
 
-            MoveUpElementCommand = new RelayCommand<object>(MoveUpElementExecute, MoveUpElementCanExecute);
-            MoveDownElementCommand = new RelayCommand<object>(MoveDownElementExecute, MoveDownElementCanExecute);
-            SortElementCommand = new RelayCommand<object>(SortElementExecute, SortElementCanExecute);
+            MoveUpElementCommand = RegisterCommand(MoveUpElementExecute, MoveUpElementCanExecute);
+            MoveDownElementCommand = RegisterCommand(MoveDownElementExecute, MoveDownElementCanExecute);
+            SortElementCommand = RegisterCommand(SortElementExecute, SortElementCanExecute);
 
-            ToggleElementBookmarkCommand = new RelayCommand<object>(ToggleElementBookmarkExecute, ToggleElementBookmarkCanExecute);
+            ToggleElementBookmarkCommand = RegisterCommand(ToggleElementBookmarkExecute, ToggleElementBookmarkCanExecute);
 
-            ShowElementDetailMatrixCommand = new RelayCommand<object>(ShowElementDetailMatrixExecute);
-            ShowElementContextMatrixCommand = new RelayCommand<object>(ShowElementContextMatrixExecute);
-            ShowCellDetailMatrixCommand = new RelayCommand<object>(ShowCellDetailMatrixExecute);
+            ShowElementDetailMatrixCommand = RegisterCommand(ShowElementDetailMatrixExecute);
+            ShowElementContextMatrixCommand = RegisterCommand(ShowElementContextMatrixExecute);
+            ShowCellDetailMatrixCommand = RegisterCommand(ShowCellDetailMatrixExecute);
 
-            ZoomInCommand = new RelayCommand<object>(ZoomInExecute, ZoomInCanExecute);
-            ZoomOutCommand = new RelayCommand<object>(ZoomOutExecute, ZoomOutCanExecute);
-            ToggleElementExpandedCommand = new RelayCommand<object>(ToggleElementExpandedExecute);
+            ZoomInCommand = RegisterCommand(ZoomInExecute, ZoomInCanExecute);
+            ZoomOutCommand = RegisterCommand(ZoomOutExecute, ZoomOutCanExecute);
+            ToggleElementExpandedCommand = RegisterCommand(ToggleElementExpandedExecute);
 
-            UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
-            RedoCommand = new RelayCommand<object>(RedoExecute, RedoCanExecute);
+            UndoCommand = RegisterCommand(UndoExecute, UndoCanExecute);
+            RedoCommand = RegisterCommand(RedoExecute, RedoCanExecute);
 
-            AddChildElementCommand = new RelayCommand<object>(AddChildElementExecute);
-            AddSiblingElementAboveCommand = new RelayCommand<object>(AddSiblingElementAboveExecute);
-            AddSiblingElementBelowCommand = new RelayCommand<object>(AddSiblingElementBelowExecute);
-            ModifyElementCommand = new RelayCommand<object>(ModifyElementExecute, SelectedProviderIsNotRoot);
-            DeleteElementCommand = new RelayCommand<object>(DeleteElementExecute, SelectedProviderIsNotRoot);
-            ChangeElementParentCommand = new RelayCommand<object>(MoveElementExecute, SelectedProviderIsNotRoot);
+            AddChildElementCommand = RegisterCommand(AddChildElementExecute);
+            AddSiblingElementAboveCommand = RegisterCommand(AddSiblingElementAboveExecute);
+            AddSiblingElementBelowCommand = RegisterCommand(AddSiblingElementBelowExecute);
+            ModifyElementCommand = RegisterCommand(ModifyElementExecute, SelectedProviderIsNotRoot);
+            DeleteElementCommand = RegisterCommand(DeleteElementExecute, SelectedProviderIsNotRoot);
+            ChangeElementParentCommand = RegisterCommand(MoveElementExecute, SelectedProviderIsNotRoot);
 
-            CopyElementCommand = new RelayCommand<object>(CopyElementExecute, SelectedProviderIsNotRoot);
-            CutElementCommand = new RelayCommand<object>(CutElementExecute, SelectedProviderIsNotRoot);
-            PasteAsChildElementCommand = new RelayCommand<object>(PasteAsChildElementExecute, SelectedProviderIsNotRoot);
-            PasteAsSiblingElementAboveCommand = new RelayCommand<object>(PasteAsSiblingElementAboveExecute, SelectedProviderIsNotRoot);
-            PasteAsSiblingElementBelowCommand = new RelayCommand<object>(PasteAsSiblingElementBelowExecute, SelectedProviderIsNotRoot);
+            CopyElementCommand = RegisterCommand(CopyElementExecute, SelectedProviderIsNotRoot);
+            CutElementCommand = RegisterCommand(CutElementExecute, SelectedProviderIsNotRoot);
+            PasteAsChildElementCommand = RegisterCommand(PasteAsChildElementExecute, SelectedProviderIsNotRoot);
+            PasteAsSiblingElementAboveCommand = RegisterCommand(PasteAsSiblingElementAboveExecute, SelectedProviderIsNotRoot);
+            PasteAsSiblingElementBelowCommand = RegisterCommand(PasteAsSiblingElementBelowExecute, SelectedProviderIsNotRoot);
 
-            MakeSnapshotCommand = new RelayCommand<object>(MakeSnapshotExecute);
-            GotoSnapshotCommand = new RelayCommand<object>(GotoSnapshotExecute);
-            ShowHistoryCommand = new RelayCommand<object>(ShowHistoryExecute);
-            ShowSettingsCommand = new RelayCommand<object>(ShowSettingsExecute);
+            MakeSnapshotCommand = RegisterCommand(MakeSnapshotExecute);
+            GotoSnapshotCommand = RegisterCommand(GotoSnapshotExecute);
+            ShowHistoryCommand = RegisterCommand(ShowHistoryExecute);
+            ShowSettingsCommand = RegisterCommand(ShowSettingsExecute);
 
-            TakeScreenshotCommand = new RelayCommand<object>(TakeScreenshotExecute);
+            TakeScreenshotCommand = RegisterCommand(TakeScreenshotExecute);
 
             _modelFilename = "";
             _version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -284,6 +280,16 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
                             FileInfo dsiFileInfo = fileInfo;
                             FileInfo dsmFileInfo = new FileInfo(fileInfo.FullName.Replace(".dsi", ".dsm"));
                             await _application.AsyncImportDsiModel(dsiFileInfo.FullName, dsmFileInfo.FullName, false, true, progress);
+                            ModelFilename = dsmFileInfo.FullName;
+                            Title = $"DSM Viewer - {dsmFileInfo.Name}";
+                            IsLoaded = true;
+                        }
+                        break;
+                    case ".sql":
+                        {
+                            FileInfo sqlFileInfo = fileInfo;
+                            FileInfo dsmFileInfo = new FileInfo(fileInfo.FullName.Replace(".sql", ".dsm"));
+                            await _application.AsyncImportSqlModel(sqlFileInfo.FullName, dsmFileInfo.FullName, false, true, progress);
                             ModelFilename = dsmFileInfo.FullName;
                             Title = $"DSM Viewer - {dsmFileInfo.Name}";
                             IsLoaded = true;
@@ -489,6 +495,12 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             RedoText = $"Redo {_application.GetRedoActionDescription()}";
             ActiveMatrix?.Reload();
             UpdateSnapshots();
+            NotifyCommandsCanExecuteChanged();
+        }
+
+        public void UpdateCommandStates()
+        {
+            NotifyCommandsCanExecuteChanged();
         }
 
         private void UpdateSnapshots()
@@ -539,7 +551,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             if (moveParameter != null)
             {
                 _application.ChangeElementParent(moveParameter.Item1, moveParameter.Item2, moveParameter.Item3);
-                CommandManager.InvalidateRequerySuggested();
+                // TODO Fix CommandManager.InvalidateRequerySuggested();
             }
         }
 

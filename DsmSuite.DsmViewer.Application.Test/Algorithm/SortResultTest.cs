@@ -25,7 +25,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
             Assert.AreEqual(2, result.GetIndex(2));
             Assert.AreEqual(3, result.GetIndex(3));
         }
-        
+
         [TestMethod]
         public void WhenSortResultConstructedWithEmptyListThenItIsInvalid()
         {
@@ -84,7 +84,6 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WhenSwapWithOutOfBoundArgumentThenExceptionIsThrown()
         {
             SortResult result = new SortResult( new List<int>() { 2, 1, 0} );
@@ -93,7 +92,7 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
             Assert.AreEqual(1, result.GetIndex(1));
             Assert.AreEqual(0, result.GetIndex(2));
 
-            result.Swap(0, 3);
+            Assert.Throws<ArgumentOutOfRangeException>(() => result.Swap(0, 3));
         }
 
         [TestMethod]
@@ -132,12 +131,11 @@ namespace DsmSuite.DsmViewer.Application.Test.Algorithm
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WhenGetIndexWithOutOfBoundArgumentThenExceptionIsThrown()
         {
             SortResult result = new SortResult(new List<int>() { 2, 1, 0 });
             Assert.IsTrue(result.IsValid);
-            result.GetIndex(3);
+            Assert.Throws<ArgumentOutOfRangeException>(() => result.GetIndex(3));
         }
     }
 }

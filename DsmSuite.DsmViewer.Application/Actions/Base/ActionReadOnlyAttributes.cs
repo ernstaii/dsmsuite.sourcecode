@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Base
 {
@@ -95,14 +92,14 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
         public IDsmElement GetElement(string memberName)
         {
             int id = GetInt(memberName);
-            return _model.GetElementById(id) ?? 
+            return _model.GetElementById(id) ??
                    _model.GetDeletedElementById(id);
         }
 
         public IDsmRelation GetRelation(string memberName)
         {
             int id = GetInt(memberName);
-            return _model.GetRelationById(id) ?? 
+            return _model.GetRelationById(id) ??
                    _model.GetDeletedRelationById(id);
         }
 

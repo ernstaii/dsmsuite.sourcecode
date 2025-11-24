@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using DsmSuite.Analyzer.Cpp.IncludeResolve;
 using System.Text.RegularExpressions;
-using DsmSuite.Analyzer.Cpp.IncludeResolve;
 
 namespace DsmSuite.Analyzer.Cpp.Sources
 {
@@ -53,7 +50,7 @@ namespace DsmSuite.Analyzer.Cpp.Sources
             }
         }
 
-        internal void ResolveIncludeFile(string relativeIncludeFilename, IIncludeResolveStrategy includeResolveStrategy)
+        public void ResolveIncludeFile(string relativeIncludeFilename, IIncludeResolveStrategy includeResolveStrategy)
         {
             if (relativeIncludeFilename != null)
             {
@@ -74,8 +71,8 @@ namespace DsmSuite.Analyzer.Cpp.Sources
                 }
             }
         }
-        
-        internal string ExtractFileFromIncludeStatement(string line)
+
+        public string ExtractFileFromIncludeStatement(string line)
         {
             // Preprocessing directives are lines in your program that start with #.
             // The # is followed by an identifier that is the directive name.

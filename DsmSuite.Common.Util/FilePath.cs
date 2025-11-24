@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Xml.Schema;
+﻿using System.IO;
+using System.Collections.Generic;
 
 namespace DsmSuite.Common.Util
 {

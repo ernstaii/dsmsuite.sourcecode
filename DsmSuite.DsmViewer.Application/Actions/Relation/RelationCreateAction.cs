@@ -2,7 +2,6 @@
 using DsmSuite.DsmViewer.Application.Actions.Management;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using System.Collections.Generic;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Relation
 {
@@ -59,7 +58,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Relation
 
         public bool IsValid()
         {
-            return (_model != null) && 
+            return (_model != null) &&
                    (_relation != null) &&
                    (_provider != null) &&
                    (_provider != null) &&

@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
+using System.Text;
+using System.Windows;
+using System.Windows.Input;
+using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
-using System.Windows.Input;
-using System.Windows;
-using System.Text;
-using System.Collections.ObjectModel;
-using DsmSuite.DsmViewer.Application.Interfaces;
-using DsmSuite.DsmViewer.Application.Queries;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
@@ -73,13 +71,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
 
             Elements = new ObservableCollection<ElementListItemViewModel>(elementViewModels);
 
-            CopyToClipboardCommand = new RelayCommand<object>(CopyToClipboardExecute);
+            CopyToClipboardCommand = RegisterCommand(CopyToClipboardExecute);
         }
 
         public string Title { get; }
         public string SubTitle { get; }
 
-        public ObservableCollection<ElementListItemViewModel> Elements { get;  }
+        public ObservableCollection<ElementListItemViewModel> Elements { get; }
 
         public ElementListItemViewModel SelectedElement { get; set; }
 

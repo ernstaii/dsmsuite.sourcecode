@@ -1,30 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <OutputType>WinExe</OutputType>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
   <PropertyGroup>
     <ApplicationIcon>Resources/DSM.ico</ApplicationIcon>
   </PropertyGroup>
+
   <ItemGroup>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\DSM.ico" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DsmSuite.Common.Util\DsmSuite.Common.Util.csproj" />
     <ProjectReference Include="..\DsmSuite.DsmViewer.Application\DsmSuite.DsmViewer.Application.csproj" />
     <ProjectReference Include="..\DsmSuite.DsmViewer.Model\DsmSuite.DsmViewer.Model.csproj" />
     <ProjectReference Include="..\DsmSuite.DsmViewer.ViewModel\DsmSuite.DsmViewer.ViewModel.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\DSM.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
+
 </Project>

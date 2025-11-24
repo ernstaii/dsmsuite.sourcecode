@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using DsmSuite.DsmViewer.ViewModel.Common;
-using System.Windows.Input;
-using System.Windows;
-using System.Text;
+﻿using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using DsmSuite.DsmViewer.Application.Interfaces;
-using System.Collections.ObjectModel;
+using DsmSuite.DsmViewer.ViewModel.Common;
 using DsmSuite.DsmViewer.ViewModel.Editing.Relation;
-using System;
-using System.Xml.Linq;
+using System.Collections.ObjectModel;
+using System.Text;
+using System.Windows;
+using System.Windows.Input;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
@@ -36,28 +33,28 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             {
                 case RelationsListViewModelType.ElementIngoingRelations:
                     SubTitle = $"Ingoing relations of {_selectedProvider.Fullname}";
-                    AddRelationCommand = new RelayCommand<object>(AddConsumerRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddConsumerRelationExecute, AddRelationCanExecute);
                     break;
                 case RelationsListViewModelType.ElementOutgoingRelations:
                     SubTitle = $"Outgoing relations of {_selectedProvider.Fullname}";
-                    AddRelationCommand = new RelayCommand<object>(AddProviderRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddProviderRelationExecute, AddRelationCanExecute);
                     break;
                 case RelationsListViewModelType.ElementInternalRelations:
                     SubTitle = $"Internal relations of {_selectedProvider.Fullname}";
-                    AddRelationCommand = new RelayCommand<object>(AddInternalRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand  (AddInternalRelationExecute, AddRelationCanExecute);
                     break;
                 case RelationsListViewModelType.ConsumerProviderRelations:
                     SubTitle = $"Relations between consumer {_selectedConsumer.Fullname} and provider {_selectedProvider.Fullname}";
-                    AddRelationCommand = new RelayCommand<object>(AddConsumerProviderRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddConsumerProviderRelationExecute, AddRelationCanExecute);
                     break;
                 default:
                     SubTitle = "";
                     break;
             }
 
-            CopyToClipboardCommand = new RelayCommand<object>(CopyToClipboardExecute);
-            DeleteRelationCommand = new RelayCommand<object>(DeleteRelationExecute, DeleteRelationCanExecute);
-            EditRelationCommand = new RelayCommand<object>(EditRelationExecute, EditRelationCanExecute);
+            CopyToClipboardCommand = RegisterCommand(CopyToClipboardExecute);
+            DeleteRelationCommand = RegisterCommand(DeleteRelationExecute, DeleteRelationCanExecute);
+            EditRelationCommand = RegisterCommand(EditRelationExecute, EditRelationCanExecute);
 
             UpdateRelations(null);
         }

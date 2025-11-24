@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Input;
-using DsmSuite.DsmViewer.Application.Interfaces;
+﻿using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
 using DsmSuite.DsmViewer.ViewModel.Main;
+using System.Windows.Input;
 
 namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
 {
@@ -43,7 +41,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
                     _selectedProvider = _selectedRelation.Provider;
                     SelectedRelationType = _selectedRelation.Type;
                     Weight = _selectedRelation.Weight;
-                    AcceptChangeCommand = new RelayCommand<object>(AcceptModifyExecute, AcceptCanExecute);
+                    AcceptChangeCommand = RegisterCommand(AcceptModifyExecute, AcceptCanExecute);
                     break;
                 case RelationEditViewModelType.Add:
                     Title = "Add relation";
@@ -54,7 +52,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
                     _selectedProvider = selectedProvider;
                     SelectedRelationType = _lastSelectedRelationType;
                     Weight = 1;
-                    AcceptChangeCommand = new RelayCommand<object>(AcceptAddExecute, AcceptCanExecute);
+                    AcceptChangeCommand = RegisterCommand(AcceptAddExecute, AcceptCanExecute);
                     break;
                 default:
                     break;
@@ -168,7 +166,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
                 return true;
             }
         }
-        
+
         private void InvokeRelationUpdated(IDsmRelation updateRelation)
         {
             _lastSelectedConsumerElementType = ConsumerSearchViewModel.SelectedElementType;

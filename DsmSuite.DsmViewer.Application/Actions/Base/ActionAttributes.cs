@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Base
 {
@@ -90,7 +87,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Base
 
         private static string RemoveUnderscore(string memberName)
         {
-            return memberName.Substring(1); 
+            return memberName.Substring(1);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace DsmSuite.DsmViewer.Application.Interfaces
+﻿namespace DsmSuite.DsmViewer.Application.Interfaces
 {
     /// <summary>
     /// An action the user can perform in the application.<para/>

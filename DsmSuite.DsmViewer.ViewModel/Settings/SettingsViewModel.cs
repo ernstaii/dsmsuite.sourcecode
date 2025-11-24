@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using System.Windows.Input;
-using DsmSuite.Common.Util;
+﻿using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
+using System.Windows.Input;
 
 namespace DsmSuite.DsmViewer.ViewModel.Settings
 {
@@ -31,7 +28,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
             SelectedThemeName = _supportedThemes[ViewerSetting.Theme];
             Help = "";
 
-            AcceptChangeCommand = new RelayCommand<object>(AcceptChangeExecute);
+            AcceptChangeCommand = RegisterCommand(AcceptChangeExecute);
         }
 
         public ICommand AcceptChangeCommand { get; }

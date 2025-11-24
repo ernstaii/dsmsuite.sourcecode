@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using DsmSuite.Common.Model.Core;
+using DsmSuite.Common.Model.Interface;
 using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using DsmSuite.DsmViewer.Model.Persistency;
-using DsmSuite.Common.Model.Core;
-using DsmSuite.Common.Model.Interface;
+using System.Reflection;
 
 namespace DsmSuite.DsmViewer.Model.Core
 {
@@ -40,7 +38,7 @@ namespace DsmSuite.DsmViewer.Model.Core
         {
             Logger.LogDataModelMessage($"Save data model file={dsmFilename} compress={compressFile}");
 
-            _metaDataModel.AddMetaDataItemToDefaultGroup("Total elements found", $"{GetExportedElementCount()}"); 
+            _metaDataModel.AddMetaDataItemToDefaultGroup("Total elements found", $"{GetExportedElementCount()}");
 
             DsmModelFile dsmModelFile = new DsmModelFile(dsmFilename, _metaDataModel, _elementsDataModel, _relationsDataModel, _actionsDataModel);
             dsmModelFile.Save(compressFile, progress);
@@ -92,6 +90,11 @@ namespace DsmSuite.DsmViewer.Model.Core
         public IEnumerable<IDsmAction> GetActions()
         {
             return _actionsDataModel.GetExportedActions();
+        }
+
+        public IDsmElement AddElement(int id, string name, string type, IDictionary<string, string> properties, int order)
+        {
+            return _elementsDataModel.AddElement(id, name, type, properties, order);
         }
 
         public IDsmElement AddElement(string name, string type, int? parentId, int? index, IDictionary<string, string> properties)
@@ -160,8 +163,8 @@ namespace DsmSuite.DsmViewer.Model.Core
             return _elementsDataModel.GetElementCount();
         }
 
-        public IDsmElement RootElement 
-        { 
+        public IDsmElement RootElement
+        {
             get
             {
                 return _elementsDataModel.RootElement;
@@ -202,6 +205,12 @@ namespace DsmSuite.DsmViewer.Model.Core
         {
             return _relationsDataModel.AddRelation(consumer, provider, type, weight, properties);
         }
+
+        public IDsmRelation AddRelation(int id, IDsmElement consumer, IDsmElement provider, string type, int weight, IDictionary<string, string> properties)
+        {
+            return _relationsDataModel.AddRelation(id, consumer, provider, type, weight, properties);
+        }
+
 
         public void ChangeRelationType(IDsmRelation relation, string type)
         {

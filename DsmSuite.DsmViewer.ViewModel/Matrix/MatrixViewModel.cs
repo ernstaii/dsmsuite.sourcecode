@@ -1,13 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using DsmSuite.DsmViewer.ViewModel.Common;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using DsmSuite.DsmViewer.Application.Interfaces;
+﻿using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using DsmSuite.DsmViewer.ViewModel.Main;
+using DsmSuite.DsmViewer.ViewModel.Common;
 using DsmSuite.DsmViewer.ViewModel.Lists;
-using System.Data.Common;
+using DsmSuite.DsmViewer.ViewModel.Main;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace DsmSuite.DsmViewer.ViewModel.Matrix
 {
@@ -83,25 +80,25 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             PasteAsSiblingElementAboveCommand = mainViewModel.DeleteElementCommand;
             PasteAsSiblingElementBelowCommand = mainViewModel.DeleteElementCommand;
 
-            ShowElementIngoingRelationsCommand = new RelayCommand<object>(ShowElementIngoingRelationsExecute);
-            ShowElementOutgoingRelationCommand = new RelayCommand<object>(ShowElementOutgoingRelationExecute);
-            ShowElementinternalRelationsCommand = new RelayCommand<object>(ShowElementinternalRelationsExecute);
+            ShowElementIngoingRelationsCommand = RegisterCommand(ShowElementIngoingRelationsExecute);
+            ShowElementOutgoingRelationCommand = RegisterCommand(ShowElementOutgoingRelationExecute);
+            ShowElementinternalRelationsCommand = RegisterCommand(ShowElementinternalRelationsExecute);
 
-            ShowElementConsumersCommand = new RelayCommand<object>(ShowElementConsumersExecute);
-            ShowElementProvidedInterfacesCommand = new RelayCommand<object>(ShowProvidedInterfacesExecute);
-            ShowElementRequiredInterfacesCommand = new RelayCommand<object>(ShowElementRequiredInterfacesExecute);
+            ShowElementConsumersCommand = RegisterCommand(ShowElementConsumersExecute);
+            ShowElementProvidedInterfacesCommand = RegisterCommand(ShowProvidedInterfacesExecute);
+            ShowElementRequiredInterfacesCommand = RegisterCommand(ShowElementRequiredInterfacesExecute);
             ShowCellDetailMatrixCommand = mainViewModel.ShowCellDetailMatrixCommand;
 
-            ShowCellRelationsCommand = new RelayCommand<object>(ShowCellRelationsExecute);
-            ShowCellConsumersCommand = new RelayCommand<object>(ShowCellConsumersExecute);
-            ShowCellProvidersCommand = new RelayCommand<object>(ShowCellProvidersExecute);
+            ShowCellRelationsCommand = RegisterCommand(ShowCellRelationsExecute);
+            ShowCellConsumersCommand = RegisterCommand(ShowCellConsumersExecute);
+            ShowCellProvidersCommand = RegisterCommand(ShowCellProvidersExecute);
             ShowElementDetailMatrixCommand = mainViewModel.ShowElementDetailMatrixCommand;
             ShowElementContextMatrixCommand = mainViewModel.ShowElementContextMatrixCommand;
 
-            ToggleMetricsViewExpandedCommand = new RelayCommand<object>(ToggleMetricsViewExpandedExecute);
+            ToggleMetricsViewExpandedCommand = RegisterCommand(ToggleMetricsViewExpandedExecute);
 
-            PreviousMetricCommand = new RelayCommand<object>(PreviousMetricExecute, PreviousMetricCanExecute);
-            NextMetricCommand = new RelayCommand<object>(NextMetricExecute, NextMetricCanExecute);
+            PreviousMetricCommand = RegisterCommand(PreviousMetricExecute, PreviousMetricCanExecute);
+            NextMetricCommand = RegisterCommand(NextMetricExecute, NextMetricCanExecute);
 
             Reload();
 
@@ -342,6 +339,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             SelectedRow = GetRowCoord(row);
             SelectedColumn = null;
+            _mainViewModel.UpdateCommandStates();
         }
 
         /// <summary>
@@ -351,6 +349,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             SelectedColumn = GetColumnCoord(column);
             SelectedRow = null;
+            _mainViewModel.UpdateCommandStates();
         }
 
         /// <summary>
@@ -360,6 +359,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             SelectedRow = GetRowCoord(row);
             SelectedColumn = GetColumnCoord(column);
+            _mainViewModel.UpdateCommandStates();
         }
 
         /// <summary>
@@ -369,6 +369,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             SelectedRow = GetRowCoord(selectedTreeItem);
             SelectedColumn = null;
+            _mainViewModel.UpdateCommandStates();
         }
 
         #endregion
@@ -771,6 +772,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             _selectedMetricType--;
             SelectedMetricTypeName = _metricTypeNames[_selectedMetricType];
+            NotifyCommandsCanExecuteChanged();
         }
 
         private bool PreviousMetricCanExecute(object parameter)
@@ -782,6 +784,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         {
             _selectedMetricType++;
             SelectedMetricTypeName = _metricTypeNames[_selectedMetricType];
+            NotifyCommandsCanExecuteChanged();
         }
 
         private bool NextMetricCanExecute(object parameter)

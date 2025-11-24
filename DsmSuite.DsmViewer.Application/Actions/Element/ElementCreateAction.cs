@@ -2,7 +2,6 @@
 using DsmSuite.DsmViewer.Application.Actions.Management;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.Model.Interfaces;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Element
@@ -71,9 +70,9 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
 
         public bool IsValid()
         {
-            return (_model != null) && 
-                   (_element != null) && 
-                   (_type != null) && 
+            return (_model != null) &&
+                   (_element != null) &&
+                   (_type != null) &&
                    (_parent != null);
         }
 

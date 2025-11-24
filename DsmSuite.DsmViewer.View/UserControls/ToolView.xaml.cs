@@ -1,8 +1,7 @@
-﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using DsmSuite.DsmViewer.ViewModel.Main;
+using DsmSuite.DsmViewer.Application.Actions.Snapshot;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace DsmSuite.DsmViewer.View.UserControls
@@ -44,10 +43,10 @@ namespace DsmSuite.DsmViewer.View.UserControls
                 CheckFileExists = true,
                 CheckPathExists = true,
                 DefaultExt = "dsm",
-                Filter = "DSM model|*.dsm|DSI import|*.dsi|All Types|*.dsm;*.dsi",
+                Filter = "DSM model|*.dsm|DSI import|*.dsi|SQL import|*.sql|All Types|*.dsm;*.dsi;*.sql",
                 Title = "Open DSM project"
             };
-            
+
             bool? result = dlg.ShowDialog();
 
             if (result.HasValue && result.Value)

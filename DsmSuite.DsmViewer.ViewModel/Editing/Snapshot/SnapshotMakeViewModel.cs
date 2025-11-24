@@ -1,6 +1,6 @@
-﻿using System.Windows.Input;
-using DsmSuite.DsmViewer.Application.Interfaces;
+﻿using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
+using System.Windows.Input;
 
 namespace DsmSuite.DsmViewer.ViewModel.Editing.Snapshot
 {
@@ -20,7 +20,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Snapshot
             Help = "";
 
             Description = "";
-            AcceptChangeCommand = new RelayCommand<object>(AcceptChangeExecute, AcceptChangeCanExecute);
+            AcceptChangeCommand = RegisterCommand(AcceptChangeExecute, AcceptChangeCanExecute);
         }
 
         public string Title { get; }

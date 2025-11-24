@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using DsmSuite.DsmViewer.Application.Interfaces;
+﻿using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
+using System.Text;
 using System.Windows.Input;
 using System.Windows;
-using System.Text;
-using System;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
@@ -21,10 +19,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             _application.ActionPerformed += OnActionPerformed;
 
             UpdateActionList();
-            
-            CopyToClipboardCommand =  new RelayCommand<object>(CopyToClipboardExecute);
-            ClearCommand = new RelayCommand<object>(ClearExecute);
-            GotoCommand = new RelayCommand<object>(GotoExecute, GotoCanExecute);
+
+            CopyToClipboardCommand = RegisterCommand(CopyToClipboardExecute);
+            ClearCommand = RegisterCommand(ClearExecute);
+            GotoCommand = RegisterCommand(GotoExecute, GotoCanExecute);
         }
 
         private void OnActionPerformed(object sender, System.EventArgs e)
@@ -48,7 +46,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
         private void CopyToClipboardExecute(object parameter)
         {
             StringBuilder builder = new StringBuilder();
-            foreach(ActionListItemViewModel viewModel in Actions)
+            foreach (ActionListItemViewModel viewModel in Actions)
             {
                 builder.AppendLine($"{viewModel.Index, -5}, {viewModel.Title, -30}, {viewModel.Details}");
             }
