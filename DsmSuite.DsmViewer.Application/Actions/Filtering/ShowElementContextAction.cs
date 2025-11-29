@@ -55,10 +55,10 @@ namespace DsmSuite.DsmViewer.Application.Actions.Filtering
 
             _model.IncludeInTree(_model.RootElement, false);
             _model.IncludeInTree(_provider, true);
-            foreach (IDsmElement consumer in queries.GetElementConsumers(_provider))
-                _model.IncludeInTree(consumer, true);
-            foreach (IDsmElement provider in queries.GetElementProviders(_provider))
-                _model.IncludeInTree(provider, true);
+            foreach (WeightedElement consumer in queries.GetElementConsumers(_provider))
+                _model.IncludeInTree(consumer.Element, true);
+            foreach (WeightedElement provider in queries.GetElementProviders(_provider))
+                _model.IncludeInTree(provider.Element, true);
 
             return null;
         }
