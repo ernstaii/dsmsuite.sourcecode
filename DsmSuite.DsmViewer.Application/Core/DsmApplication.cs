@@ -151,17 +151,17 @@ namespace DsmSuite.DsmViewer.Application.Core
 
         public IEnumerable<WeightedElement> GetElementConsumers(IDsmElement element)
         {
-            return _queries.GetElementConsumers(element);
+            return _queries.FindConsumersOf(element);
         }
 
         public IEnumerable<WeightedElement> GetElementProvidedElements(IDsmElement element)
         {
-            return _queries.GetElementProvidedElements(element);
+            return _queries.FindElementsProvidedBy(element);
         }
 
         public IEnumerable<WeightedElement> GetElementProviders(IDsmElement element)
         {
-            return _queries.GetElementProviders(element);
+            return _queries.FindProvidersFor(element);
         }
 
         public IEnumerable<IDsmRelation> FindResolvedRelations(IDsmElement consumer, IDsmElement provider)
@@ -181,12 +181,12 @@ namespace DsmSuite.DsmViewer.Application.Core
 
         public IEnumerable<IDsmRelation> FindIngoingRelations(IDsmElement element)
         {
-            return _queries.FindIngoingRelations(element);
+            return _queries.FindConsumingRelations(element);
         }
 
         public IEnumerable<IDsmRelation> FindOutgoingRelations(IDsmElement element)
         {
-            return _queries.FindOutgoingRelations(element);
+            return _queries.FindProvidingRelations(element);
         }
 
         public IEnumerable<IDsmRelation> FindInternalRelations(IDsmElement element)
@@ -201,12 +201,12 @@ namespace DsmSuite.DsmViewer.Application.Core
 
         public IEnumerable<WeightedElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
         {
-            return _queries.GetRelationProviders(consumer, provider);
+            return _queries.FindRelationProviders(consumer, provider);
         }
 
         public IEnumerable<WeightedElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
         {
-            return _queries.GetRelationConsumers(consumer, provider);
+            return _queries.FindRelationConsumers(consumer, provider);
         }
 
         public int GetHierarchicalCycleCount(IDsmElement element)

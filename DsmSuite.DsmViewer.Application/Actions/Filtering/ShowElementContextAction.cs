@@ -55,9 +55,9 @@ namespace DsmSuite.DsmViewer.Application.Actions.Filtering
 
             _model.IncludeInTree(_model.RootElement, false);
             _model.IncludeInTree(_provider, true);
-            foreach (WeightedElement consumer in queries.GetElementConsumers(_provider))
+            foreach (WeightedElement consumer in queries.FindConsumersOf(_provider))
                 _model.IncludeInTree(consumer.Element, true);
-            foreach (WeightedElement provider in queries.GetElementProviders(_provider))
+            foreach (WeightedElement provider in queries.FindProvidersFor(_provider))
                 _model.IncludeInTree(provider.Element, true);
 
             return null;

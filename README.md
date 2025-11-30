@@ -55,7 +55,7 @@ Actions are things the user does with the model that are saved as part of the mo
 The flow of control when executing an action is as follows:
 
 * MainViewModel has private methods FooExecute and optionally FooCanExecute.
-It also has a ICommand FooCommand, which the MainViewModel constructor sets to RelayCommand(FooExecute, FooCanExecute).
+It also has a ICommand FooCommand, which the MainViewModel constructor sets to RegisterCommand(FooExecute, FooCanExecute).
 * FooCommand can be bound in the view to a button or a menu.
 * The FooExecute method calls the IApplication.Foo method with the necessary parameters. This method instantiates a FooAction object and passes it to ActionManager.Execute.
 

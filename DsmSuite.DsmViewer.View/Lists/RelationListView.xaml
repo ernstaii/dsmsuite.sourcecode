@@ -22,7 +22,7 @@
         <ListView Grid.Row="2" ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedRelation}" Style="{StaticResource DialogListView}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Index" Width="auto" DisplayMemberBinding="{Binding Path=Index}" />
+                    <GridViewColumn Header="Index" Width="40" DisplayMemberBinding="{Binding Path=Index}" />
                     <GridViewColumn Header="Consumer path" Width="auto" DisplayMemberBinding="{Binding Path=ConsumerPath}" />
                     <GridViewColumn Header="Consumer name" Width="auto" DisplayMemberBinding="{Binding Path=ConsumerName}" />
                     <GridViewColumn Header="Consumer type" Width="auto" DisplayMemberBinding="{Binding Path=ConsumerType}" />

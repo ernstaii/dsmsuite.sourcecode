@@ -21,7 +21,7 @@
         <ListView Grid.Row="2" ItemsSource="{Binding Elements}" SelectedItem="{Binding SelectedElement}" Style="{StaticResource DialogListView}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Index" Width="auto" DisplayMemberBinding="{Binding Index}" />
+                    <GridViewColumn Header="Index" Width="40" DisplayMemberBinding="{Binding Index}" />
                     <GridViewColumn Header="Element path" Width="auto" DisplayMemberBinding="{Binding ElementPath}" />
                     <GridViewColumn Header="Element name" Width="auto" DisplayMemberBinding="{Binding ElementName}" />
                     <GridViewColumn Header="Element type" Width="auto" DisplayMemberBinding="{Binding ElementType}" />

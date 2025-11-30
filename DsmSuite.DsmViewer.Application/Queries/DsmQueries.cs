@@ -9,7 +9,7 @@ namespace DsmSuite.DsmViewer.Application.Queries
     /// Contains some but not all queries the application executes on the model
     /// </summary>
     /// TODO Can this class be made more useful?
-    /// DsmApplicaton does some queries as well and dispatches others here. Can we make this class more useful
+    /// DsmApplication does some queries as well and dispatches others here. Can we make this class more useful
     /// by forwarding once and dispatching here?
     public class DsmQueries
     {
@@ -20,7 +20,11 @@ namespace DsmSuite.DsmViewer.Application.Queries
             _model = model;
         }
 
-        public IEnumerable<WeightedElement> GetElementProvidedElements(IDsmElement element)
+        /// <summary>
+        /// Return sub-elements of <c>element</c> that are providers for elements outside
+        /// of <c>element</c>. The result is ordered by provider name.
+        /// </summary>
+        public IEnumerable<WeightedElement> FindElementsProvidedBy(IDsmElement element)
         {
             var elements = _model.FindIngoingRelations(element)
                 .OrderBy(x => x.Provider.Fullname)
@@ -31,7 +35,11 @@ namespace DsmSuite.DsmViewer.Application.Queries
             return elements;
         }
 
-        public IEnumerable<WeightedElement> GetElementProviders(IDsmElement element)
+        /// <summary>
+        /// Return elements outside of <c>element</c> that are providers for elements within
+        /// <c>element</c>. The result is ordered by provider name.
+        /// </summary>
+        public IEnumerable<WeightedElement> FindProvidersFor(IDsmElement element)
         {
             var elements = _model.FindOutgoingRelations(element)
                 .OrderBy(x => x.Provider.Fullname)
@@ -42,7 +50,11 @@ namespace DsmSuite.DsmViewer.Application.Queries
             return elements;
         }
 
-        public IEnumerable<WeightedElement> GetElementConsumers(IDsmElement element)
+        /// <summary>
+        /// Return elements outside of <c>element</c> that are consumer of elements within
+        /// <c>element</c>. The result is ordered by consumer name.
+        /// </summary>
+        public IEnumerable<WeightedElement> FindConsumersOf(IDsmElement element)
         {
             var elements = _model.FindIngoingRelations(element)
                 .OrderBy(x => x.Consumer.Fullname)
@@ -53,7 +65,11 @@ namespace DsmSuite.DsmViewer.Application.Queries
             return elements;
         }
 
-        public IEnumerable<WeightedElement> GetRelationConsumers(IDsmElement consumer, IDsmElement provider)
+        /// <summary>
+        /// Return the consumers in the relations between (sub-elements of) <c>consumer</c> and
+        /// <c>provider</c>. The result is ordered by consumer name.
+        /// </summary>
+        public IEnumerable<WeightedElement> FindRelationConsumers(IDsmElement consumer, IDsmElement provider)
         {
             var elements = _model.FindRelations(consumer, provider)
                 .OrderBy(x => x.Consumer.Fullname)
@@ -64,7 +80,11 @@ namespace DsmSuite.DsmViewer.Application.Queries
             return elements;
         }
 
-        public IEnumerable<WeightedElement> GetRelationProviders(IDsmElement consumer, IDsmElement provider)
+        /// <summary>
+        /// Return the providers in the relations between (sub-elements of) <c>consumer</c> and
+        /// <c>provider</c>. The result is ordered by provider name.
+        /// </summary>
+        public IEnumerable<WeightedElement> FindRelationProviders(IDsmElement consumer, IDsmElement provider)
         {
             var elements = _model.FindRelations(consumer, provider)
                 .OrderBy(x => x.Provider.Fullname)
@@ -75,6 +95,10 @@ namespace DsmSuite.DsmViewer.Application.Queries
             return elements;
         }
 
+        /// <summary>
+        /// Return the relations between (sub-elements of) <c>consumer</c> and
+        /// <c>provider</c>. The result is ordered by provider name, consumer name.
+        /// </summary>
         public IEnumerable<IDsmRelation> FindRelations(IDsmElement consumer, IDsmElement provider)
         {
             var relations = _model.FindRelations(consumer, provider)
@@ -83,21 +107,35 @@ namespace DsmSuite.DsmViewer.Application.Queries
                 .ToList();
             return relations;
         }
-        public IEnumerable<IDsmRelation> FindIngoingRelations(IDsmElement element)
+
+        /// <summary>
+        /// Return the relations consuming (a sub-elements of) <c>element</c>.
+        /// </summary>
+        public IEnumerable<IDsmRelation> FindConsumingRelations(IDsmElement element)
         {
             return _model.FindIngoingRelations(element);
         }
 
-        public IEnumerable<IDsmRelation> FindOutgoingRelations(IDsmElement element)
+        /// <summary>
+        /// Return the relations providing to (a sub-elements of) <c>element</c>.
+        /// </summary>
+        public IEnumerable<IDsmRelation> FindProvidingRelations(IDsmElement element)
         {
             return _model.FindOutgoingRelations(element);
         }
 
+        /// <summary>
+        /// Return the relations between sub-elements of <c>element</c>.
+        /// </summary>
         public IEnumerable<IDsmRelation> FindInternalRelations(IDsmElement element)
         {
             return _model.FindInternalRelations(element);
         }
 
+        /// <summary>
+        /// Return the relations between (a sub-element of) <c>element</c> and an element
+        /// outside of <c>element</c>.
+        /// </summary>
         public IEnumerable<IDsmRelation> FindExternalRelations(IDsmElement element)
         {
             return _model.FindExternalRelations(element);
