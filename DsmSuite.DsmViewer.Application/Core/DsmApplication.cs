@@ -250,6 +250,12 @@ namespace DsmSuite.DsmViewer.Application.Core
             _actionManager.Execute(action);
         }
 
+        public void SortRecursively(IDsmElement element, string algorithm)
+        {
+            IAction action = new ElementSortRecursiveAction(_dsmModel, element, algorithm);
+            _actionManager.Execute(action);
+        }
+
         public IEnumerable<string> GetSupportedSortAlgorithms()
         {
             return SortAlgorithmFactory.GetSupportedAlgorithms();

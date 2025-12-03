@@ -83,6 +83,8 @@ namespace DsmSuite.DsmViewer.Model.Interfaces
         int GetSystemCycleCount(IDsmElement element);
         // Actions
         IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data);
+        IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data,
+                IEnumerable<IDsmAction> actions);
         void ClearActions();
         IEnumerable<IDsmAction> GetActions();
     }

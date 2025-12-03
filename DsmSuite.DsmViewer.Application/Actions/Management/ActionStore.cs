@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Actions.Element;
 using DsmSuite.DsmViewer.Application.Actions.Filtering;
@@ -46,27 +47,11 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
             _actionManager.Clear();
             foreach (IDsmAction action in _model.GetActions())
             {
-                ActionType actionType;
-                if (ActionType.TryParse(action.Type, out actionType))
-                {
-                    if (_types.ContainsKey(actionType))
-                    {
-                        Type type = _types[actionType];
-                        object[] args = { _model, _actionManager.GetContext(), action.Data };
-                        IAction instance = Activator.CreateInstance(type, args) as IAction;
-
-                        if (instance != null)
-                        {
-                            _actionManager.Add(instance);
-                        }
-                        else
-                            Logger.LogError($"Cannot instantiate action {action.Id} {action.Type}.");
-                    }
-                    else
-                        Logger.LogError($"Action {action.Type} not in table.");
-                }
+                IAction instance = LoadAction(action);
+                if (instance != null)
+                    _actionManager.Add(instance);
                 else
-                    Logger.LogWarning($"Unknown action {action.Type} in model.");
+                    Logger.LogError($"Cannot instantiate action {action.Id} {action.Type}.");
             }
 
             if (!_actionManager.Validate())
@@ -75,6 +60,37 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                 _actionManager.Clear();
             }
         }
+
+        public IAction LoadAction(IDsmAction action)
+        {
+            ActionType actionType;
+            Type type;
+            object[] args;
+
+            if (!ActionType.TryParse(action.Type, out actionType))
+                Logger.LogWarning($"Unknown action {action.Type} in model.");
+            if (!_types.TryGetValue(actionType, out type))
+                Logger.LogError($"Action {action.Type} not in table.");
+
+            if (action.Actions == null)
+                args = [_model, _actionManager.GetContext(), action.Data];
+            else
+            {
+                List<IAction> subactions = new();
+                foreach (IDsmAction subaction in action.Actions)
+                {
+                    IAction a = LoadAction(subaction);
+                    if (a == null)
+                        return null;
+                    subactions.Add(a);
+                }
+
+                args = [_model, _actionManager.GetContext(), action.Data, subactions];
+            }
+
+            return Activator.CreateInstance(type, args) as IAction;
+        }
+
 
         /// <summary>
         /// Saves all actions in the ActionManager to the model.
@@ -86,7 +102,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                 _model.ClearActions();
                 foreach (IAction action in _actionManager.GetActionsInChronologicalOrder())
                 {
-                    _model.AddAction(action.Type.ToString(), action.Data);
+                    _model.AddAction(action.Type.ToString(), action.Data, new ActionData(action).Actions);
                 }
             }
         }
@@ -102,6 +118,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
             _types[ElementMoveDownAction.RegisteredType] = typeof(ElementMoveDownAction);
             _types[ElementMoveUpAction.RegisteredType] = typeof(ElementMoveUpAction);
             _types[ElementSortAction.RegisteredType] = typeof(ElementSortAction);
+            _types[ElementSortRecursiveAction.RegisteredType] = typeof(ElementSortRecursiveAction);
 
             _types[ShowElementDetailAction.RegisteredType] = typeof(ShowElementDetailAction);
             _types[ShowElementContextAction.RegisteredType] = typeof(ShowElementContextAction);

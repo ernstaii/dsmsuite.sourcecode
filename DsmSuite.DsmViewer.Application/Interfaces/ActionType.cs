@@ -14,6 +14,7 @@
         ElementMoveUp,
         ElementMoveDown,
         ElementSort,
+        ElementSortRecursive,
         ElementCopy,
         ElementCut,
         ElementPaste,

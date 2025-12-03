@@ -77,9 +77,15 @@ namespace DsmSuite.DsmViewer.Model.Core
             return _metaDataModel.GetExportedMetaDataGroupItems(groupName);
         }
 
+        public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data,
+                IEnumerable<IDsmAction> actions)
+        {
+            return _actionsDataModel.AddAction(type, data, actions);
+        }
+
         public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data)
         {
-            return _actionsDataModel.AddAction(type, data);
+            return this.AddAction(type, data, null);
         }
 
         public void ClearActions()

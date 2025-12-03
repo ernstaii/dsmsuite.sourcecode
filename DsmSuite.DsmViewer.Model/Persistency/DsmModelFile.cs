@@ -1,6 +1,7 @@
 ﻿using DsmSuite.Common.Model.Interface;
 using DsmSuite.Common.Model.Persistency;
 using DsmSuite.Common.Util;
+using DsmSuite.DsmViewer.Model.Core;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using System.Xml;
 
@@ -136,7 +137,7 @@ namespace DsmSuite.DsmViewer.Model.Persistency
                             ReadMetaDataGroup(xReader);
                             ReadElement(xReader, progress);
                             ReadRelation(xReader, progress);
-                            ReadAction(xReader, progress);
+                            ReadActionGroup(xReader, _actionModelCallback, progress);
                             break;
                         case XmlNodeType.Text:
                             break;
@@ -445,55 +446,85 @@ namespace DsmSuite.DsmViewer.Model.Persistency
 
         private void WriteActions(XmlWriter writer, IProgress<ProgressInfo> progress)
         {
+            WriteActionGroup(writer, _actionModelCallback.GetExportedActions(), progress);
+        }
+
+        private void WriteActionGroup(XmlWriter writer, IEnumerable<IDsmAction> actions,
+                IProgress<ProgressInfo> progress)
+        {
             writer.WriteStartElement(ActionGroupXmlNode);
-            foreach (IDsmAction action in _actionModelCallback.GetExportedActions())
-            {
+            foreach (IDsmAction action in actions)
                 WriteAction(writer, action, progress);
-            }
             writer.WriteEndElement();
         }
+
 
         private void WriteAction(XmlWriter writer, IDsmAction action, IProgress<ProgressInfo> progress)
         {
             writer.WriteStartElement(ActionXmlNode);
             writer.WriteAttributeString(ActionIdXmlAttribute, action.Id.ToString());
             writer.WriteAttributeString(ActionTypeXmlAttribute, action.Type);
+
             writer.WriteStartElement(ActionDataXmlNode);
             foreach (var d in action.Data)
             {
                 writer.WriteAttributeString(d.Key, d.Value);
             }
             writer.WriteEndElement();
+
+            if (action.Actions != null)
+                WriteActionGroup(writer, action.Actions, progress);
+
             writer.WriteEndElement();
 
             _progressedActionCount++;
             UpdateProgress(progress, false);
         }
 
-        private void ReadAction(XmlReader xReader, IProgress<ProgressInfo> progress)
+        private void ReadActionGroup(XmlReader xReader, IDsmActionModelFileCallback actionModel,
+                IProgress<ProgressInfo> progress)
+        {
+            if (xReader.Name == ActionGroupXmlNode)
+            {
+                XmlReader xActionsReader = xReader.ReadSubtree();
+                while (xActionsReader.Read())
+                {
+                    if (xActionsReader.Name == ActionXmlNode)
+                        ReadAction(xActionsReader, actionModel, progress);
+                }
+            }
+        }
+
+        private void ReadAction(XmlReader xReader, IDsmActionModelFileCallback actionModel,
+                IProgress<ProgressInfo> progress)
         {
             if (xReader.Name == ActionXmlNode)
             {
                 int? id = ParseInt(xReader.GetAttribute(ActionIdXmlAttribute));
                 string type = xReader.GetAttribute(ActionTypeXmlAttribute);
                 Dictionary<string, string> data = new Dictionary<string, string>();
+                DsmActionModel subactions = null;
 
                 XmlReader xActionDataReader = xReader.ReadSubtree();
                 while (xActionDataReader.Read())
                 {
-                    if (xActionDataReader.Name == ActionDataXmlNode)
+                    switch (xActionDataReader.Name)
                     {
-                        while (xActionDataReader.MoveToNextAttribute())
-                        {
-                            data[xReader.Name] = xReader.Value;
-                        }
-                        xActionDataReader.MoveToElement();
+                        case ActionDataXmlNode:
+                            while (xActionDataReader.MoveToNextAttribute())
+                                data[xReader.Name] = xReader.Value;
+                            xActionDataReader.MoveToElement();
+                            break;
+                        case ActionGroupXmlNode:
+                            subactions = new DsmActionModel();
+                            ReadActionGroup(xActionDataReader, subactions, progress);
+                            break;
                     }
                 }
 
                 if (id.HasValue)
                 {
-                    _actionModelCallback.ImportAction(id.Value, type, data);
+                    actionModel.ImportAction(id.Value, type, data, subactions?.GetExportedActions());
                 }
 
                 _progressedActionCount++;

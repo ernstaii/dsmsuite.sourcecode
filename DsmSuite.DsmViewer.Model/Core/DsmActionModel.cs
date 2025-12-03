@@ -4,16 +4,18 @@ using DsmSuite.DsmViewer.Model.Persistency;
 namespace DsmSuite.DsmViewer.Model.Core
 {
     /// <summary>
-     /// Manages the actions of a model. Only used by DsmModel, which forwards calls here.
-     /// </summary>
+    /// Stores an ordered list of actions.<br/>
+    /// actionIds are assigned in increasing order, if not provided by the caller.
+    /// </summary>
+    /// DsmModel forwards calls here.
     public class DsmActionModel : IDsmActionModelFileCallback
     {
-        private readonly List<IDsmAction> _actions;
+        private readonly List<DsmAction> _actions;
         private int _lastActionId;
 
         public DsmActionModel()
         {
-            _actions = new List<IDsmAction>();
+            _actions = new List<DsmAction>();
             _lastActionId = 0;
         }
 
@@ -23,22 +25,24 @@ namespace DsmSuite.DsmViewer.Model.Core
             _lastActionId = 0;
         }
 
-        public IDsmAction ImportAction(int id, string type, IReadOnlyDictionary<string, string> data)
+        public IDsmAction ImportAction(int id, string type, IReadOnlyDictionary<string, string> data,
+                IEnumerable<IDsmAction> actions)
         {
             if (id > _lastActionId)
             {
                 _lastActionId = id;
             }
 
-            IDsmAction action = new DsmAction(id, type, data);
+            DsmAction action = new DsmAction(id, type, data, actions);
             _actions.Add(action);
             return action;
         }
 
-        public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data)
+        public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data,
+                IEnumerable<IDsmAction> actions)
         {
             _lastActionId++;
-            IDsmAction action = new DsmAction(_lastActionId, type, data);
+            DsmAction action = new DsmAction(_lastActionId, type, data, actions);
             _actions.Add(action);
             return action;
         }

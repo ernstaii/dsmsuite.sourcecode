@@ -357,9 +357,18 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             return IsLoaded;
         }
 
-        private void SortElementExecute(object parameter)
+        /// <summary>
+        /// Sort the child elements of the selected provider. If shift is down, this is done
+        /// recursively for all elements under the selected provider.
+        /// </summary>
+        private void SortElementExecute(object recursive)
         {
-            _application.Sort(SelectedProvider, SelectedSortAlgorithm);
+            //TODO doesn't belong in the viewmodel, recursive should be an argument
+            bool rec = (Keyboard.Modifiers & ModifierKeys.Shift) > 0;
+            if (rec)
+                _application.SortRecursively(SelectedProvider, SelectedSortAlgorithm);
+            else
+                _application.Sort(SelectedProvider, SelectedSortAlgorithm);
         }
 
         private bool SortElementCanExecute(object parameter)

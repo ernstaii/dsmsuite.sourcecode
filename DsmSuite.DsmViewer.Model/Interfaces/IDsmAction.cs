@@ -7,5 +7,10 @@
         string Type { get; }
 
         IReadOnlyDictionary<string, string> Data { get; }
+
+        /// <summary>
+        /// Sub-actions or null.
+        /// </summary>
+        IEnumerable<IDsmAction> Actions { get; }
     }
 }

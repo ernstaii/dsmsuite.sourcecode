@@ -42,6 +42,7 @@ namespace DsmSuite.DsmViewer.Application.Interfaces
         IDsmElement PreviousSibling(IDsmElement element);
         bool HasChildren(IDsmElement element);
         void Sort(IDsmElement element, string algorithm);
+        void SortRecursively(IDsmElement element, string algorithm);
         IEnumerable<string> GetSupportedSortAlgorithms();
         void MoveUp(IDsmElement element);
         void MoveDown(IDsmElement element);
