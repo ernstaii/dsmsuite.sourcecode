@@ -8,16 +8,15 @@ using DsmSuite.DsmViewer.Model.Interfaces;
 namespace DsmSuite.DsmViewer.Application.Actions.Element
 {
     /// <summary>
-    /// Recursively sort the subtree rooted at an element. Only sorts elements that are visible
-    /// (i.e. whose ancestors are all expanded).
+    /// Recursively sort the subtree rooted at an element. Only sorts elements that are in the tree.
     /// </summary>
-    public class ElementSortRecursiveAction : IAction
+    public class ElementSortRecursiveAction : IMultiAction
     {
         private readonly IDsmModel _model;
         private readonly IActionContext _actionContext;
         private readonly IDsmElement _element;
         private readonly string _algorithm;
-        private List<IAction> _actions;
+        private List<IAction> _actions; // The sort actions on descendant elements (possibly empty)
 
         public const ActionType RegisteredType = ActionType.ElementSortRecursive;
 
@@ -65,6 +64,7 @@ namespace DsmSuite.DsmViewer.Application.Actions.Element
 
         public object Do()
         {
+            _actions.Clear();
             doRecursive(_element);
             return null;
         }

@@ -43,6 +43,12 @@ namespace DsmSuite.DsmViewer.Model.Test.Persistency
         }
 
         [TestMethod]
+        public void TestLoadSaveNestedActions()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestLoadModel()
         {
             string inputFile = "DsmSuite.DsmViewer.Model.Test.Input.dsm";

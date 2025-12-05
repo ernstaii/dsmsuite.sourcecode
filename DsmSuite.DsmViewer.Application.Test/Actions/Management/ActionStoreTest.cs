@@ -81,5 +81,11 @@ namespace DsmSuite.DsmViewer.Application.Test.Actions.Management
             manager.Verify(x => x.Add(It.IsAny<ElementMoveDownAction>()), Times.Once());
             manager.Verify(x => x.Add(It.IsAny<ElementMoveUpAction>()), Times.Once());
         }
+
+        [TestMethod]
+        public void TestMultiAction()
+        {
+            Assert.Inconclusive();
+        }
     }
 }

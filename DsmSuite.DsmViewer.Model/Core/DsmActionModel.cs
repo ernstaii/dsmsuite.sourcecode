@@ -25,6 +25,10 @@ namespace DsmSuite.DsmViewer.Model.Core
             _lastActionId = 0;
         }
 
+        /// <summary>
+        /// Create a new action with the given properties and append it to the list.
+        /// </summary>
+        /// <returns>The new action.</returns>
         public IDsmAction ImportAction(int id, string type, IReadOnlyDictionary<string, string> data,
                 IEnumerable<IDsmAction> actions)
         {
@@ -38,6 +42,12 @@ namespace DsmSuite.DsmViewer.Model.Core
             return action;
         }
 
+
+        /// <summary>
+        /// Create a new action with the given properties, assigning it a sequential number
+        /// as id.
+        /// </summary>
+        /// <returns>The new action.</returns>
         public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data,
                 IEnumerable<IDsmAction> actions)
         {
@@ -46,6 +56,7 @@ namespace DsmSuite.DsmViewer.Model.Core
             _actions.Add(action);
             return action;
         }
+
 
         public IEnumerable<IDsmAction> GetExportedActions()
         {

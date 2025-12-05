@@ -21,6 +21,7 @@ Several smallish changes to the functionality were made; see Changes below.
 Larger changes are described in the remainder of this section.
 
 * Expanding or collapsing a row header with shift pressed will expand or collapse recursively.
+* Sorting with shift pressed will sort recursively.
 
 
 ### Snapshots
@@ -30,17 +31,19 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 
 ## Changes
 
-* 24-06-09 Weight visualised in the cell by a coloured bar.
-* 24-06-12 Added class diagrams and documentation comments.
-* 24-07-02 Better tests and bugfixes.
-* 24-07-03 Upgraded to net8.
-* 24-08-10 Distribute as a zip file instead of .msi.
-* 24-08-24 Small UI improvements and corrections.
-* 24-08-28 Show current selection in legend.
-* 25-02-15 Filtering is an action and can be undone and saved.
-* 25-03-09 A dropdown list next to the 'Make snapshot' button allows jumping back to a snapshot.
-* 25-03-23 Expand/collapse recursively with shift. Weights and sorting in consumer/provider/relation list dialogs.
+* 25-12-04 Sort recursively with shift.
 * 25-03-23 Font size of the matrix increased.
+* 25-03-23 Expand/collapse recursively with shift. Weights and sorting in consumer/provider/relation list dialogs.
+* 25-03-09 A dropdown list next to the 'Make snapshot' button allows jumping back to a snapshot.
+* 25-02-15 Filtering is an action and can be undone and saved.
+* 24-08-28 Show current selection in legend.
+* 24-08-24 Small UI improvements and corrections.
+* 24-08-10 Distribute as a zip file instead of .msi.
+* 24-07-03 Upgraded to net8.
+* 24-07-02 Better tests and bugfixes.
+* 24-06-12 Added class diagrams and documentation comments.
+* 24-06-09 Weight visualised in the cell by a coloured bar.
+
 
 ## Implementation notes
 

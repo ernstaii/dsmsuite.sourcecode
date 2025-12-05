@@ -6,13 +6,17 @@ namespace DsmSuite.DsmViewer.Model.Core
     {
         private List<IDsmAction> _actions;
 
+        /// <summary>
+        /// Create a new action. For every sub-action, an equivalent DsmAction is created recursively.
+        /// </summary>
         public DsmAction(int id, string type, IReadOnlyDictionary<string, string> data,
                 IEnumerable<IDsmAction> actions = null)
         {
             Id = id;
             Type = type;
             Data = data;
-            _actions = actions != null ? new List<IDsmAction>(actions) : null;
+            _actions = actions == null ? null : new List<IDsmAction>(actions.Select(
+                    a => a is DsmAction ? a : new DsmAction(a.Id, a.Type, a.Data, a.Actions)));
         }
 
         public int Id { get; }

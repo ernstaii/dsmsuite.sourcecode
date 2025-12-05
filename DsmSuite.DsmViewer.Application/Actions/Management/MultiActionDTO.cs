@@ -8,7 +8,11 @@ using DsmSuite.DsmViewer.Model.Interfaces;
 
 namespace DsmSuite.DsmViewer.Application.Actions.Management
 {
-    public class ActionData : IDsmAction
+    /// <summary>
+    /// A recursive representation of an IMultiAction, used by the ActionStore for saving to the DsmModel.
+    /// Id is always 0.
+    /// </summary>
+    public class MultiActionDTO : IDsmAction
     {
         public int Id { get; }
 
@@ -18,13 +22,12 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
 
         public IEnumerable<IDsmAction> Actions { get; }
 
-        public ActionData(IAction action)
+        public MultiActionDTO(IAction action)
         {
             Id = 0;
-            Type = action.Type.ToString();
+            Type = action.Type.ToString();  // Must be kept in sync with the code in ActionStore
             Data = action.Data;
-            Actions = (action.GetType().GetProperty("Actions")?.
-                    GetValue(action) as IEnumerable<IAction>)?.Select(a => new ActionData(a));
+            Actions = (action as IMultiAction)?.Actions.Select(a => new MultiActionDTO(a));
         }
     }
 }

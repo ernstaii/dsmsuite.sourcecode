@@ -102,11 +102,12 @@ namespace DsmSuite.DsmViewer.Application.Actions.Management
                 _model.ClearActions();
                 foreach (IAction action in _actionManager.GetActionsInChronologicalOrder())
                 {
-                    _model.AddAction(action.Type.ToString(), action.Data, new ActionData(action).Actions);
+                    _model.AddAction(action.Type.ToString(), action.Data, new MultiActionDTO(action).Actions);
                 }
             }
         }
 
+        // Strings here must be kept in sync with MultiAction.
         private void RegisterActionTypes()
         {
             //TODO cut/copy/paste actions not present

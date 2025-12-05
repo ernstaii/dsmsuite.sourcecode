@@ -83,11 +83,6 @@ namespace DsmSuite.DsmViewer.Model.Core
             return _actionsDataModel.AddAction(type, data, actions);
         }
 
-        public IDsmAction AddAction(string type, IReadOnlyDictionary<string, string> data)
-        {
-            return this.AddAction(type, data, null);
-        }
-
         public void ClearActions()
         {
             _actionsDataModel.Clear();
