@@ -24,7 +24,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
                 [Theme.Pastel] = "Pastel"
             };
 
-            LogLevel = ViewerSetting.LogLevel;
+            _logLevel = ViewerSetting.LogLevel;
             SelectedThemeName = _supportedThemes[ViewerSetting.Theme];
             Help = "";
 
@@ -33,12 +33,14 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
 
         public ICommand AcceptChangeCommand { get; }
 
-        public LogLevel LogLevel
+        public string[] LogLevelNames => Enum.GetNames(typeof(LogLevel));
+
+        public string LogLevel
         {
-            get { return _logLevel; }
+            get { return _logLevel.ToString(); }
             set
             {
-                _logLevel = value;
+                _logLevel = (LogLevel) Enum.Parse(typeof(LogLevel), value);
                 RaisePropertyChanged();
             }
         }
@@ -49,6 +51,10 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
         }
 
         public List<string> SupportedThemeNames => _supportedThemes.Values.ToList();
+
+        public string Version => SystemInfo.VersionLong;
+
+        public string SettingsFilePath => $"Settings file {ViewerSetting.SettingsFilePath}";
 
         public string SelectedThemeName
         {
@@ -66,7 +72,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
 
         private void AcceptChangeExecute(object parameter)
         {
-            ViewerSetting.LogLevel = LogLevel;
+            // Immediately effective.
+            Logger.LogLevel = _logLevel;
+
+            // Save upon application exit.
+            ViewerSetting.LogLevel = _logLevel;
             ViewerSetting.Theme = _supportedThemes.FirstOrDefault(x => x.Value == SelectedThemeName).Key;
         }
     }

@@ -53,7 +53,8 @@ namespace DsmSuite.Common.Util
             string name = _assembly.GetName().Name;
             string version = _assembly.GetName().Version.ToString();
             DateTime buildDate = new FileInfo(_assembly.Location).LastWriteTime;
-            LogUserMessage(name + " version =" + version + " build=" + buildDate);
+            LogUserMessage($"{SystemInfo.VersionLong}");
+            LogUserMessage("Assembly: " + name + " version =" + version + " built on " + buildDate);
         }
 
         public static void LogUserMessage(string message,

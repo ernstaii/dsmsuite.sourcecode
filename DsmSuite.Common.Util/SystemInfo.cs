@@ -13,5 +13,8 @@ namespace DsmSuite.Common.Util
             DateTime buildDate = new FileInfo(assembly.Location).LastWriteTime;
             return $"{name} version={version} build={buildDate}";
         }
+
+        public static string Version => $"{ThisAssembly.Git.Tag} {ThisAssembly.Git.Commit}";
+        public static string VersionLong => $"DsmSuite version {Version}";
     }
 }

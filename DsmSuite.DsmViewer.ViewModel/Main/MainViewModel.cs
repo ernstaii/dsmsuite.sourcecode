@@ -114,7 +114,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
             _modelFilename = "";
             _version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             _title = $"DSM Viewer";
-            _isModified = false;
+            IsModified = false;
             _isLoaded = false;
             _selectedSortAlgorithm = SupportedSortAlgorithms[0];
             _selectedIndicatorViewMode = IndicatorViewMode.Default;
@@ -320,7 +320,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
 
         private bool SaveFileCanExecute(object parameter)
         {
-            return _application.IsModified;
+            return IsModified;
         }
 
         private async void SaveAsExecute(object parameter)

@@ -31,6 +31,9 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 
 ## Changes
 
+**v2.0**
+
+* 25-12-06 Version numbering introduced. Settings dialog improved.
 * 25-12-04 Sort recursively with shift.
 * 25-03-23 Font size of the matrix increased.
 * 25-03-23 Expand/collapse recursively with shift. Weights and sorting in consumer/provider/relation list dialogs.

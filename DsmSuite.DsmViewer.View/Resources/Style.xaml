@@ -4,6 +4,7 @@
 
     <sys:Double x:Key="StandardFontSize">14</sys:Double>
     <sys:Double x:Key="LargeFontSize">16</sys:Double>
+    <sys:Double x:Key="SmallFontSize">12</sys:Double>
     <sys:Double x:Key="StandardEditControlHeight">26</sys:Double>
     
     <sys:Double x:Key="StandardButtonSize">24</sys:Double>

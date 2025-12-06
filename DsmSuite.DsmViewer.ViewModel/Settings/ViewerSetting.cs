@@ -6,7 +6,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
     public static class ViewerSetting
     {
         private static readonly string ApplicationSettingsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DsmSuite");
-        private static readonly string SettingsFilePath = Path.Combine(ApplicationSettingsFolder, "ViewerSettings.xml");
+        private static readonly string _settingsFilePath = Path.Combine(ApplicationSettingsFolder, "ViewerSettings.xml");
 
         private static ViewerSettingsData _viewerSettings = ViewerSettingsData.CreateDefault();
 
@@ -17,16 +17,18 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
                 Directory.CreateDirectory(ApplicationSettingsFolder);
             }
 
-            FileInfo settingsFileInfo = new FileInfo(SettingsFilePath);
+            FileInfo settingsFileInfo = new FileInfo(_settingsFilePath);
             if (!settingsFileInfo.Exists)
             {
-                ViewerSettingsData.WriteToFile(SettingsFilePath, _viewerSettings);
+                ViewerSettingsData.WriteToFile(_settingsFilePath, _viewerSettings);
             }
             else
             {
                 _viewerSettings = ViewerSettingsData.ReadFromFile(settingsFileInfo.FullName);
             }
         }
+
+        public static string SettingsFilePath => _settingsFilePath;
 
         public static LogLevel LogLevel
         {
@@ -42,7 +44,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Settings
 
         public static void Write()
         {
-            ViewerSettingsData.WriteToFile(SettingsFilePath, _viewerSettings);
+            ViewerSettingsData.WriteToFile(_settingsFilePath, _viewerSettings);
         }
     }
 }
