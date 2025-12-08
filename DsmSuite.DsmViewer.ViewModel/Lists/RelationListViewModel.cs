@@ -32,11 +32,11 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             switch (viewModelType)
             {
                 case RelationsListViewModelType.ElementIngoingRelations:
-                    SubTitle = $"Ingoing relations of {_selectedProvider.Fullname}";
+                    SubTitle = $"Relations consuming {_selectedProvider.Fullname}";
                     AddRelationCommand = RegisterCommand(AddConsumerRelationExecute, AddRelationCanExecute);
                     break;
                 case RelationsListViewModelType.ElementOutgoingRelations:
-                    SubTitle = $"Outgoing relations of {_selectedProvider.Fullname}";
+                    SubTitle = $"Relations providing to {_selectedProvider.Fullname}";
                     AddRelationCommand = RegisterCommand(AddProviderRelationExecute, AddRelationCanExecute);
                     break;
                 case RelationsListViewModelType.ElementInternalRelations:

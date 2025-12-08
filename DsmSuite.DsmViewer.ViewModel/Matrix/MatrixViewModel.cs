@@ -108,8 +108,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             {
                 [MetricType.NumberOfElements] = "Internal\nElements",
                 [MetricType.RelativeSizePercentage] = "Relative\nSize",
-                [MetricType.IngoingRelations] = "Ingoing Relations",
-                [MetricType.OutgoingRelations] = "Outgoing\nRelations",
+                [MetricType.IngoingRelations] = "Consuming\nRelations",
+                [MetricType.OutgoingRelations] = "Providing\nRelations",
                 [MetricType.InternalRelations] = "Internal\nRelations",
                 [MetricType.ExternalRelations] = "External\nRelations",
                 [MetricType.HierarchicalCycles] = "Hierarchical\nCycles",
