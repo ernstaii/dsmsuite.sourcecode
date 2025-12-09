@@ -21,8 +21,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// </summary>
         private ObservableCollection<ElementTreeItemViewModel> _elementViewModelTree;
         /// <summary>
-        /// The leafs in <see cref="_elementViewModelTree"/>, in the order they are visualized.
-        /// These correspond to the rows/columns of the matrix. Note that a columns/consumers
+        /// The leaves in <see cref="_elementViewModelTree"/>, in the order they are visualized.
+        /// These correspond to the rows/columns of the matrix. Note that a column/consumer
         /// does NOT have its own ElementTreeItemViewModel. Every leaf VM is either a leaf element,
         /// or a collapsed element.
         /// </summary>
@@ -309,7 +309,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public MatrixViewModelCoordinate SelectedRow
         {
             get { return _selectedRow; }
-            private set { _selectedRow = value; SelectionChanged();  RaisePropertyChanged(); }
+            private set { _selectedRow = value; SelectionChanged(); RaisePropertyChanged(); }
         }
 
 
@@ -319,7 +319,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         public MatrixViewModelCoordinate SelectedColumn
         {
             get { return _selectedColumn; }
-            private set { _selectedColumn = value; SelectionChanged();  RaisePropertyChanged(); }
+            private set { _selectedColumn = value; SelectionChanged(); RaisePropertyChanged(); }
         }
 
         /// <summary>
@@ -327,8 +327,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// </summary>
         private void SelectionChanged()
         {
-            UpdateProviderRows();
-            UpdateConsumerRows();
+            UpdateRelationFlags();
         }
 
 
@@ -627,38 +626,27 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             }
         }
 
-        private void UpdateProviderRows()
-        {
-            if (SelectedRow?.Index != null)
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsProvider = _cellWeights[row][SelectedRow.Index.Value] > 0;
-                }
-            }
-            else
-            {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
-                {
-                    _elementViewModelLeafs[row].IsProvider = false;
-                }
-            }
-        }
 
-        private void UpdateConsumerRows()
+        /// <summary>
+        /// Set the <c>IsConsumer, IsProvider</c> properties of the view model leaves with respect to
+        /// the <c>SelectedRow</c>.
+        /// </summary>
+        private void UpdateRelationFlags()
         {
-            if (SelectedRow?.Index != null)
+            if (SelectedRow == null)
             {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                foreach (ElementTreeItemViewModel row in _elementViewModelLeafs)
                 {
-                    _elementViewModelLeafs[row].IsConsumer = _cellWeights[SelectedRow.Index.Value][row] > 0;
+                    row.IsConsumer = false;
+                    row.IsProvider = false;
                 }
             }
             else
             {
-                for (int row = 0; row < _elementViewModelLeafs.Count; row++)
+                foreach (ElementTreeItemViewModel row in _elementViewModelLeafs)
                 {
-                    _elementViewModelLeafs[row].IsConsumer = false;
+                    row.IsConsumer = _application.GetDependencyWeight(SelectedRow.Element, row.Element) > 0;
+                    row.IsProvider = _application.GetDependencyWeight(row.Element, SelectedRow.Element) > 0;
                 }
             }
         }

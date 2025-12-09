@@ -13,7 +13,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
         private static readonly string DataObjectName = "Element";
         private readonly MatrixTheme _theme;
         private ElementTreeItemViewModel _viewModel;
-        private readonly int _indicatorWith = 5;
+        private readonly int _indicatorWidth = 7;
 
         public MatrixRowHeaderItemView(MatrixViewModel matrixViewModel, MatrixTheme theme)
         {
@@ -172,7 +172,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
                 }
                 else
                 {
-                    Rect indicatorRect = new Rect(backgroundRect.Width - _indicatorWith, 1.0, _indicatorWith, ActualHeight - _theme.SpacingWidth);
+                    Rect indicatorRect = new Rect(backgroundRect.Width - _indicatorWidth, 1.0, _indicatorWidth, ActualHeight - _theme.SpacingWidth);
 
                     switch (_viewModel.SelectedIndicatorViewMode)
                     {
@@ -227,21 +227,12 @@ namespace DsmSuite.DsmViewer.View.Matrix
         private SolidColorBrush GetIndicatorColor()
         {
             SolidColorBrush brush = null;
-            if (_viewModel.IsConsumer)
-            {
-                if (_viewModel.IsProvider)
-                {
-                    brush = _theme.MatrixColorCycle;
-                }
-                else
-                {
-                    brush = _theme.MatrixColorConsumer;
-                }
-            }
+            if (_viewModel.IsConsumer  &&  _viewModel.IsProvider)
+                brush = _theme.MatrixColorCycle;
+            else if (_viewModel.IsConsumer)
+                brush = _theme.MatrixColorConsumer;
             else if (_viewModel.IsProvider)
-            {
                 brush = _theme.MatrixColorProvider;
-            }
 
             return brush;
         }

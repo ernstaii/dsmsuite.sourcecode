@@ -33,6 +33,7 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 
 **v2.0**
 
+* 25-12-09 Selecting an expanded element marks consumers/providers of its sub-elements.
 * 25-12-06 Version numbering introduced. Settings dialog improved.
 * 25-12-04 Sort recursively with shift.
 * 25-03-23 Font size of the matrix increased.
