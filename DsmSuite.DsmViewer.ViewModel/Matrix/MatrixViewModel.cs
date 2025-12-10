@@ -16,7 +16,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         private readonly IEnumerable<IDsmElement> _rootElements;
 
         /// <summary>
-        /// The ViewModels that constitute the providers. Each leaf is a row in the matrix,
+        /// The ViewModels that constitute the provider tree. Each leaf is a row in the matrix,
         /// internal nodes are drawn vertically and have no row with cells.
         /// </summary>
         private ObservableCollection<ElementTreeItemViewModel> _elementViewModelTree;
@@ -209,6 +209,20 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Add the leaf viewmodels strictly under a given element to leaves.
+        /// </summary>
+        private void FindLeaves(ElementTreeItemViewModel element,  List<ElementTreeItemViewModel> leaves)
+        {
+            foreach (ElementTreeItemViewModel vm in element.Children)
+            {
+                if (vm.IsExpanded)
+                    FindLeaves(vm, leaves);
+                else
+                    leaves.Add(vm);
+            }
         }
 
         private MatrixViewModelCoordinate GetRowCoord(int? row)
@@ -633,22 +647,41 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
         /// </summary>
         private void UpdateRelationFlags()
         {
-            if (SelectedRow == null)
+            if (SelectedRow?.Element == null)
             {
                 foreach (ElementTreeItemViewModel row in _elementViewModelLeafs)
                 {
                     row.IsConsumer = false;
                     row.IsProvider = false;
+                    row.IsConsumerIn = false;
+                    row.IsProviderIn = false;
                 }
             }
             else
             {
                 foreach (ElementTreeItemViewModel row in _elementViewModelLeafs)
                 {
-                    row.IsConsumer = _application.GetDependencyWeight(SelectedRow.Element, row.Element) > 0;
-                    row.IsProvider = _application.GetDependencyWeight(row.Element, SelectedRow.Element) > 0;
+                    row.IsConsumer = _application.GetDependencyWeight(row.Element, SelectedRow.Element) > 0;
+                    row.IsProvider = _application.GetDependencyWeight(SelectedRow.Element, row.Element) > 0;
+                    row.IsConsumerIn = false;
+                    row.IsProviderIn = false;
                 }
             }
+
+            if (SelectedRow?.Element?.IsExpanded == true)
+            {
+                List<ElementTreeItemViewModel> leaves = new();
+                FindLeaves(FindElementViewModel(SelectedRow.Element), leaves);
+                List<ElementTreeItemViewModel> others = new(_elementViewModelLeafs.Except(leaves));
+
+                foreach (ElementTreeItemViewModel leaf in leaves)
+                {
+                    leaf.IsProviderIn = others
+                            .Any(x => _application.GetDependencyWeight(x.Element, leaf.Element) > 0);
+                    leaf.IsConsumerIn = others
+                            .Any(x => _application.GetDependencyWeight(leaf.Element, x.Element) > 0);
+                }
+             }
         }
 
         #endregion

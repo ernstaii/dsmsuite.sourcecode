@@ -52,8 +52,14 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 
         public int Id => Element.Id;
         public int Order => Element.Order;
+        /// <summary>True iff this is a consumer of the selected tree item.</summary>
         public bool IsConsumer { get; set; }
+        /// <summary>True iff this is a provider for the selected tree item.</summary>
         public bool IsProvider { get; set; }
+        /// <summary>True iff this is a consumer in an external relation of the selected tree item.</summary>
+        public bool IsConsumerIn {get; set; }
+        /// <summary>True iff this is a provider in an external relation of the selected tree item.</summary>
+        public bool IsProviderIn {get; set; }
         public bool IsMatch => Element.IsMatch;
         public bool IsBookmarked => Element.IsBookmarked;
         public string Name => Element.IsRoot ? "Root" : Element.Name;

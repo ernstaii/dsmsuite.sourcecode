@@ -10,7 +10,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Matrix
 {
     /// <summary>
     /// Contains identification for a row/provider or column/consumer in the matrix.
-    /// Note that Index may be 0, even if Element is not (e.g. a non-leaf element).
+    /// Note that Index may be null, even if Element is not (e.g. a non-leaf element).
     /// </summary>
     public class MatrixViewModelCoordinate
     {

@@ -174,41 +174,42 @@ namespace DsmSuite.DsmViewer.View.Matrix
                 {
                     Rect indicatorRect = new Rect(backgroundRect.Width - _indicatorWidth, 1.0, _indicatorWidth, ActualHeight - _theme.SpacingWidth);
 
+                    //---- Right hand indicator
                     switch (_viewModel.SelectedIndicatorViewMode)
                     {
                         case IndicatorViewMode.Default:
                             {
                                 SolidColorBrush brush = GetIndicatorColor();
                                 if (brush != null)
-                                {
                                     dc.DrawRectangle(brush, null, indicatorRect);
-                                };
                             }
                             break;
                         case IndicatorViewMode.Search:
-                            {
-                                if (_viewModel.IsMatch)
-                                {
-                                    dc.DrawRectangle(_theme.MatrixColorMatch, null, indicatorRect);
-                                }
-                            }
+                            if (_viewModel.IsMatch)
+                                dc.DrawRectangle(_theme.MatrixColorMatch, null, indicatorRect);
                             break;
                         case IndicatorViewMode.Bookmarks:
-                            {
-                                if (_viewModel.IsBookmarked)
-                                {
-                                    dc.DrawRectangle(_theme.MatrixColorBookmark, null, indicatorRect);
-                                }
-                            }
+                            if (_viewModel.IsBookmarked)
+                                dc.DrawRectangle(_theme.MatrixColorBookmark, null, indicatorRect);
                             break;
                     }
 
+                    //---- Left hand indicator
+                    {
+                        indicatorRect = new Rect(1.0, 1.0, _indicatorWidth, ActualHeight - _theme.SpacingWidth);
+                        SolidColorBrush brush = GetInnerIndicatorColor();
+                        if (brush != null)
+                            dc.DrawRectangle(brush, null, indicatorRect);
+                    }
+
+                    //---- Element Label
                     if (ActualWidth > 70.0)
                     {
                         Point contentTextLocation = new Point(backgroundRect.X + 20.0, backgroundRect.Y + 16.0);
                         DrawText(dc, content, contentTextLocation, _theme.TextColor, ActualWidth - 70.0);
                     }
 
+                    //---- Element number
                     string order = _viewModel.Order.ToString();
                     double textWidth = MeasureText(order);
 
@@ -224,7 +225,11 @@ namespace DsmSuite.DsmViewer.View.Matrix
             }
         }
 
-        private SolidColorBrush GetIndicatorColor()
+        /// <summary>
+        /// Return the brush to use for the right hand consumer/producer indicator in the row,
+        /// or null if this element is neither producer nor consumer.
+        /// </summary>
+        private SolidColorBrush? GetIndicatorColor()
         {
             SolidColorBrush brush = null;
             if (_viewModel.IsConsumer  &&  _viewModel.IsProvider)
@@ -232,6 +237,23 @@ namespace DsmSuite.DsmViewer.View.Matrix
             else if (_viewModel.IsConsumer)
                 brush = _theme.MatrixColorConsumer;
             else if (_viewModel.IsProvider)
+                brush = _theme.MatrixColorProvider;
+
+            return brush;
+        }
+
+        /// <summary>
+        /// Return the brush to use for the left hand consumer/producer indicator in the row,
+        /// or null if this element is neither producer nor consumer for external elements.
+        /// </summary>
+        private SolidColorBrush GetInnerIndicatorColor()
+        {
+            SolidColorBrush brush = null;
+            if (_viewModel.IsConsumerIn  &&  _viewModel.IsProviderIn)
+                brush = _theme.MatrixColorCycle;
+            else if (_viewModel.IsConsumerIn)
+                brush = _theme.MatrixColorConsumer;
+            else if (_viewModel.IsProviderIn)
                 brush = _theme.MatrixColorProvider;
 
             return brush;
