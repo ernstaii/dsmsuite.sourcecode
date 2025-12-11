@@ -23,7 +23,7 @@ Larger changes are described in the remainder of this section.
 * Expanding or collapsing a row header with shift pressed will expand or collapse recursively.
 * Sorting with shift pressed will sort recursively.
 * Consumer/producer indicators are also shown when selecting a collapsed (vertical) element. They highlight consumers and producers of any sub-element of the selection.
-* A left hand indicator was added. When a collapsed (vertical) element is selected, every row that descends from this element gets an indicator that shows its relation to rows outside the selection. The "cycle" color is used for rows that are both a producer and consumer for some row (but possibly different ones!) outside the selection. Rows that do not get a left hand indicator therefore are used only internally, at least in the current tree.
+* A left hand indicator was added. When a collapsed (vertical) element is selected, every row that descends from this element gets an indicator that shows its relation to rows outside the selection. Rows that do not get a left hand indicator therefore are used only internally, at least in the current tree.
 
 
 ### Snapshots

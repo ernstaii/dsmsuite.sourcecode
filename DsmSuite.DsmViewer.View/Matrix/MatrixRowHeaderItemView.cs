@@ -179,7 +179,7 @@ namespace DsmSuite.DsmViewer.View.Matrix
                     {
                         case IndicatorViewMode.Default:
                             {
-                                SolidColorBrush brush = GetIndicatorColor();
+                                Brush brush = GetIndicatorColor();
                                 if (brush != null)
                                     dc.DrawRectangle(brush, null, indicatorRect);
                             }
@@ -195,12 +195,21 @@ namespace DsmSuite.DsmViewer.View.Matrix
                     }
 
                     //---- Left hand indicator
+                    indicatorRect = new Rect(_viewModel.IsExpandable ? 12.0 : 1.0,
+                            1.0, _indicatorWidth, ActualHeight - _theme.SpacingWidth);
+                    if (_viewModel.IsConsumerIn  &&  _viewModel.IsProviderIn)
                     {
-                        indicatorRect = new Rect(1.0, 1.0, _indicatorWidth, ActualHeight - _theme.SpacingWidth);
-                        SolidColorBrush brush = GetInnerIndicatorColor();
-                        if (brush != null)
-                            dc.DrawRectangle(brush, null, indicatorRect);
+                        Rect top = new Rect(indicatorRect.X, indicatorRect.Y,
+                                indicatorRect.Width, indicatorRect.Height/2);
+                        Rect bottom = new Rect(indicatorRect.X, top.Bottom,
+                                indicatorRect.Width, indicatorRect.Height/2);
+                        dc.DrawRectangle(_theme.MatrixColorProvider, null, top);
+                        dc.DrawRectangle(_theme.MatrixColorConsumer, null, bottom);
                     }
+                    else if (_viewModel.IsConsumerIn)
+                        dc.DrawRectangle(_theme.MatrixColorConsumer, null, indicatorRect);
+                    else if (_viewModel.IsProviderIn)
+                        dc.DrawRectangle(_theme.MatrixColorProvider, null, indicatorRect);
 
                     //---- Element Label
                     if (ActualWidth > 70.0)
@@ -229,9 +238,9 @@ namespace DsmSuite.DsmViewer.View.Matrix
         /// Return the brush to use for the right hand consumer/producer indicator in the row,
         /// or null if this element is neither producer nor consumer.
         /// </summary>
-        private SolidColorBrush? GetIndicatorColor()
+        private Brush? GetIndicatorColor()
         {
-            SolidColorBrush brush = null;
+            Brush brush = null;
             if (_viewModel.IsConsumer  &&  _viewModel.IsProvider)
                 brush = _theme.MatrixColorCycle;
             else if (_viewModel.IsConsumer)
@@ -242,22 +251,6 @@ namespace DsmSuite.DsmViewer.View.Matrix
             return brush;
         }
 
-        /// <summary>
-        /// Return the brush to use for the left hand consumer/producer indicator in the row,
-        /// or null if this element is neither producer nor consumer for external elements.
-        /// </summary>
-        private SolidColorBrush GetInnerIndicatorColor()
-        {
-            SolidColorBrush brush = null;
-            if (_viewModel.IsConsumerIn  &&  _viewModel.IsProviderIn)
-                brush = _theme.MatrixColorCycle;
-            else if (_viewModel.IsConsumerIn)
-                brush = _theme.MatrixColorConsumer;
-            else if (_viewModel.IsProviderIn)
-                brush = _theme.MatrixColorProvider;
-
-            return brush;
-        }
 
         private void DrawExpander(DrawingContext dc, Point location)
         {
