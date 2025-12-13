@@ -1,4 +1,6 @@
-﻿namespace DsmSuite.Analyzer.Cpp.Test.Util
+﻿using System.Reflection;
+
+namespace DsmSuite.Analyzer.Cpp.Test.Util
 {
     class TestData
     {
@@ -8,7 +10,7 @@
             {
                 // Assemblies in build\Release\net8.0 or 
                 string pathExecutingAssembly = AppDomain.CurrentDomain.BaseDirectory;
-                return Path.GetFullPath(Path.Combine(pathExecutingAssembly, @"..\..\..\DsmSuite.Analyzer.Cpp.Test.Data"));
+                return Path.GetFullPath(Path.Combine(pathExecutingAssembly, @"..\..\..\..\DsmSuite.Analyzer.Cpp.Test.Data"));
             }
         }
     }

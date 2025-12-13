@@ -214,7 +214,7 @@ namespace DsmSuite.Analyzers.Python.Analysis
             Dictionary<string, string> relationProperties = new Dictionary<string, string>();
             relationProperties["line"] = line.ToString();
 
-            Logger.LogInfo($"Added relation from consumer='{consumerName}' to provoider='{providerName}'");
+            Logger.LogInfo($"Added relation from consumer='{consumerName}' to provider='{providerName}'");
             _model.AddRelation(consumerName, providerName, "dependency", 1, relationProperties);
         }
     }

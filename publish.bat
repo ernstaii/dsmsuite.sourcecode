@@ -1,5 +1,5 @@
 set TARGET=Publish\DsmSuite
-set PROJECTS=DsmSuite.Analyzer.Compare DsmSuite.Analyzer.DotNet DsmSuite.Analyzer.JDeps DsmSuite.Analyzer.UML DsmSuite.DsmViewer.View
+set PROJECTS=DsmSuite.Analyzer.Compare DsmSuite.Analyzer.Cpp DsmSuite.Analyzer.DotNet DsmSuite.Analyzer.JDeps DsmSuite.Analyzer.Python DsmSuite.Analyzer.UML DsmSuite.DsmViewer.View
 
 for %%p in (%PROJECTS%) do dotnet publish --no-build -p:PublishProfile=FolderProfile %%p
 
