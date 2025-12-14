@@ -1,14 +1,15 @@
-using Dsmviz.Analyzer.C4.Settings;
-using Dsmviz.Analyzer.C4.Test.Utils;
-using Dsmviz.Datamodel.Dsi.Core;
-using Dsmviz.Datamodel.Dsi.Interface;
+using DsmSuite.Analyzer.C4.Settings;
+using DsmSuite.Analyzer.C4.Test.Utils;
+using DsmSuite.Analyzer.Model.Core;
+using DsmSuite.Analyzer.Model.Interface;
 using System.Reflection;
 
-namespace Dsmviz.Analyzer.C4.Test.Analysis
+namespace DsmSuite.Analyzer.C4.Test.Analysis
 {
+    [TestClass]
     public class AnalyzerTest
     {
-        [Fact]
+        [TestMethod]
         public void TestAnalyze()
         {
             AnalyzerSettings analyzerSettings = AnalyzerSettings.CreateDefault();
@@ -22,62 +23,62 @@ namespace Dsmviz.Analyzer.C4.Test.Analysis
 
             // Main elements
             var elementUser = model.FindElementByName("User");
-            Assert.NotNull(elementUser);
+            Assert.IsNotNull(elementUser);
 
             var elementAdmin = model.FindElementByName("Admin");
-            Assert.NotNull(elementAdmin);
+            Assert.IsNotNull(elementAdmin);
 
             var elementSoftwareSystem = model.FindElementByName("Software System");
-            Assert.NotNull(elementSoftwareSystem);
+            Assert.IsNotNull(elementSoftwareSystem);
 
             var elementSoftwareSystemApp1 = model.FindElementByName("Software System.Web Application 1");
-            Assert.NotNull(elementSoftwareSystemApp1);
+            Assert.IsNotNull(elementSoftwareSystemApp1);
 
             var elementSoftwareSystemApp2 = model.FindElementByName("Software System.Web Application 2");
-            Assert.NotNull(elementSoftwareSystemApp2);
+            Assert.IsNotNull(elementSoftwareSystemApp2);
 
             var elementSoftwareSystemApp3 = model.FindElementByName("Software System.Web Application 3");
-            Assert.NotNull(elementSoftwareSystemApp3);
+            Assert.IsNotNull(elementSoftwareSystemApp3);
 
             var elementUsersController = model.FindElementByName("Software System.Web Application 2.Users Controller");
-            Assert.NotNull(elementUsersController);
+            Assert.IsNotNull(elementUsersController);
 
             var elementPermissionsController = model.FindElementByName("Software System.Web Application 2.Permissions Controller");
-            Assert.NotNull(elementPermissionsController);
+            Assert.IsNotNull(elementPermissionsController);
 
             var elementDatabase1 = model.FindElementByName("Software System.Database1");
-            Assert.NotNull(elementDatabase1);
+            Assert.IsNotNull(elementDatabase1);
 
             var elementDatabase2 = model.FindElementByName("Software System.Database2");
-            Assert.NotNull(elementDatabase2);
+            Assert.IsNotNull(elementDatabase2);
 
             var elementWebserver1 = model.FindElementByName("Deployments.Development.Web Server 1");
-            Assert.NotNull(elementWebserver1);
+            Assert.IsNotNull(elementWebserver1);
 
             var elementContainerInstance1 = model.FindElementByName("Deployments.Development.Web Server 1.webapp1instance");
-            Assert.NotNull(elementContainerInstance1);
+            Assert.IsNotNull(elementContainerInstance1);
 
             var elementContainerInstance2 = model.FindElementByName("Deployments.Development.Web Server 1.webapp2instance");
-            Assert.NotNull(elementContainerInstance2);
+            Assert.IsNotNull(elementContainerInstance2);
 
             var elementWebserver2 = model.FindElementByName("Deployments.Development.Web Server 2");
-            Assert.NotNull(elementWebserver2);
+            Assert.IsNotNull(elementWebserver2);
 
             var elementContainerInstance3 = model.FindElementByName("Deployments.Development.Web Server 2.webapp3instance");
-            Assert.NotNull(elementContainerInstance3);
+            Assert.IsNotNull(elementContainerInstance3);
 
             var elementDatabaseServer = model.FindElementByName("Deployments.Development.Database Server");
-            Assert.NotNull(elementDatabaseServer);
+            Assert.IsNotNull(elementDatabaseServer);
 
             var elementContainerInstance4 = model.FindElementByName("Deployments.Development.Web Server 2.Redis Server");
-            Assert.NotNull(elementContainerInstance4);
+            Assert.IsNotNull(elementContainerInstance4);
 
             var elementContainerInstance5 = model.FindElementByName("Deployments.Development.Web Server 2.webapp3instance");
-            Assert.NotNull(elementContainerInstance5);
+            Assert.IsNotNull(elementContainerInstance5);
 
             // Main relations
-            Assert.True(model.DoesRelationExist(elementUser.Id, elementSoftwareSystem.Id));
-            Assert.True(model.DoesRelationExist(elementUser.Id, elementSoftwareSystemApp1.Id));
+            Assert.IsTrue(model.DoesRelationExist(elementUser.Id, elementSoftwareSystem.Id));
+            Assert.IsTrue(model.DoesRelationExist(elementUser.Id, elementSoftwareSystemApp1.Id));
 
         }
     }

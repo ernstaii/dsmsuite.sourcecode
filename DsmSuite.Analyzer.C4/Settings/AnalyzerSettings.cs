@@ -1,8 +1,8 @@
-﻿using Dsmviz.Util;
+﻿using DsmSuite.Common.Util;
 using System.Xml.Serialization;
 using System.Xml;
 
-namespace Dsmviz.Analyzer.C4.Settings
+namespace DsmSuite.Analyzer.C4.Settings
 {
     [Serializable]
     public class InputSettings

@@ -1,9 +1,9 @@
-﻿using Dsmviz.Analyzer.C4.Settings;
-using Dsmviz.Datamodel.Dsi.Interface;
-using Dsmviz.Util;
+﻿using DsmSuite.Analyzer.C4.Settings;
+using DsmSuite.Analyzer.Model.Interface;
+using DsmSuite.Common.Util;
 using System.Text.Json;
 
-namespace Dsmviz.Analyzer.C4.Analysis
+namespace DsmSuite.Analyzer.C4.Analysis
 {
     public class Analyzer
     {

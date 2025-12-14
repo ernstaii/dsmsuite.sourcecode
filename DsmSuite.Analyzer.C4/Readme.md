@@ -1,4 +1,4 @@
-# Dsmviz.Analyzer.C4
+# DsmSuite.Analyzer.C4
 
 This is a command line tool to generate DSI files from C4 diagrams.
 

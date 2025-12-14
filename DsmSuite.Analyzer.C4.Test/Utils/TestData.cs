@@ -1,4 +1,4 @@
-﻿namespace Dsmviz.Analyzer.C4.Test.Utils
+﻿namespace DsmSuite.Analyzer.C4.Test.Utils
 {
     class TestData
     {
@@ -8,7 +8,7 @@
             {
                 string testData = "Examples";
                 string pathExecutingAssembly = AppDomain.CurrentDomain.BaseDirectory;
-                return Path.GetFullPath(Path.Combine(pathExecutingAssembly, testData));
+                return Path.GetFullPath(Path.Combine(pathExecutingAssembly, @"..\..\..", testData));
             }
         }
 

@@ -1,9 +1,9 @@
-﻿using Dsmviz.Analyzer.C4.Settings;
-using Dsmviz.Datamodel.Dsi.Core;
-using Dsmviz.Util;
+﻿using DsmSuite.Analyzer.C4.Settings;
+using DsmSuite.Analyzer.Model.Core;
+using DsmSuite.Common.Util;
 using System.Reflection;
 
-namespace Dsmviz.Analyzer.C4
+namespace DsmSuite.Analyzer.C4
 {
     public class ConsoleAction : ConsoleActionBase
     {
