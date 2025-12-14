@@ -1,11 +1,11 @@
-﻿using DsmSuite.Analyzer.Jdeps.Settings;
+﻿using DsmSuite.Analyzer.Dot.Settings;
 using DsmSuite.Analyzer.Model.Interface;
 using DsmSuite.Common.Util;
 
-namespace DsmSuite.Analyzer.Jdeps.Analysis
+namespace DsmSuite.Analyzer.Dot.Analysis
 {
     /// <summary>
-    /// Java code analyzer which uses Java SDK 8 jdeps tools to analyze dependencies between types.
+    /// Analyzer for graphviz .dot files, e.g. produced by Java SDK 8 jdeps tool.
     /// </summary>
     public class Analyzer
     {

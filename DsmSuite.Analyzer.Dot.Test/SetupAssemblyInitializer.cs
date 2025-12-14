@@ -1,7 +1,7 @@
 ﻿using DsmSuite.Common.Util;
 using System.Reflection;
 
-namespace DsmSuite.Analyzer.Jdeps.Test
+namespace DsmSuite.Analyzer.Dot.Test
 {
     [TestClass]
     public class SetupAssemblyInitializer

@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace DsmSuite.Analyzer.Jdeps.Settings
+namespace DsmSuite.Analyzer.Dot.Settings
 {
     [Serializable]
     public class InputSettings

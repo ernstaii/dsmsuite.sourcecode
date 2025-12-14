@@ -1,9 +1,9 @@
-﻿using DsmSuite.Analyzer.Jdeps.Settings;
+﻿using DsmSuite.Analyzer.Dot.Settings;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 using System.Reflection;
 
-namespace DsmSuite.Analyzer.Jdeps
+namespace DsmSuite.Analyzer.Dot
 {
     public class ConsoleAction : ConsoleActionBase
     {
@@ -55,7 +55,7 @@ namespace DsmSuite.Analyzer.Jdeps
 
             if (args.Length < 1)
             {
-                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Jdeps <settingsfile>");
+                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Dot <settingsfile>");
             }
             else
             {

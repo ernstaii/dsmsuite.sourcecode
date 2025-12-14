@@ -52,17 +52,17 @@
 		</ComponentGroup>
 
 		<ComponentGroup Id="JavaAnalyzerComponents" Directory="JAVA_ANALYZER_INSTALL_FOLDER">
-			<Component Id="DsmSuite.Analyzer.Jdeps.exe" Guid="01EC8FED-31D0-45B4-B3FA-E864BCF54EA0">
-				<File Id="DsmSuite.Analyzer.Jdeps.exe" Source="..\build\Release\net8.0\DsmSuite.Analyzer.Jdeps.exe" KeyPath="yes" Checksum="yes" />
+			<Component Id="DsmSuite.Analyzer.Dot.exe" Guid="01EC8FED-31D0-45B4-B3FA-E864BCF54EA0">
+				<File Id="DsmSuite.Analyzer.Dot.exe" Source="..\build\Release\net8.0\DsmSuite.Analyzer.Dot.exe" KeyPath="yes" Checksum="yes" />
 			</Component>
-			<Component Id="DsmSuite.Analyzer.Model.Jdeps.dll" Guid="6D750515-B877-48F2-8C10-939D7720DAD1">
-				<File Id="DsmSuite.Analyzer.Model.Jdeps.dll" Source="..\build\Release\net8.0\DsmSuite.Analyzer.Model.dll" KeyPath="yes" Checksum="yes" />
+			<Component Id="DsmSuite.Analyzer.Model.Dot.dll" Guid="6D750515-B877-48F2-8C10-939D7720DAD1">
+				<File Id="DsmSuite.Analyzer.Model.Dot.dll" Source="..\build\Release\net8.0\DsmSuite.Analyzer.Model.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
-			<Component Id="DsmSuite.Common.Model.Jdeps.dll" Guid="FBC3F60A-6B46-4365-8BD6-D06E9615A3DA">
-				<File Id="DsmSuite.Common.Model.Jdeps.dll" Source="..\build\Release\net8.0\DsmSuite.Common.Model.dll" KeyPath="yes" Checksum="yes" />
+			<Component Id="DsmSuite.Common.Model.Dot.dll" Guid="FBC3F60A-6B46-4365-8BD6-D06E9615A3DA">
+				<File Id="DsmSuite.Common.Model.Dot.dll" Source="..\build\Release\net8.0\DsmSuite.Common.Model.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
-			<Component Id="DsmSuite.Common.Util.Jdeps.dll" Guid="E75C3A3A-CE7D-44E4-B585-A0DFB0DC4D50">
-				<File Id="DsmSuite.Common.Util.Jdeps.dll" Source="..\build\Release\net8.0\DsmSuite.Common.Util.dll" KeyPath="yes" Checksum="yes" />
+			<Component Id="DsmSuite.Common.Util.Dot.dll" Guid="E75C3A3A-CE7D-44E4-B585-A0DFB0DC4D50">
+				<File Id="DsmSuite.Common.Util.Dot.dll" Source="..\build\Release\net8.0\DsmSuite.Common.Util.dll" KeyPath="yes" Checksum="yes" />
 			</Component>
 		</ComponentGroup>
 
@@ -192,11 +192,11 @@
 			<ComponentRef Id="Mono.Cecil.Rocks.DotNet.dll" />
 		</Feature>
 
-		<Feature Id="JavaAnalyzerFeature" Title="DSM Suite JDeps Analyzer" Level="1">
-			<ComponentRef Id="DsmSuite.Analyzer.Jdeps.exe" />
-			<ComponentRef Id="DsmSuite.Analyzer.Model.Jdeps.dll" />
-			<ComponentRef Id="DsmSuite.Common.Model.Jdeps.dll" />
-			<ComponentRef Id="DsmSuite.Common.Util.Jdeps.dll" />
+		<Feature Id="JavaAnalyzerFeature" Title="DSM Suite Dot Analyzer" Level="1">
+			<ComponentRef Id="DsmSuite.Analyzer.Dot.exe" />
+			<ComponentRef Id="DsmSuite.Analyzer.Model.Dot.dll" />
+			<ComponentRef Id="DsmSuite.Common.Model.Dot.dll" />
+			<ComponentRef Id="DsmSuite.Common.Util.Dot.dll" />
 		</Feature>
 
 		<Feature Id="UmlAnalyzerFeature" Title="DSM Suite UML Analyzer" Level="1">

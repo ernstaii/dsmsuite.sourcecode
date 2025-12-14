@@ -1,9 +1,9 @@
-﻿using DsmSuite.Analyzer.Jdeps.Settings;
+﻿using DsmSuite.Analyzer.Dot.Settings;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Analyzer.Model.Interface;
 using System.Reflection;
 
-namespace DsmSuite.Analyzer.Jdeps.Test.Analysis
+namespace DsmSuite.Analyzer.Dot.Test.Analysis
 {
     [TestClass]
     public class AnalyzerTest
@@ -15,7 +15,7 @@ namespace DsmSuite.Analyzer.Jdeps.Test.Analysis
             analyzerSettings.Input.DotFileDirectory = ".";
 
             IDsiModel model = new DsiModel("Test", analyzerSettings.Transformation.IgnoredNames, Assembly.GetExecutingAssembly());
-            Jdeps.Analysis.Analyzer analyzer = new Jdeps.Analysis.Analyzer(model, analyzerSettings, null);
+            Dot.Analysis.Analyzer analyzer = new Dot.Analysis.Analyzer(model, analyzerSettings, null);
             analyzer.Analyze();
 
             Assert.AreEqual(5, model.CurrentElementCount);
