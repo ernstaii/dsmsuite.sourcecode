@@ -2,12 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Xml.Serialization;
+using DsmSuite.Analyzer.Common;
 using DsmSuite.Analyzer.DotNet.Settings;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 
 namespace DsmSuite.Analyzer.DotNet
 {
+    public class DotNetAnalyzer : IAnalyzer {
+        ///<inheritdoc/>
+        public ISettings CreateDefaultSettings() {
+            return AnalyzerSettings.CreateDefault();
+        }
+
+        ///<inheritdoc/>
+        public XmlSerializer GetSettingsSerializer() {
+            return new XmlSerializer(typeof(AnalyzerSettings));
+        }
+    }
+
+
     public class ConsoleAction : ConsoleActionBase
     {
         private readonly AnalyzerSettings _analyzerSettings;

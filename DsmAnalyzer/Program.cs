@@ -1,5 +1,9 @@
 ﻿using DsmSuite.Analyzer.Common;
 using DsmSuite.Common.Util;
+using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
+using System.Xml;
+using System.Xml.Serialization;
 
 
 namespace DsmAnalyzer
@@ -16,15 +20,21 @@ namespace DsmAnalyzer
             System.Environment.Exit(res);
         }
 
-
+        //======================== Commandline arguments ==============================
         /// <summary>Specified analyzer to use.</summary>
         IAnalyzer? analyzer;
-        ///<summary>Specified config file to create/use.</summary>
-        string? configfile;
+        ///<summary>Specified settings file to create or read.</summary>
+        string? settingsfile;
+        ///<summary>Output file for the analysis.</summary>
+        string? outputfile;
+        ///<summary>Non-parsed commandline arguments, in commandline order.</summary>
+        IEnumerable<string>? otherArgs;
 
         /// <summary>Maps names to supported analyzers.</summary>
+        /// Keeps these in alphabetical order for a nicer help().
         private Dictionary<string, IAnalyzer> analyzers = new() {
             { "dot", null },
+            { "dotnet", new DsmSuite.Analyzer.DotNet.DotNetAnalyzer() },
             { "jdeps", null },
             { "cpp", null }
         };
@@ -37,15 +47,16 @@ namespace DsmAnalyzer
             } catch (ParseException e) {
                 error(e.Message);
             }
+            otherArgs = args;
 
             if (cmd == 'h')
                 return 0;
             else if (cmd == 'c') {
                 if (analyzer == null)
                     error("No analyzer specified.");
-                createConfig(analyzer!, configfile!, args);
+                CreateSettingsFile(analyzer!, settingsfile!);
             } else if (cmd == 0) {
-                if (analyzer == null  &&  configfile == null)
+                if (analyzer == null  &&  settingsfile == null)
                     error("Neither language nor analyzer specified.");
             } else
                 throw new Exception($"Internal error. Unknown command {cmd}");
@@ -54,7 +65,38 @@ namespace DsmAnalyzer
         }
 
 
-        void createConfig(IAnalyzer analyzer, string fname, IEnumerable<string> args) {
+        /// <summary>
+        /// Create a settings file from the default, update it with commandline arguments
+        /// and write it to fname, or to stdout, if fname == "-".
+        /// </summary>
+        void CreateSettingsFile(IAnalyzer analyzer, string fname) {
+            XmlSerializer serializer = analyzer.GetSettingsSerializer();
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings() { Indent = true };
+            ISettings settings = UpdateSettings(analyzer.CreateDefaultSettings());
+
+            if (fname == "-") {
+                // Note that write to stdout doesn't use the utf-8 encoding.
+                using (XmlWriter xmlWriter = XmlWriter.Create(Console.Out, xmlWriterSettings)) {
+                    serializer.Serialize(xmlWriter, settings);
+                }
+            } else {
+                using (XmlWriter xmlWriter = XmlWriter.Create(fname, xmlWriterSettings)) {
+                    serializer.Serialize(xmlWriter, settings);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update settings with the options and arguments passed on the commandline and
+        /// return the updated settings.
+        /// </summary>
+        ISettings UpdateSettings(ISettings settings) {
+            if (outputfile != null)
+                settings.SetOutput(outputfile);
+            if (otherArgs != null)
+                foreach (string arg in otherArgs)
+                    settings.AddInput(arg);
+            return settings;
         }
 
 
@@ -75,7 +117,7 @@ namespace DsmAnalyzer
                 if (opt == "--")
                     break;
 
-                bool needsarg = "fL".Contains(opt[1]);
+                bool needsarg = "cfLo".Contains(opt[1]);
 
                 if (opt.Length > 2)
                     args.Push(needsarg ? opt.Remove(0,2) : opt.Remove(1, 1));
@@ -85,14 +127,19 @@ namespace DsmAnalyzer
                 switch (opt[1]) {
                     case 'c':
                         command = 'c';
-                        configfile = args.Pop();
+                        settingsfile = args.Pop();
                         break;
                     case 'f':
-                        configfile = args.Pop();
+                        settingsfile = args.Pop();
                         break;
                     case 'h':
                         help();
                         return 'h';
+                    case 'o':
+                        if (outputfile != null)
+                            throw new ParseException($"-o can be used only once.");
+                        outputfile = args.Pop();
+                        break;
                     case 'L': {
                             String arg = args.Pop();
                             if (!analyzers.TryGetValue(arg, out analyzer))
@@ -113,12 +160,14 @@ namespace DsmAnalyzer
 
         private void help() {
             Console.WriteLine(
-                "Usage: DsmAnalyzer [options] [inputs...]\n" +
+                "Usage: DsmAnalyzer [options] [inputfile...]\n" +
                 "  -h       Show this help text\n"+
                 "  -V       Show version information\n" +
-                "  -f file  Use config from file\n" +
-                "  -c file  Create config file\n" +
-                ""
+                "  -L lang  Use analyse for language lang\n" +
+                "  -f file  Use settings from file\n" +
+                "  -c file  Create settings file\n" +
+                "  -o file  Outputfile for the analysis\n" +
+                "Supported languages: " + string.Join(", ", analyzers.Keys) + "\n"
             );
         }
 

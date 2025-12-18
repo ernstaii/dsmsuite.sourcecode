@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DsmSuite.Analyzer.Common\DsmSuite.Analyzer.Common.csproj" />
     <ProjectReference Include="..\DsmSuite.Analyzer.DotNet.Lib\DsmSuite.Analyzer.DotNet.Lib.csproj" />
     <ProjectReference Include="..\DsmSuite.Analyzer.Model\DsmSuite.Analyzer.Model.csproj" />
     <ProjectReference Include="..\DsmSuite.Common.Util\DsmSuite.Common.Util.csproj" />
