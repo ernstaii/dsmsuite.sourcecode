@@ -20,6 +20,13 @@ namespace DsmSuite.Analyzer.DotNet
         public XmlSerializer GetSettingsSerializer() {
             return new XmlSerializer(typeof(AnalyzerSettings));
         }
+
+        ///<inheritdoc/>
+        public void Analyze(ISettings settings, string? path) {
+            AnalyzerSettings s = (AnalyzerSettings) settings;
+            s.ResolvePaths(path);
+            new ConsoleAction(s).Execute();
+        }
     }
 
 
