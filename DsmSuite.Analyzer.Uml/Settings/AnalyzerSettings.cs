@@ -1,4 +1,5 @@
-﻿using DsmSuite.Common.Util;
+﻿using DsmSuite.Analyzer.Common;
+using DsmSuite.Common.Util;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -21,11 +22,23 @@ namespace DsmSuite.Analyzer.Uml.Settings
     /// Settings used during analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public Input Input { get; set; }
         public Output Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            if (!String.IsNullOrEmpty(Input.Filename))
+                Logger.LogWarning("Replacing input file");
+            Input.Filename = fname;
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
 
         public static AnalyzerSettings CreateDefault()
         {
@@ -68,7 +81,7 @@ namespace DsmSuite.Analyzer.Uml.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
             Input.Filename = FilePath.ResolveFile(settingFilePath, Input.Filename);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);

@@ -1,12 +1,12 @@
 ﻿using DsmSuite.Analyzer.Model.Interface;
-using DsmSuite.Analyzers.Python.Settings;
+using DsmSuite.Analyzer.Python.Settings;
 using DsmSuite.Common.Util;
 using System.Runtime.Intrinsics.Arm;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
-namespace DsmSuite.Analyzers.Python.Analysis
+namespace DsmSuite.Analyzer.Python.Analysis
 {
     public class DependencyRoot
     {

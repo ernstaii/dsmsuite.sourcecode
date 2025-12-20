@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
 using DsmSuite.Common.Util;
+using DsmSuite.Analyzer.Common;
 
-namespace DsmSuite.Analyzers.Python.Settings
+namespace DsmSuite.Analyzer.Python.Settings
 {
     [Serializable]
     public class InputSettings
@@ -26,11 +27,23 @@ namespace DsmSuite.Analyzers.Python.Settings
     /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public InputSettings Input { get; set; }
         public OutputSettings Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            if (!String.IsNullOrEmpty(Input.JsonFilename))
+                Logger.LogWarning("Replacing input file");
+            Input.JsonFilename = fname;
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
 
         public static AnalyzerSettings CreateDefault()
         {
@@ -74,7 +87,7 @@ namespace DsmSuite.Analyzers.Python.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
             Input.JsonFilename = FilePath.ResolveFile(settingFilePath, Input.JsonFilename);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);

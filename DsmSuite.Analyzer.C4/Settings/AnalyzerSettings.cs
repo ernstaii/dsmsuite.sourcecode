@@ -1,6 +1,8 @@
 ﻿using DsmSuite.Common.Util;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Runtime;
+using DsmSuite.Analyzer.Common;
 
 namespace DsmSuite.Analyzer.C4.Settings
 {
@@ -29,12 +31,24 @@ namespace DsmSuite.Analyzer.C4.Settings
     /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public InputSettings Input { get; set; }
         public TransformationSettings Transformation { get; set; }
         public OutputSettings Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            if (!String.IsNullOrEmpty(Input.Workspace))
+                Logger.LogWarning("Replacing input file");
+            Input.Workspace = fname;
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
 
         public static AnalyzerSettings CreateDefault()
         {
@@ -48,6 +62,8 @@ namespace DsmSuite.Analyzer.C4.Settings
                 Transformation = new TransformationSettings(),
                 Output = new OutputSettings(),
             };
+
+            analyzerSettings.Transformation.IgnoredNames = new();
 
             analyzerSettings.Output.Filename = "workspace.dsi";
             analyzerSettings.Output.Compress = true;
@@ -79,7 +95,7 @@ namespace DsmSuite.Analyzer.C4.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);
         }

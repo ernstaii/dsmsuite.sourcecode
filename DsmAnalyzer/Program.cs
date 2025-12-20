@@ -39,11 +39,14 @@ namespace DsmAnalyzer
 
         /// <summary>Maps names to supported analyzers.</summary>
         /// Keep these in alphabetical order for a nicer help().
-        private Dictionary<string, IAnalyzer> analyzers = new() {
-            { "dot", null },
+        private Dictionary<string, IAnalyzer> analyzers = new(StringComparer.OrdinalIgnoreCase) {
+            { "C4",     new DsmSuite.Analyzer.C4.C4Analyzer() },
+            { "cpp",    new DsmSuite.Analyzer.Cpp.CppAnalyzer() },
+            { "dot",    new DsmSuite.Analyzer.Dot.DotAnalyzer() },
             { "dotnet", new DsmSuite.Analyzer.DotNet.DotNetAnalyzer() },
-            { "jdeps", null },
-            { "cpp", null }
+            { "python", new DsmSuite.Analyzer.Python.PythonAnalyzer() },
+            { "uml",    new DsmSuite.Analyzer.Uml.UMLAnalyzer() },
+            //{ "jdeps", null },
         };
 
 
@@ -286,10 +289,13 @@ namespace DsmAnalyzer
                             loglevel = level;
                         }
                         break;
-                    case 'L':
-                        analyzerName = args.Pop();
-                        if (!analyzers.TryGetValue(analyzerName, out analyzer))
-                            throw new ParseException($"Unknown language: {analyzerName}");
+                    case 'L': {
+                            string name = args.Pop();
+                            if (!analyzers.TryGetValue(name, out analyzer))
+                                throw new ParseException($"Unknown language: {name}");
+                            // normalize case to that in dictionary.
+                            analyzerName = analyzers.First(kvp => analyzers.Comparer.Equals(kvp.Key, name)).Key;
+                        }
                         break;
                     case 'V':
                         Console.WriteLine(SystemInfo.VersionLong);

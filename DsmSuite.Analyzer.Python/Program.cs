@@ -1,11 +1,33 @@
-﻿using DsmSuite.Analyzer.Model.Core;
-using DsmSuite.Analyzers.Python.Analysis;
-using DsmSuite.Analyzers.Python.Settings;
+﻿using DsmSuite.Analyzer.Common;
+using DsmSuite.Analyzer.Model.Core;
+using DsmSuite.Analyzer.Python.Analysis;
+using DsmSuite.Analyzer.Python.Settings;
 using DsmSuite.Common.Util;
 using System.Reflection;
+using System.Xml.Serialization;
 
-namespace DsmSuite.Analyzers.Python
+namespace DsmSuite.Analyzer.Python
 {
+    public class PythonAnalyzer : IAnalyzer {
+        ///<inheritdoc/>
+        public ISettings CreateDefaultSettings() {
+            return AnalyzerSettings.CreateDefault();
+        }
+
+        ///<inheritdoc/>
+        public XmlSerializer GetSettingsSerializer() {
+            return new XmlSerializer(typeof(AnalyzerSettings));
+        }
+
+        ///<inheritdoc/>
+        public void Analyze(ISettings settings, string? path) {
+            AnalyzerSettings s = (AnalyzerSettings) settings;
+            s.ResolvePaths(path);
+            new ConsoleAction(s).Execute();
+        }
+    }
+
+
     public class ConsoleAction : ConsoleActionBase
     {
         private readonly AnalyzerSettings _analyzerSettings;
@@ -35,7 +57,7 @@ namespace DsmSuite.Analyzers.Python
         {
             DsiModel model = new DsiModel("Analyzer", new List<string>(), Assembly.GetExecutingAssembly());
 
-            Analysis.Analyzer analyzer = new Analysis.Analyzer(model, _analyzerSettings, this);
+            Analysis.Analyzer analyzer = new(model, _analyzerSettings, this);
             analyzer.Analyze();
 
             model.Save(_analyzerSettings.Output.Filename, _analyzerSettings.Output.Compress, this);

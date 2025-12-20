@@ -1,4 +1,5 @@
-﻿using DsmSuite.Common.Util;
+﻿using DsmSuite.Analyzer.Common;
+using DsmSuite.Common.Util;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -27,12 +28,24 @@ namespace DsmSuite.Analyzer.Dot.Settings
     /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public InputSettings Input { get; set; }
         public TransformationSettings Transformation { get; set; }
         public OutputSettings Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            if (!String.IsNullOrEmpty(Input.DotFileDirectory))
+                Logger.LogWarning("Replacing input file");
+            Input.DotFileDirectory = fname;
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
 
         public static AnalyzerSettings CreateDefault()
         {
@@ -44,7 +57,7 @@ namespace DsmSuite.Analyzer.Dot.Settings
                 Output = new OutputSettings(),
             };
 
-            analyzerSettings.Input.DotFileDirectory = "."; // Use analyzer from directory containing dot files
+            analyzerSettings.Input.DotFileDirectory = "";
 
             analyzerSettings.Transformation.IgnoredNames = new List<string>();
 
@@ -79,7 +92,7 @@ namespace DsmSuite.Analyzer.Dot.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
             Input.DotFileDirectory = FilePath.ResolveFile(settingFilePath, Input.DotFileDirectory);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);

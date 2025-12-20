@@ -1,10 +1,31 @@
 ﻿using DsmSuite.Analyzer.C4.Settings;
+using DsmSuite.Analyzer.Common;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace DsmSuite.Analyzer.C4
 {
+    public class C4Analyzer : IAnalyzer {
+        ///<inheritdoc/>
+        public ISettings CreateDefaultSettings() {
+            return AnalyzerSettings.CreateDefault();
+        }
+
+        ///<inheritdoc/>
+        public XmlSerializer GetSettingsSerializer() {
+            return new XmlSerializer(typeof(AnalyzerSettings));
+        }
+
+        ///<inheritdoc/>
+        public void Analyze(ISettings settings, string? path) {
+            AnalyzerSettings s = (AnalyzerSettings) settings;
+            s.ResolvePaths(path);
+            new ConsoleAction(s).Execute();
+        }
+    }
+
     public class ConsoleAction : ConsoleActionBase
     {
         private readonly AnalyzerSettings _analyzerSettings;

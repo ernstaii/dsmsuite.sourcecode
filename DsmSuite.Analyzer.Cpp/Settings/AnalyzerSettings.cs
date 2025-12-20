@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Transformations.Settings;
+﻿using DsmSuite.Analyzer.Common;
+using DsmSuite.Analyzer.Transformations.Settings;
 using DsmSuite.Common.Util;
 using System.Xml;
 using System.Xml.Serialization;
@@ -63,13 +64,23 @@ namespace DsmSuite.Analyzer.Cpp.Settings
     /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public InputSettings Input { get; set; }
         public AnalysisSettings Analysis { get; set; }
         public TransformationSettings Transformation { get; set; }
         public OutputSettings Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            throw new NotSupportedException("Input must be specified in the settings file.");
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
 
         public static AnalyzerSettings CreateDefault()
         {
@@ -127,7 +138,7 @@ namespace DsmSuite.Analyzer.Cpp.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
             Input.RootDirectory = FilePath.ResolveFile(settingFilePath, Input.RootDirectory);
             Input.SourceDirectories = FilePath.ResolveFiles(settingFilePath, Input.SourceDirectories);

@@ -8,8 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DsmSuite.Analyzer.C4\DsmSuite.Analyzer.C4.csproj" />
     <ProjectReference Include="..\DsmSuite.Analyzer.Common\DsmSuite.Analyzer.Common.csproj" />
+    <ProjectReference Include="..\DsmSuite.Analyzer.Cpp\DsmSuite.Analyzer.Cpp.csproj" />
     <ProjectReference Include="..\DsmSuite.Analyzer.DotNet\DsmSuite.Analyzer.DotNet.csproj" />
+    <ProjectReference Include="..\DsmSuite.Analyzer.Dot\DsmSuite.Analyzer.Dot.csproj" />
+    <ProjectReference Include="..\DsmSuite.Analyzer.Python\DsmSuite.Analyzer.Python.csproj" />
+    <ProjectReference Include="..\DsmSuite.Analyzer.Uml\DsmSuite.Analyzer.Uml.csproj" />
     <ProjectReference Include="..\DsmSuite.Common.Util\DsmSuite.Common.Util.csproj" />
   </ItemGroup>
 
