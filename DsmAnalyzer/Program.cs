@@ -1,7 +1,6 @@
 ﻿using DsmSuite.Analyzer.Common;
 using DsmSuite.Common.Util;
-using System.Collections.ObjectModel;
-using System.Reflection.Metadata.Ecma335;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -12,6 +11,8 @@ namespace DsmAnalyzer
 
     internal class Program
     {
+        private const string XMLROOT = "DsmAnalyzer";
+
         /// <summary>Runner for the application.</summary>
         static public void Main(string[] args)
         {
@@ -20,24 +21,31 @@ namespace DsmAnalyzer
             System.Environment.Exit(res);
         }
 
-        //======================== Commandline arguments ==============================
-        /// <summary>Specified analyzer to use.</summary>
+        //======================== (Mostly) Commandline arguments ==============================
+        /// <summary>
+        /// Analyzer to use, from the commandline if specified; otherwise from the settingsfile.
+        /// </summary>
         IAnalyzer? analyzer;
+        /// <summary>Name of the used Analyzer.</summary>
+        string? analyzerName;
         ///<summary>Specified settings file to create or read.</summary>
         string? settingsfile;
         ///<summary>Output file for the analysis.</summary>
         string? outputfile;
         ///<summary>Non-parsed commandline arguments, in commandline order.</summary>
         IEnumerable<string>? otherArgs;
+        ///<summary>Log level for the Analyzer</summary>
+        LogLevel? loglevel;
 
         /// <summary>Maps names to supported analyzers.</summary>
-        /// Keeps these in alphabetical order for a nicer help().
+        /// Keep these in alphabetical order for a nicer help().
         private Dictionary<string, IAnalyzer> analyzers = new() {
             { "dot", null },
             { "dotnet", new DsmSuite.Analyzer.DotNet.DotNetAnalyzer() },
             { "jdeps", null },
             { "cpp", null }
         };
+
 
         int main(string[] argArray) {
             int cmd = 0;
@@ -58,6 +66,7 @@ namespace DsmAnalyzer
             } else if (cmd == 0) {
                 if (analyzer == null  &&  settingsfile == null)
                     error("Neither language nor analyzer specified.");
+                Analyze(analyzer, settingsfile);
             } else
                 throw new Exception($"Internal error. Unknown command {cmd}");
 
@@ -66,37 +75,167 @@ namespace DsmAnalyzer
 
 
         /// <summary>
+        /// Performs an analysis. If <c>fname</c> is null, a default configuration for <c>analyzer</c>
+        /// is created and completed with the commandline arguments.<br/>
+        /// If <c>fname</c> is not null, the commandline arguments are completed with the settings from
+        /// this file and then an analysis is executed. The commandline takes precedence, so the passed
+        /// analyzer takes precedence over the one specified in the settings file.<br/>
+        /// It both an analyzer and fname are null, an error is generated.
+        /// </summary>
+        void Analyze(IAnalyzer? analyzer, string? fname) {
+            ISettings settings;
+            string? rootdir;
+
+            if (fname == null) {
+                settings = analyzer!.CreateDefaultSettings();
+                rootdir = Directory.GetCurrentDirectory();
+            } else {
+                settings = ReadSettingsFile(fname);
+                rootdir = new FileInfo(fname).DirectoryName;
+            }
+            UpdateSettings(settings);
+            //WriteSettingsFile(analyzer ?? this.analyzer!, settings, "-"); return;
+
+            Logger.Init(Assembly.GetExecutingAssembly(), true);
+            analyzer!.Analyze(settings, rootdir);
+            Logger.Flush();
+        }
+
+
+        /// <summary>
         /// Create a settings file from the default, update it with commandline arguments
         /// and write it to fname, or to stdout, if fname == "-".
         /// </summary>
         void CreateSettingsFile(IAnalyzer analyzer, string fname) {
+            WriteSettingsFile(analyzer, UpdateSettings(analyzer.CreateDefaultSettings()), fname);
+        }
+
+
+        /// <summary>
+        /// Write the active frontend settings together with the given Analyzer settings to a new
+        /// file fname, or to stdout, if fname == "-".
+        /// </summary>
+        void WriteSettingsFile(IAnalyzer analyzer, ISettings settings, string fname) {
             XmlSerializer serializer = analyzer.GetSettingsSerializer();
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings() { Indent = true };
-            ISettings settings = UpdateSettings(analyzer.CreateDefaultSettings());
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
 
-            if (fname == "-") {
-                // Note that write to stdout doesn't use the utf-8 encoding.
-                using (XmlWriter xmlWriter = XmlWriter.Create(Console.Out, xmlWriterSettings)) {
-                    serializer.Serialize(xmlWriter, settings);
-                }
-            } else {
-                using (XmlWriter xmlWriter = XmlWriter.Create(fname, xmlWriterSettings)) {
-                    serializer.Serialize(xmlWriter, settings);
-                }
+            // Note that write to stdout doesn't use the utf-8 encoding.
+            using ( XmlWriter xmlWriter = fname == "-" ?
+                    XmlWriter.Create(Console.Out, xmlWriterSettings) :
+                    XmlWriter.Create(fname, xmlWriterSettings) ) {
+                xmlWriter.WriteStartDocument();
+                xmlWriter.WriteStartElement(XMLROOT);
+                WriteFrontendSettings(xmlWriter);
+                serializer.Serialize(xmlWriter, settings, ns);
+                xmlWriter.WriteEndElement();
+                xmlWriter.WriteEndDocument();
             }
         }
+
+
+        ///<summary>Write the frontend settings to the given XMLWriter.</summary>
+        public void WriteFrontendSettings(XmlWriter writer) {
+            XmlSerializer serializer = new XmlSerializer(typeof(DsmAnalyzerSettings));
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+            DsmAnalyzerSettings settings = new DsmAnalyzerSettings() { Language = analyzerName };
+            serializer.Serialize(writer, settings, ns);
+        }
+
+
+        /// <summary>
+        /// Read the given settings file. Empty commandline arguments are filled with
+        /// the frontend settings from the file. The analyzer settings are returned.
+        /// </summary>
+        ISettings ReadSettingsFile(string fname) {
+            ISettings settings;
+            FileInfo settingsFileInfo = new FileInfo(fname);
+
+            if (!settingsFileInfo.Exists)
+                error($"Settings file {fname} does not exist.");
+
+            using (XmlReader reader = XmlReader.Create(settingsFileInfo.FullName)) {
+                XmlForwardTo(reader, XMLROOT);
+                reader.ReadStartElement(XMLROOT);
+                MergeFrontendSettings(reader);  // Sets analyzer, if necessary
+                settings = ReadAnalyzerSettings(analyzer!, reader);
+            }
+
+            return settings;
+        }
+
+
+        /// <summary>
+        /// Read analyzer settings from reader and return them. In case of errors,
+        /// error() is invoked.
+        /// </summary>
+        ISettings ReadAnalyzerSettings(IAnalyzer analyzer, XmlReader reader) {
+            ISettings? settings;
+
+            XmlSerializer serializer = analyzer.GetSettingsSerializer();
+            settings = (ISettings?) serializer.Deserialize(reader);
+            if (settings == null)
+                error("Reading settings file failed. (not a settings file?)");
+
+            return settings!;
+        }
+
+
+        ///<summary>
+        /// Read the frontend settings from the given XmlReader and use them to set the
+        /// arguments that were not specified on the commandline.
+        /// Errors are handled by invoking error().
+        ///</summary>
+        public void MergeFrontendSettings(XmlReader reader) {
+            XmlForwardTo(reader, nameof(DsmAnalyzerSettings));
+            XmlSerializer serializer = new XmlSerializer(typeof(DsmAnalyzerSettings));
+            DsmAnalyzerSettings? settings = (DsmAnalyzerSettings?) serializer.Deserialize(reader);
+
+            if (settings == null)
+                error("Reading settings file failed. (not a settings file?)");
+            if (analyzer == null) {
+                if (settings!.Language == null)
+                    error($"No language in the settings file and not on the commandline either.");
+                if (!analyzers.TryGetValue(settings.Language!, out analyzer))
+                    error($"Unknown language in settings file: {settings.Language!}");
+            } else if (settings!.Language != null  &&  !analyzers.ContainsKey(settings.Language))
+                Console.Error.WriteLine($"Warning: Unknown language {settings.Language} in settings file.");
+        }
+
 
         /// <summary>
         /// Update settings with the options and arguments passed on the commandline and
         /// return the updated settings.
         /// </summary>
         ISettings UpdateSettings(ISettings settings) {
+            if (loglevel != null)
+                settings.LogLevel = (LogLevel) loglevel;
             if (outputfile != null)
                 settings.SetOutput(outputfile);
             if (otherArgs != null)
-                foreach (string arg in otherArgs)
-                    settings.AddInput(arg);
+                try {
+                    foreach (string arg in otherArgs)
+                        settings.AddInput(arg);
+                } catch (NotSupportedException) {
+                    error("Inputs on the commandline not supported for the selected language.");
+                }
             return settings;
+        }
+
+
+        /// <summary>
+        /// Read from reader until the next start tag. If this equals tag, return.
+        /// If not, or a read error occurs, error() is invoked.
+        /// </summary>
+        private void XmlForwardTo(XmlReader reader, string tag) {
+            do {
+                if (!reader.Read())
+                    error($"Failed to parse {reader.BaseURI}");
+            } while (reader.NodeType != XmlNodeType.Element);
+            if (reader.Name != tag)
+                error($"Malformed settings file {reader.BaseURI}: expected {tag} element");
         }
 
 
@@ -104,7 +243,7 @@ namespace DsmAnalyzer
         /// Parse the given commandline arguments and return an int indicating the command to execute.
         /// Options are consumed from args, unprocessed arguments remain.
         /// </summary>
-        /// <param name="args">Stack of argument; lefmost argument on top</param>
+        /// <param name="args">Stack of arguments; lefmost argument on top</param>
         /// <returns>0, 'c', 'h'</returns>
         /// <exception cref="ParseException"></exception>
         int parseArgs(Stack<string> args) {
@@ -117,7 +256,7 @@ namespace DsmAnalyzer
                 if (opt == "--")
                     break;
 
-                bool needsarg = "cfLo".Contains(opt[1]);
+                bool needsarg = "cfLov".Contains(opt[1]);
 
                 if (opt.Length > 2)
                     args.Push(needsarg ? opt.Remove(0,2) : opt.Remove(1, 1));
@@ -140,11 +279,17 @@ namespace DsmAnalyzer
                             throw new ParseException($"-o can be used only once.");
                         outputfile = args.Pop();
                         break;
-                    case 'L': {
-                            String arg = args.Pop();
-                            if (!analyzers.TryGetValue(arg, out analyzer))
-                                throw new ParseException($"Unknown language: {arg}");
+                    case 'v': {
+                            string arg = args.Pop();
+                            if (!Enum.TryParse<LogLevel>(arg, true, out var level))
+                                throw new ParseException($"Unknown verbosity: {arg}");
+                            loglevel = level;
                         }
+                        break;
+                    case 'L':
+                        analyzerName = args.Pop();
+                        if (!analyzers.TryGetValue(analyzerName, out analyzer))
+                            throw new ParseException($"Unknown language: {analyzerName}");
                         break;
                     case 'V':
                         Console.WriteLine(SystemInfo.VersionLong);
@@ -163,10 +308,12 @@ namespace DsmAnalyzer
                 "Usage: DsmAnalyzer [options] [inputfile...]\n" +
                 "  -h       Show this help text\n"+
                 "  -V       Show version information\n" +
-                "  -L lang  Use analyse for language lang\n" +
+                "  -L lang  Use analyzer for language lang\n" +
                 "  -f file  Use settings from file\n" +
                 "  -c file  Create settings file\n" +
                 "  -o file  Outputfile for the analysis\n" +
+                "  -v level Set verbosity for the analyzer, with level one of\n" +
+                "           " + string.Join(", ", Enum.GetNames(typeof(LogLevel))) + "\n" +
                 "Supported languages: " + string.Join(", ", analyzers.Keys) + "\n"
             );
         }

@@ -7,7 +7,6 @@ namespace DsmSuite.Analyzer.Common {
         /// </summary>
         public ISettings CreateDefaultSettings();
 
-
         /// <summary>
         /// Return an XMLSerializer that can be used for reading/writing a settings file for
         /// the language.
