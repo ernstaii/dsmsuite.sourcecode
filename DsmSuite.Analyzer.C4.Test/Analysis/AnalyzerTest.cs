@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 using DsmSuite.Analyzer.C4.Settings;
 using DsmSuite.Analyzer.C4.Test.Utils;
 using DsmSuite.Analyzer.Model.Core;

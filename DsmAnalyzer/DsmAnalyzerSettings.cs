@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Xml.Serialization;
 
 namespace DsmAnalyzer {
 

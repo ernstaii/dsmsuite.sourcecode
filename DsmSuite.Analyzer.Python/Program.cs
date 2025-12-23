@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Common;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.Common;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Analyzer.Python.Analysis;
 using DsmSuite.Analyzer.Python.Settings;

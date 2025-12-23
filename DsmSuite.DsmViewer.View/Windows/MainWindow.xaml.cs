@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.Application.Core;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.Application.Core;
 using DsmSuite.DsmViewer.Model.Core;
 using DsmSuite.DsmViewer.View.Editing;
 using DsmSuite.DsmViewer.View.Lists;

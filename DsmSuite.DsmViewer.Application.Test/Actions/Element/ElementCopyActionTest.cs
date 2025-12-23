@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.DsmViewer.Application.Test.Actions.Element
 {
     [TestClass]
     public class ElementCopyActionTest

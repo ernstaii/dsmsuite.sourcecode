@@ -1,4 +1,5 @@
-﻿using DsmSuite.Common.Model.Interface;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Common.Model.Interface;
 
 namespace DsmSuite.Common.Model.Core
 {

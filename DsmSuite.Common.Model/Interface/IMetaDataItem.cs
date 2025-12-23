@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Common.Model.Interface
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Common.Model.Interface
 {
     public interface IMetaDataItem
     {

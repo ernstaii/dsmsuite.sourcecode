@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 

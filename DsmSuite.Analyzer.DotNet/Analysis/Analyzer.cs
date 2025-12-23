@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.DotNet.Lib;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.DotNet.Lib;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Windows.Controls;
 
 namespace DsmSuite.DsmViewer.View.Validation
 {

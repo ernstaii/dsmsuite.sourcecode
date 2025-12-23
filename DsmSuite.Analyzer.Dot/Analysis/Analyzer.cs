@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Dot.Settings;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.Dot.Settings;
 using DsmSuite.Analyzer.Model.Interface;
 using DsmSuite.Common.Util;
 

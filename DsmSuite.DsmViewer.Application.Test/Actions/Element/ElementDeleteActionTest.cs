@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.Application.Actions.Element;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.Application.Actions.Element;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using Moq;
 

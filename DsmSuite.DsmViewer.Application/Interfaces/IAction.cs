@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.DsmViewer.Application.Interfaces
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.DsmViewer.Application.Interfaces
 {
     /// <summary>
     /// An action the user can perform in the application.<para/>

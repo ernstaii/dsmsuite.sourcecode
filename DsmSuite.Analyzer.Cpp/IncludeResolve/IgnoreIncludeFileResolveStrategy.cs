@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Analyzer.Cpp.IncludeResolve
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Analyzer.Cpp.IncludeResolve
 {
     public class IgnoreIncludeFileResolveStrategy : IncludeResolveStrategy
     {

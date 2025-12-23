@@ -1,4 +1,5 @@
-﻿using System;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DsmSuite.DsmViewer.Application.Sorting;
 using System.Collections.Generic;

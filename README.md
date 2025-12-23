@@ -1,4 +1,4 @@
-This is a copy of https://github.com/dsmsuite/dsmsuite.sourcecode with the changes listed below.
+This is a fork of https://github.com/dsmsuite/dsmsuite.sourcecode with the changes listed below.
 
 ## Installation
 
@@ -8,6 +8,8 @@ This will create a directory DsmSuite with the programs inside.
 ## Invocation
 
 The viewer is invoked by `DsmViewer` (instead of `DsmSuite.DsmViewer.View`).
+
+The analyzer can be invoked by `DsmAnalyzer`. This is a generic frontend to specialized analyzers. Use `DsmAnalyzer -h` to get a list of options and supported target languages. For example `DsmAnalyzer -Ljdeps -o project.dsi project.jar` to analyze project.jar using the jdeps program and write the relation data to project.dsi, which can be read by DsmViewer.
 
 ## Directories
 
@@ -24,6 +26,7 @@ Larger changes are described in the remainder of this section.
 * Sorting with shift pressed will sort recursively.
 * Consumer/producer indicators are also shown when selecting a collapsed (vertical) element. They highlight consumers and producers of any sub-element of the selection.
 * A left hand indicator was added. When a collapsed (vertical) element is selected, every row that descends from this element gets an indicator that shows its relation to rows outside the selection. Rows that do not get a left hand indicator therefore are used only internally, at least in the current tree.
+* An entire new commandline frontend to the analyzers was added, see Invocation above.
 
 
 ### Snapshots
@@ -32,6 +35,10 @@ Snapshots are saved as part of the action list with the model. You can return to
 A snapshot is a marker in the undo/redo list. This has some important consequences: If you go back to an early snapshot and execute a new action, the redo list is cleared and you lose later snapshots. Similarly, if you go back to an early snapshot and save the model, the redo list is not saved and neither are later snapshots.
 
 ## Changes
+
+**v2.2**
+
+* 25-12-23 Added a frontend to the analyzers. Relicensed under the GPL.
 
 **v2.1**
 
@@ -54,11 +61,15 @@ A snapshot is a marker in the undo/redo list. This has some important consequenc
 * 24-06-12 Added class diagrams and documentation comments.
 * 24-06-09 Weight visualised in the cell by a coloured bar.
 
+## License
+
+This program is distributed under the GPL v3.0 or later, see the file LICENSE.
+It is based on software licensed under an MIT license, see the file LICENSE-jmuijsenberg and includes a C4 structurizr analyser also under an MIT license, see DsmSuite.Analyzer.C4/LICENSE.
 
 ## Implementation notes
 
-## Building
-The project can be build the usual way in Visual Studio.
+### Building
+The project can be built the usual way in Visual Studio.
 After it builds successfully, running `publish.bat` will create a distribution directory in `Publish\DsmSuite`.
 `dsmanalyzer.xml` contains dsm analyzer settings that use the distribution directory.
 

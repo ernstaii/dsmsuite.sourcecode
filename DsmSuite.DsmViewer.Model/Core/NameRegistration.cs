@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Diagnostics;
 
 namespace DsmSuite.DsmViewer.Model.Core
 {

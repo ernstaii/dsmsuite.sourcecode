@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.Application.Interfaces;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
 
 namespace DsmSuite.DsmViewer.ViewModel.Lists

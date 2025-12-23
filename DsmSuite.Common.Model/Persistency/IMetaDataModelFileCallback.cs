@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.Generic;
 using DsmSuite.Common.Model.Interface;
 
 namespace DsmSuite.Common.Model.Persistency

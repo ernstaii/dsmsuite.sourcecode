@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Cpp.Settings;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.Cpp.Settings;
 using DsmSuite.Analyzer.Model.Interface;
 using DsmSuite.Analyzer.Transformations.Transformation;
 using DsmSuite.Common.Util;

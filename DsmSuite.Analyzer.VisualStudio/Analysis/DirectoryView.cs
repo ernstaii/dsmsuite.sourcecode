@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.VisualStudio.Settings;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.VisualStudio.Settings;
 using DsmSuite.Analyzer.VisualStudio.VisualStudio;
 
 namespace DsmSuite.Analyzer.VisualStudio.Analysis

@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Analyzer.VisualStudio.VisualStudio
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Analyzer.VisualStudio.VisualStudio
 {
     public class GeneratedFileRelation
     {

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 

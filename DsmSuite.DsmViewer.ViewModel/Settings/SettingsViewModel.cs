@@ -1,4 +1,5 @@
-﻿using DsmSuite.Common.Util;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Common.Util;
 using DsmSuite.DsmViewer.Application.Interfaces;
 using DsmSuite.DsmViewer.ViewModel.Common;
 using System.Windows.Input;

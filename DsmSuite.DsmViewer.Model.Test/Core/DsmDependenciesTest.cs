@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.Model.Core;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.Model.Core;
 
 namespace DsmSuite.DsmViewer.Model.Test.Core
 {

@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Model.Core;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Analyzer.Model.Interface;
 
 namespace DsmSuite.Analyzer.Model.Test.Core

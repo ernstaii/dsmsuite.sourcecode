@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.DsmViewer.Application.Interfaces
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.DsmViewer.Application.Interfaces
 {
     /// <summary>
     /// The enumeration of all available user actions (i.e. <c>IAction</c> implementors).

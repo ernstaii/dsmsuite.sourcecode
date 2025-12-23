@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using Mono.Cecil;
 
 namespace DsmSuite.Analyzer.DotNet.Lib
 {

@@ -1,4 +1,5 @@
-﻿/* MIT License
+// SPDX-License-Identifier: GPL-3.0-or-later
+/* MIT License
 
 Copyright (c) 2016 JetBrains http://www.jetbrains.com
 

@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.Cpp.IncludeResolve;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.Cpp.IncludeResolve;
 using System.Text.RegularExpressions;
 
 namespace DsmSuite.Analyzer.Cpp.Sources

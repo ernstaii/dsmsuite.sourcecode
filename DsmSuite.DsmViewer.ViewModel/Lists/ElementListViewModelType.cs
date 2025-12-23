@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.DsmViewer.ViewModel.Lists
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.DsmViewer.ViewModel.Lists
 {
     public enum ElementListViewModelType
     {

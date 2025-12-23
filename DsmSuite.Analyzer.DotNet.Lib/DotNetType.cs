@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Analyzer.DotNet.Lib
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Analyzer.DotNet.Lib
 {
     public class DotNetType
     {

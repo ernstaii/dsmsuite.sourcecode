@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.View.Editing;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.View.Editing;
 using DsmSuite.DsmViewer.ViewModel.Editing.Relation;
 using DsmSuite.DsmViewer.ViewModel.Lists;
 using System.Windows;

@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.DsmViewer.Application.Sorting
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.DsmViewer.Application.Sorting
 {
     public interface ISortAlgorithm
     {

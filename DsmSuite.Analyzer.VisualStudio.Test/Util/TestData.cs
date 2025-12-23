@@ -1,4 +1,5 @@
-﻿using System;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System;
 using System.IO;
 
 namespace DsmSuite.Analyzer.VisualStudio.Test.Util

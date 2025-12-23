@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.Application.Sorting;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.Application.Sorting;
 using System.Collections.Generic;
 
 namespace DsmSuite.DsmViewer.Application.Test.Stubs

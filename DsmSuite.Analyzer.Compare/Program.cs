@@ -1,4 +1,5 @@
-﻿using DsmSuite.Analyzer.CompareLib;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.Analyzer.CompareLib;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 using System.Reflection;

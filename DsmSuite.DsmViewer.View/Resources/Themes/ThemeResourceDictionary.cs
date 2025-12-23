@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.ViewModel.Settings;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.ViewModel.Settings;
 using System.Windows;
 
 namespace DsmSuite.DsmViewer.View.Resources.Themes

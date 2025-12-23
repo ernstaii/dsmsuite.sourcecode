@@ -1,4 +1,5 @@
-﻿using DsmSuiteAnalyzerVisualStudioTestDataClr;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuiteAnalyzerVisualStudioTestDataClr;
 
 namespace DsmSuite.Analyzer.VisualStudio.Test.Data.DotNet
 {

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 

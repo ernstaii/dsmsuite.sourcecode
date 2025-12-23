@@ -1,4 +1,5 @@
-﻿using System.IO;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.IO;
 using System.Collections.Generic;
 
 namespace DsmSuite.Common.Util

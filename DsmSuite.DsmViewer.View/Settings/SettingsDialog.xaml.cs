@@ -1,4 +1,5 @@
-﻿using System.Windows;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Windows;
 
 namespace DsmSuite.DsmViewer.View.Settings
 {

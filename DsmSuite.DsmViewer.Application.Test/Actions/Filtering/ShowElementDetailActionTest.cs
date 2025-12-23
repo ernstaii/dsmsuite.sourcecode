@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DsmSuite.DsmViewer.Model.Interfaces;
 using Moq;
 using DsmSuite.DsmViewer.Application.Actions.Relation;

@@ -1,4 +1,5 @@
-﻿using DsmSuite.DsmViewer.ViewModel.Matrix;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using DsmSuite.DsmViewer.ViewModel.Matrix;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;

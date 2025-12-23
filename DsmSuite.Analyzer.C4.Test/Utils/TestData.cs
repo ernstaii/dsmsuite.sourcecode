@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Analyzer.C4.Test.Utils
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Analyzer.C4.Test.Utils
 {
     class TestData
     {

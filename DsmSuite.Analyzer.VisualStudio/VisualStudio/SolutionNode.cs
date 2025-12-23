@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Construction;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using Microsoft.Build.Construction;
 
 namespace DsmSuite.Analyzer.VisualStudio.VisualStudio
 {

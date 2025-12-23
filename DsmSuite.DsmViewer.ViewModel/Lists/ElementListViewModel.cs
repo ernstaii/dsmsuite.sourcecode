@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;

@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Common.Util
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Common.Util
 {
     public class ProgressInfo
     {

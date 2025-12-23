@@ -1,4 +1,5 @@
-﻿namespace DsmSuite.Analyzer.DotNet.Test.Util
+// SPDX-License-Identifier: GPL-3.0-or-later
+namespace DsmSuite.Analyzer.DotNet.Test.Util
 {
     class TestData
     {
