@@ -1,38 +1,43 @@
-﻿using DsmSuite.Analyzer.Common;
-using DsmSuite.Common.Util;
-using System.Xml;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Xml;
+using DsmSuite.Common.Util;
+using DsmSuite.Analyzer.Common;
 
-namespace DsmSuite.Analyzer.Uml.Settings
+namespace DsmSuite.Analyzer.Python.Settings
 {
     [Serializable]
-    public class Input
+    public class InputSettings
     {
-        public string Filename { get; set; }
+        public string JsonFilename { get; set; }
     }
 
     [Serializable]
-    public class Output
+    public class OutputSettings
     {
         public string Filename { get; set; }
         public bool Compress { get; set; }
     }
 
     /// <summary>
-    /// Settings used during analysis. Persisted in XML format using serialization.
+    /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
     public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
-        public Input Input { get; set; }
-        public Output Output { get; set; }
+        public InputSettings Input { get; set; }
+        public OutputSettings Output { get; set; }
 
         /// <inheritdoc/>
         public void AddInput(string fname) {
-            if (!String.IsNullOrEmpty(Input.Filename))
+            if (!String.IsNullOrEmpty(Input.JsonFilename))
                 Logger.LogWarning("Replacing input file");
-            Input.Filename = fname;
+            Input.JsonFilename = fname;
         }
 
         /// <inheritdoc/>
@@ -45,11 +50,12 @@ namespace DsmSuite.Analyzer.Uml.Settings
             AnalyzerSettings analyzerSettings = new AnalyzerSettings
             {
                 LogLevel = LogLevel.Error,
-                Input = new Input(),
-                Output = new Output(),
+                Input = new InputSettings(),
+                Output = new OutputSettings(),
             };
 
-            analyzerSettings.Input.Filename = "Model.eap";
+            analyzerSettings.Input.JsonFilename = "Input.json"; 
+
             analyzerSettings.Output.Filename = "Output.dsi";
             analyzerSettings.Output.Compress = true;
 
@@ -83,7 +89,7 @@ namespace DsmSuite.Analyzer.Uml.Settings
 
         public void ResolvePaths(string settingFilePath)
         {
-            Input.Filename = FilePath.ResolveFile(settingFilePath, Input.Filename);
+            Input.JsonFilename = FilePath.ResolveFile(settingFilePath, Input.JsonFilename);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);
         }
     }

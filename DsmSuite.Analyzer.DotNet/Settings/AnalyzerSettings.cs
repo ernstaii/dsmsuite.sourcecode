@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using DsmSuite.Analyzer.Common;
 using DsmSuite.Common.Util;
 
 namespace DsmSuite.Analyzer.DotNet.Settings
@@ -56,12 +57,28 @@ namespace DsmSuite.Analyzer.DotNet.Settings
     /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
-    public class AnalyzerSettings
+    public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
         public InputSettings Input { get; set; }
         public TransformationSettings Transformation { get; set; }
         public OutputSettings Output { get; set; }
+
+        /// <inheritdoc/>
+        public void AddInput(string fname) {
+            if (Input.AssemblyDirectories == null)
+                Input.AssemblyDirectories = new();
+            if (!String.IsNullOrEmpty(Input.AssemblyDirectory))
+                Input.AssemblyDirectories.Add(Input.AssemblyDirectory);
+            Input.AssemblyDirectory = null;
+            Input.AssemblyDirectories.Add(fname);
+        }
+
+        /// <inheritdoc/>
+        public void SetOutput(string fname) {
+            Output.Filename = fname;
+        }
+
 
         /// <summary>
         /// A convenience method that returns the configured assembly directory/ies.
@@ -128,9 +145,10 @@ namespace DsmSuite.Analyzer.DotNet.Settings
             return analyzerSettings;
         }
 
-        private void ResolvePaths(string settingFilePath)
+        public void ResolvePaths(string settingFilePath)
         {
-            Input.AssemblyDirectory = FilePath.ResolveFile(settingFilePath, Input.AssemblyDirectory);
+            if (Input.AssemblyDirectory != null)
+                Input.AssemblyDirectory = FilePath.ResolveFile(settingFilePath, Input.AssemblyDirectory);
             for (int i = 0; i < (Input.AssemblyDirectories?.Count ?? 0); i++)
                 Input.AssemblyDirectories[i] = FilePath.ResolveFile(settingFilePath, Input.AssemblyDirectories[i]);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);

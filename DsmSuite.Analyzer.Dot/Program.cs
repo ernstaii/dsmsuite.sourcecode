@@ -1,14 +1,13 @@
 ﻿using DsmSuite.Analyzer.Common;
-using DsmSuite.Analyzer.Cpp.Settings;
-using DsmSuite.Analyzer.Cpp.Transformation;
+using DsmSuite.Analyzer.Dot.Settings;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace DsmSuite.Analyzer.Cpp
+namespace DsmSuite.Analyzer.Dot
 {
-    public class CppAnalyzer : IAnalyzer {
+        public class DotAnalyzer : IAnalyzer {
         ///<inheritdoc/>
         public ISettings CreateDefaultSettings() {
             return AnalyzerSettings.CreateDefault();
@@ -32,37 +31,36 @@ namespace DsmSuite.Analyzer.Cpp
     {
         private readonly AnalyzerSettings _analyzerSettings;
 
-        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing C++ source code")
+        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing Java code")
         {
             _analyzerSettings = analyzerSettings;
         }
 
         protected override bool CheckPrecondition()
         {
-            return true;
+            bool result = true;
+            if (!Directory.Exists(_analyzerSettings.Input.DotFileDirectory))
+            {
+                result = false;
+                Logger.LogUserMessage($"Input directory '{_analyzerSettings.Input.DotFileDirectory}' does not exist.");
+            }
+            return result;
         }
 
         protected override void LogInputParameters()
         {
-            Logger.LogUserMessage("Input directories:");
-            foreach (string sourceDirectory in _analyzerSettings.Input.SourceDirectories)
-            {
-                Logger.LogUserMessage($" {sourceDirectory}");
-            }
-            Logger.LogUserMessage($"Resolve method: {_analyzerSettings.Analysis.ResolveMethod}");
+            Logger.LogUserMessage($"Input directory:{_analyzerSettings.Input.DotFileDirectory}");
         }
 
         protected override void Action()
         {
             DsiModel model = new DsiModel("Analyzer", _analyzerSettings.Transformation.IgnoredNames, Assembly.GetExecutingAssembly());
+
             Analysis.Analyzer analyzer = new Analysis.Analyzer(model, _analyzerSettings, this);
             analyzer.Analyze();
 
-            Transformer transformer = new Transformer(model, _analyzerSettings.Transformation, this);
-            transformer.Transform();
-
             model.Save(_analyzerSettings.Output.Filename, _analyzerSettings.Output.Compress, this);
-            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}% ambiguousRelations={model.AmbiguousRelationPercentage:0.0}%");
+            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}%");
         }
 
         protected override void LogOutputParameters()
@@ -79,7 +77,7 @@ namespace DsmSuite.Analyzer.Cpp
 
             if (args.Length < 1)
             {
-                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Cpp <settings-file>");
+                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Dot <settingsfile>");
             }
             else
             {

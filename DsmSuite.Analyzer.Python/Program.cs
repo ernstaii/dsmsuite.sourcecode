@@ -1,14 +1,14 @@
 ﻿using DsmSuite.Analyzer.Common;
-using DsmSuite.Analyzer.Cpp.Settings;
-using DsmSuite.Analyzer.Cpp.Transformation;
 using DsmSuite.Analyzer.Model.Core;
+using DsmSuite.Analyzer.Python.Analysis;
+using DsmSuite.Analyzer.Python.Settings;
 using DsmSuite.Common.Util;
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace DsmSuite.Analyzer.Cpp
+namespace DsmSuite.Analyzer.Python
 {
-    public class CppAnalyzer : IAnalyzer {
+    public class PythonAnalyzer : IAnalyzer {
         ///<inheritdoc/>
         public ISettings CreateDefaultSettings() {
             return AnalyzerSettings.CreateDefault();
@@ -32,37 +32,36 @@ namespace DsmSuite.Analyzer.Cpp
     {
         private readonly AnalyzerSettings _analyzerSettings;
 
-        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing C++ source code")
+        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing Python code")
         {
             _analyzerSettings = analyzerSettings;
         }
 
         protected override bool CheckPrecondition()
         {
-            return true;
+            bool result = true;
+            if (!File.Exists(_analyzerSettings.Input.JsonFilename))
+            {
+                result = false;
+                Logger.LogUserMessage($"Input file '{_analyzerSettings.Input.JsonFilename}' does not exist. Use 'dependenpy.exe -l -f json -o <outputfile>.json <sourcedir>' to generate one");
+            }
+            return result;
         }
 
         protected override void LogInputParameters()
         {
-            Logger.LogUserMessage("Input directories:");
-            foreach (string sourceDirectory in _analyzerSettings.Input.SourceDirectories)
-            {
-                Logger.LogUserMessage($" {sourceDirectory}");
-            }
-            Logger.LogUserMessage($"Resolve method: {_analyzerSettings.Analysis.ResolveMethod}");
+            Logger.LogUserMessage($"Input file:{_analyzerSettings.Input.JsonFilename}");
         }
 
         protected override void Action()
         {
-            DsiModel model = new DsiModel("Analyzer", _analyzerSettings.Transformation.IgnoredNames, Assembly.GetExecutingAssembly());
-            Analysis.Analyzer analyzer = new Analysis.Analyzer(model, _analyzerSettings, this);
+            DsiModel model = new DsiModel("Analyzer", new List<string>(), Assembly.GetExecutingAssembly());
+
+            Analysis.Analyzer analyzer = new(model, _analyzerSettings, this);
             analyzer.Analyze();
 
-            Transformer transformer = new Transformer(model, _analyzerSettings.Transformation, this);
-            transformer.Transform();
-
             model.Save(_analyzerSettings.Output.Filename, _analyzerSettings.Output.Compress, this);
-            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}% ambiguousRelations={model.AmbiguousRelationPercentage:0.0}%");
+            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}%");
         }
 
         protected override void LogOutputParameters()
@@ -79,7 +78,7 @@ namespace DsmSuite.Analyzer.Cpp
 
             if (args.Length < 1)
             {
-                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Cpp <settings-file>");
+                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Python <settingsfile>");
             }
             else
             {

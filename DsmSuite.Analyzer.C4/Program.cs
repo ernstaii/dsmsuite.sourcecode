@@ -1,14 +1,13 @@
-﻿using DsmSuite.Analyzer.Common;
-using DsmSuite.Analyzer.Cpp.Settings;
-using DsmSuite.Analyzer.Cpp.Transformation;
+﻿using DsmSuite.Analyzer.C4.Settings;
+using DsmSuite.Analyzer.Common;
 using DsmSuite.Analyzer.Model.Core;
 using DsmSuite.Common.Util;
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace DsmSuite.Analyzer.Cpp
+namespace DsmSuite.Analyzer.C4
 {
-    public class CppAnalyzer : IAnalyzer {
+    public class C4Analyzer : IAnalyzer {
         ///<inheritdoc/>
         public ISettings CreateDefaultSettings() {
             return AnalyzerSettings.CreateDefault();
@@ -27,42 +26,40 @@ namespace DsmSuite.Analyzer.Cpp
         }
     }
 
-
     public class ConsoleAction : ConsoleActionBase
     {
         private readonly AnalyzerSettings _analyzerSettings;
 
-        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing C++ source code")
+        public ConsoleAction(AnalyzerSettings analyzerSettings) : base("Analyzing C4 code")
         {
             _analyzerSettings = analyzerSettings;
         }
 
         protected override bool CheckPrecondition()
         {
-            return true;
+            bool result = true;
+            if (!File.Exists(_analyzerSettings.Input.Workspace))
+            {
+                result = false;
+                Logger.LogUserMessage($"Input Workspace '{_analyzerSettings.Input.Workspace}' does not exist.");
+            }
+            return result;
         }
 
         protected override void LogInputParameters()
         {
-            Logger.LogUserMessage("Input directories:");
-            foreach (string sourceDirectory in _analyzerSettings.Input.SourceDirectories)
-            {
-                Logger.LogUserMessage($" {sourceDirectory}");
-            }
-            Logger.LogUserMessage($"Resolve method: {_analyzerSettings.Analysis.ResolveMethod}");
+            Logger.LogUserMessage($"Input directory:{_analyzerSettings.Input.Workspace}");
         }
 
         protected override void Action()
         {
             DsiModel model = new DsiModel("Analyzer", _analyzerSettings.Transformation.IgnoredNames, Assembly.GetExecutingAssembly());
+
             Analysis.Analyzer analyzer = new Analysis.Analyzer(model, _analyzerSettings, this);
             analyzer.Analyze();
 
-            Transformer transformer = new Transformer(model, _analyzerSettings.Transformation, this);
-            transformer.Transform();
-
             model.Save(_analyzerSettings.Output.Filename, _analyzerSettings.Output.Compress, this);
-            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}% ambiguousRelations={model.AmbiguousRelationPercentage:0.0}%");
+            Logger.LogUserMessage($"Found elements={model.CurrentElementCount} relations={model.CurrentRelationCount} resolvedRelations={model.ResolvedRelationPercentage:0.0}%");
         }
 
         protected override void LogOutputParameters()
@@ -71,15 +68,15 @@ namespace DsmSuite.Analyzer.Cpp
         }
     }
 
-    public static class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Logger.Init(Assembly.GetExecutingAssembly(), true);
 
             if (args.Length < 1)
             {
-                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.Cpp <settings-file>");
+                Logger.LogUserMessage("Usage: DsmSuite.Analyzer.C4 <settingsfile>");
             }
             else
             {
@@ -88,6 +85,7 @@ namespace DsmSuite.Analyzer.Cpp
                 {
                     AnalyzerSettings.WriteToFile(settingsFileInfo.FullName, AnalyzerSettings.CreateDefault());
                     Logger.LogUserMessage("Settings file does not exist. Default one created");
+
                 }
                 else
                 {

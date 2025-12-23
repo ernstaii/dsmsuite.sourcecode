@@ -1,38 +1,48 @@
-﻿using DsmSuite.Analyzer.Common;
-using DsmSuite.Common.Util;
-using System.Xml;
+﻿using DsmSuite.Common.Util;
 using System.Xml.Serialization;
+using System.Xml;
+using System.Runtime;
+using DsmSuite.Analyzer.Common;
 
-namespace DsmSuite.Analyzer.Uml.Settings
+namespace DsmSuite.Analyzer.C4.Settings
 {
     [Serializable]
-    public class Input
+    public class InputSettings
     {
-        public string Filename { get; set; }
+        public string Workspace { get; set; }
     }
 
     [Serializable]
-    public class Output
+    public class OutputSettings
     {
         public string Filename { get; set; }
         public bool Compress { get; set; }
     }
 
+    [Serializable]
+    public class TransformationSettings
+    {
+        public List<string> IgnoredNames { get; set; }
+
+        public List<string> IncludedNames { get; set; }
+    }
+
     /// <summary>
-    /// Settings used during analysis. Persisted in XML format using serialization.
+    /// Settings used during code analysis. Persisted in XML format using serialization.
     /// </summary>
     [Serializable]
     public class AnalyzerSettings : ISettings
     {
         public LogLevel LogLevel { get; set; }
-        public Input Input { get; set; }
-        public Output Output { get; set; }
+        public InputSettings Input { get; set; }
+        public TransformationSettings Transformation { get; set; }
+        public OutputSettings Output { get; set; }
 
         /// <inheritdoc/>
         public void AddInput(string fname) {
-            if (!String.IsNullOrEmpty(Input.Filename))
+            if (!String.IsNullOrEmpty(Input.Workspace))
                 Logger.LogWarning("Replacing input file");
-            Input.Filename = fname;
+            Input.Workspace = fname;
         }
 
         /// <inheritdoc/>
@@ -45,14 +55,18 @@ namespace DsmSuite.Analyzer.Uml.Settings
             AnalyzerSettings analyzerSettings = new AnalyzerSettings
             {
                 LogLevel = LogLevel.Error,
-                Input = new Input(),
-                Output = new Output(),
+                Input = new InputSettings
+                {
+                    Workspace = "workspace.json",
+                },
+                Transformation = new TransformationSettings(),
+                Output = new OutputSettings(),
             };
 
-            analyzerSettings.Input.Filename = "Model.eap";
-            analyzerSettings.Output.Filename = "Output.dsi";
-            analyzerSettings.Output.Compress = true;
+            analyzerSettings.Transformation.IgnoredNames = new();
 
+            analyzerSettings.Output.Filename = "workspace.dsi";
+            analyzerSettings.Output.Compress = true;
             return analyzerSettings;
         }
 
@@ -83,7 +97,6 @@ namespace DsmSuite.Analyzer.Uml.Settings
 
         public void ResolvePaths(string settingFilePath)
         {
-            Input.Filename = FilePath.ResolveFile(settingFilePath, Input.Filename);
             Output.Filename = FilePath.ResolveFile(settingFilePath, Output.Filename);
         }
     }
