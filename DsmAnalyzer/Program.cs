@@ -1,5 +1,6 @@
 ﻿using DsmSuite.Analyzer.Common;
 using DsmSuite.Common.Util;
+using System.Diagnostics;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -9,19 +10,21 @@ namespace DsmAnalyzer
 {
     internal class ParseException(string Msg) : Exception(Msg);  // thrown by parseArgs
 
-    internal class Program
-    {
+    internal record PreProcessor(string cmd, string analyzer);
+
+    internal class Program {
         private const string XMLROOT = "DsmAnalyzer";
 
         /// <summary>Runner for the application.</summary>
-        static public void Main(string[] args)
-        {
+        static public void Main(string[] args) {
             int res = new Program().main(args);
             //Console.WriteLine("Press enter");  Console.ReadLine();
             System.Environment.Exit(res);
         }
 
         //======================== (Mostly) Commandline arguments ==============================
+        /// <summary> Preprocessor command to run, from the commandline or settingsfile.</summary>
+        string? preprocessor;
         /// <summary>
         /// Analyzer to use, from the commandline if specified; otherwise from the settingsfile.
         /// </summary>
@@ -40,13 +43,18 @@ namespace DsmAnalyzer
         /// <summary>Maps names to supported analyzers.</summary>
         /// Keep these in alphabetical order for a nicer help().
         private Dictionary<string, IAnalyzer> analyzers = new(StringComparer.OrdinalIgnoreCase) {
-            { "C4",     new DsmSuite.Analyzer.C4.C4Analyzer() },
-            { "cpp",    new DsmSuite.Analyzer.Cpp.CppAnalyzer() },
-            { "dot",    new DsmSuite.Analyzer.Dot.DotAnalyzer() },
-            { "dotnet", new DsmSuite.Analyzer.DotNet.DotNetAnalyzer() },
-            { "python", new DsmSuite.Analyzer.Python.PythonAnalyzer() },
-            { "uml",    new DsmSuite.Analyzer.Uml.UMLAnalyzer() },
-            //{ "jdeps", null },
+            { "C4",         new DsmSuite.Analyzer.C4.C4Analyzer() },
+            { "cpp",        new DsmSuite.Analyzer.Cpp.CppAnalyzer() },
+            { "dot",        new DsmSuite.Analyzer.Dot.DotAnalyzer() },
+            { "dotnet",     new DsmSuite.Analyzer.DotNet.DotNetAnalyzer() },
+            { "dependenpy", new DsmSuite.Analyzer.Python.PythonAnalyzer() },
+            { "uml",        new DsmSuite.Analyzer.Uml.UMLAnalyzer() },
+        };
+
+        ///<summary>Maps names to preprocessor command and backend.</summary>
+        private Dictionary<string, PreProcessor> preprocessors = new(StringComparer.OrdinalIgnoreCase) {
+            { "jdeps",  new( "jdeps -dotoutput {TMPDIR} {INPUT}", "dot" ) },
+            { "python", new( "dependenpy -l -f json -o {TMPFILE} {INPUT}", "dependenpy" ) },
         };
 
 
@@ -85,9 +93,10 @@ namespace DsmAnalyzer
         /// analyzer takes precedence over the one specified in the settings file.<br/>
         /// It both an analyzer and fname are null, an error is generated.
         /// </summary>
-        void Analyze(IAnalyzer? analyzer, string? fname) {
+        void Analyze(IAnalyzer? analyzerOverride, string? fname) {
             ISettings settings;
             string? rootdir;
+            int exitcode;
 
             if (fname == null) {
                 settings = analyzer!.CreateDefaultSettings();
@@ -97,13 +106,65 @@ namespace DsmAnalyzer
                 rootdir = new FileInfo(fname).DirectoryName;
             }
             UpdateSettings(settings);
-            //WriteSettingsFile(analyzer ?? this.analyzer!, settings, "-"); return;
+            ConnectPreprocessor(settings);
+            //WriteSettingsFile(analyzerOverride ?? this.analyzer!, settings, "-"); return;
 
             Logger.Init(Assembly.GetExecutingAssembly(), true);
-            analyzer!.Analyze(settings, rootdir);
+            if (!string.IsNullOrEmpty(preprocessor)) {
+                Logger.LogUserMessage($"Running preprocessor: {preprocessor}");
+                exitcode = RunProgram(preprocessor);
+                if (exitcode != 0) {
+                    Logger.LogError("Preprocessor terminated with exitcode {exitcode}");
+                    error("Preprocessor failed");
+                }
+            }
+            (analyzerOverride ?? this.analyzer!).Analyze(settings, rootdir);
             Logger.Flush();
         }
 
+
+        /// <summary>
+        /// Run the command using the "standard" shell, aka system() and return its exit code.
+        /// </summary>
+        int RunProgram(string command) {
+            ProcessStartInfo pinfo;
+
+            if (OperatingSystem.IsWindows()) {
+                pinfo = new() { FileName = "cmd.exe", Arguments = "/c "+ command };
+            } else {
+                pinfo = new() { FileName = "bash", ArgumentList = { "-c", command } };
+            }
+            pinfo.UseShellExecute = false;
+
+            using (Process p = new()) {
+                p.StartInfo = pinfo;
+                p.Start();
+                p.WaitForExit();
+                return p.ExitCode;
+            }
+        }
+
+
+        /// <summary>
+        /// Connect the output of the preprocessor to the input of the analyzer,
+        /// using a temporary file/directory.
+        /// </summary>
+        void ConnectPreprocessor(ISettings settings) {
+            if (preprocessor == null)
+                return;
+
+            string temp;
+
+            if (preprocessor.Contains("{TMPDIR}")) {
+                temp = Directory.CreateTempSubdirectory().FullName;
+                preprocessor = preprocessor.Replace("{TMPDIR}", temp);
+                settings.AddInput(temp);
+            } else if (preprocessor.Contains("{TMPFILE}")) {
+                temp = Path.GetTempFileName();
+                preprocessor = preprocessor.Replace("{TMPFILE}", temp);
+                settings.AddInput(temp);
+            }
+        }
 
         /// <summary>
         /// Create a settings file from the default, update it with commandline arguments
@@ -143,7 +204,7 @@ namespace DsmAnalyzer
             XmlSerializer serializer = new XmlSerializer(typeof(DsmAnalyzerSettings));
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("", "");
-            DsmAnalyzerSettings settings = new DsmAnalyzerSettings() { Language = analyzerName };
+            DsmAnalyzerSettings settings = new() { Language = analyzerName, Preprocessor = preprocessor };
             serializer.Serialize(writer, settings, ns);
         }
 
@@ -198,6 +259,7 @@ namespace DsmAnalyzer
 
             if (settings == null)
                 error("Reading settings file failed. (not a settings file?)");
+
             if (analyzer == null) {
                 if (settings!.Language == null)
                     error($"No language in the settings file and not on the commandline either.");
@@ -205,25 +267,35 @@ namespace DsmAnalyzer
                     error($"Unknown language in settings file: {settings.Language!}");
             } else if (settings!.Language != null  &&  !analyzers.ContainsKey(settings.Language))
                 Console.Error.WriteLine($"Warning: Unknown language {settings.Language} in settings file.");
+
+            if (preprocessor == null)
+                preprocessor = settings.Preprocessor;
         }
 
 
         /// <summary>
-        /// Update settings with the options and arguments passed on the commandline and
-        /// return the updated settings.
+        /// Update settings and class variables with the options and arguments passed on the
+        /// commandline and return the updated settings.
         /// </summary>
         ISettings UpdateSettings(ISettings settings) {
             if (loglevel != null)
                 settings.LogLevel = (LogLevel) loglevel;
             if (outputfile != null)
                 settings.SetOutput(outputfile);
-            if (otherArgs != null)
-                try {
-                    foreach (string arg in otherArgs)
-                        settings.AddInput(arg);
-                } catch (NotSupportedException) {
-                    error("Inputs on the commandline not supported for the selected language.");
+            if (otherArgs != null) {
+                if (preprocessor != null) {
+                    string inputs = string.Join(" ", otherArgs);
+                    if (!string.IsNullOrEmpty(inputs))
+                        preprocessor = preprocessor.Replace("{INPUT}", inputs);
+                } else {
+                    try {
+                        foreach (string arg in otherArgs)
+                            settings.AddInput(arg);
+                    } catch (NotSupportedException) {
+                        error("Inputs on the commandline not supported for the selected language.");
+                    }
                 }
+            }
             return settings;
         }
 
@@ -291,10 +363,16 @@ namespace DsmAnalyzer
                         break;
                     case 'L': {
                             string name = args.Pop();
-                            if (!analyzers.TryGetValue(name, out analyzer))
+                            if (preprocessors.TryGetValue(name, out var prep)) {
+                                preprocessor = prep.cmd;
+                                analyzer = analyzers[prep.analyzer];
+                                analyzerName = prep.analyzer;
+                            } else if (analyzers.TryGetValue(name, out analyzer)) {
+                                // normalize case to that in dictionary.
+                                analyzerName = analyzers.First(
+                                        kvp => analyzers.Comparer.Equals(kvp.Key, name) ).Key;
+                            } else
                                 throw new ParseException($"Unknown language: {name}");
-                            // normalize case to that in dictionary.
-                            analyzerName = analyzers.First(kvp => analyzers.Comparer.Equals(kvp.Key, name)).Key;
                         }
                         break;
                     case 'V':
@@ -316,11 +394,12 @@ namespace DsmAnalyzer
                 "  -V       Show version information\n" +
                 "  -L lang  Use analyzer for language lang\n" +
                 "  -f file  Use settings from file\n" +
-                "  -c file  Create settings file\n" +
+                "  -c file  Create settings file. Use - for stdout\n" +
                 "  -o file  Outputfile for the analysis\n" +
                 "  -v level Set verbosity for the analyzer, with level one of\n" +
                 "           " + string.Join(", ", Enum.GetNames(typeof(LogLevel))) + "\n" +
-                "Supported languages: " + string.Join(", ", analyzers.Keys) + "\n"
+                "Supported languages: " + string.Join(", ",
+                        Enumerable.Concat( preprocessors.Keys, analyzers.Keys)) + "\n"
             );
         }
 
