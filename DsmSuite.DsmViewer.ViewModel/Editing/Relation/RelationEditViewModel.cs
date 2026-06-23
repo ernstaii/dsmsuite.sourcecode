@@ -75,7 +75,8 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
         public string SelectedRelationType
         {
             get { return _selectedRelationType; }
-            set { _selectedRelationType = value; _lastSelectedRelationType = value;  RaisePropertyChanged(); }
+            set { _selectedRelationType = value; _lastSelectedRelationType = value;
+                    RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public int Weight
@@ -133,17 +134,17 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
             }
             else if (ConsumerSearchViewModel.SelectedElement == ProviderSearchViewModel.SelectedElement)
             {
-                Help = "Can not connect to itself";
+                Help = "Cannot connect to itself";
                 return false;
             }
             else if (ConsumerSearchViewModel.SelectedElement.IsRecursiveChildOf(ProviderSearchViewModel.SelectedElement))
             {
-                Help = "Can not connect to child";
+                Help = "Cannot connect to child";
                 return false;
             }
             else if (ProviderSearchViewModel.SelectedElement.IsRecursiveChildOf(ConsumerSearchViewModel.SelectedElement))
             {
-                Help = "Can not connect to child";
+                Help = "Cannot connect to child";
                 return false;
             }
             else if (SelectedRelationType == null)
@@ -153,12 +154,12 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Relation
             }
             else if (Weight < 0)
             {
-                Help = "Weight can not be negative";
+                Help = "Weight cannot be negative";
                 return false;
             }
             else if (Weight == 0)
             {
-                Help = "Weight can not be zero";
+                Help = "Weight cannot be zero";
                 return false;
             }
             else

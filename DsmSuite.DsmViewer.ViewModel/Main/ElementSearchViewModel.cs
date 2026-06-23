@@ -119,7 +119,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public SearchState SearchState
         {
             get { return _searchState; }
-            set { _searchState = value; RaisePropertyChanged(); }
+            set { _searchState = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public string SearchResult

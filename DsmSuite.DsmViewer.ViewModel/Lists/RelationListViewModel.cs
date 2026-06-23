@@ -34,19 +34,19 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             {
                 case RelationsListViewModelType.ElementIngoingRelations:
                     SubTitle = $"Relations consuming {_selectedProvider.Fullname}";
-                    AddRelationCommand = RegisterCommand(AddConsumerRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddConsumerRelationExecute);
                     break;
                 case RelationsListViewModelType.ElementOutgoingRelations:
                     SubTitle = $"Relations providing to {_selectedProvider.Fullname}";
-                    AddRelationCommand = RegisterCommand(AddProviderRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddProviderRelationExecute);
                     break;
                 case RelationsListViewModelType.ElementInternalRelations:
                     SubTitle = $"Internal relations of {_selectedProvider.Fullname}";
-                    AddRelationCommand = RegisterCommand  (AddInternalRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand (AddInternalRelationExecute);
                     break;
                 case RelationsListViewModelType.ConsumerProviderRelations:
                     SubTitle = $"Relations between consumer {_selectedConsumer.Fullname} and provider {_selectedProvider.Fullname}";
-                    AddRelationCommand = RegisterCommand(AddConsumerProviderRelationExecute, AddRelationCanExecute);
+                    AddRelationCommand = RegisterCommand(AddConsumerProviderRelationExecute);
                     break;
                 default:
                     SubTitle = "";
@@ -72,7 +72,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
         public RelationListItemViewModel SelectedRelation
         {
             get { return _selectedRelation; }
-            set { _selectedRelation = value; RaisePropertyChanged(); }
+            set { _selectedRelation = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public ICommand CopyToClipboardCommand { get; }
@@ -173,11 +173,6 @@ namespace DsmSuite.DsmViewer.ViewModel.Lists
             RelationEditViewModel relationEditViewModel = new RelationEditViewModel(RelationEditViewModelType.Add, _application, null, _selectedConsumer, null, _selectedProvider, null);
             relationEditViewModel.RelationUpdated += OnRelationUpdated;
             RelationAddStarted?.Invoke(this, relationEditViewModel);
-        }
-
-        private bool AddRelationCanExecute(object parameter)
-        {
-            return true;
         }
 
         private void OnRelationUpdated(object sender, IDsmRelation updatedRelation)

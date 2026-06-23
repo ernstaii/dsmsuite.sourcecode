@@ -83,7 +83,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Element
         public string Name
         {
             get { return _name; }
-            set { _name = value; RaisePropertyChanged(); }
+            set { _name = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public List<string> ElementTypes { get; }
@@ -120,17 +120,17 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Element
 
             if (Name.Length == 0)
             {
-                Help = "Name can not be empty";
+                Help = "Name cannot be empty";
                 return false;
             }
             else if (Name.Contains("."))
             {
-                Help = "Name can not be contain dot character";
+                Help = "Name cannot contain the dot character";
                 return false;
             }
             else if ((existingElement != _selectedElement) && (existingElement != null))
             {
-                Help = "Name can not be an existing name";
+                Help = "Name cannot be an existing name";
                 return false;
             }
             else

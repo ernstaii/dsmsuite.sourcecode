@@ -35,7 +35,7 @@ namespace DsmSuite.DsmViewer.ViewModel.Editing.Snapshot
         public string Description
         {
             get { return _description; }
-            set { _description = value; RaisePropertyChanged();  }
+            set { _description = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged();  }
         }
 
         private void AcceptChangeExecute(object parameter)

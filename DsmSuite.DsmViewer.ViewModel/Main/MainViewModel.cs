@@ -229,13 +229,13 @@ namespace DsmSuite.DsmViewer.ViewModel.Main
         public bool IsModified
         {
             get { return _isModified; }
-            set { _isModified = value; RaisePropertyChanged(); }
+            set { _isModified = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            set { _isLoaded = value; RaisePropertyChanged(); }
+            set { _isLoaded = value; RaisePropertyChanged(); NotifyCommandsCanExecuteChanged(); }
         }
 
         public string Title
